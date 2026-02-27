@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com; connect-src 'self'; form-action 'self';">
 <title>Contact - Next Chapter Travel</title>
 <link rel="stylesheet" href="css/next-style.css">
 </head>
@@ -31,10 +34,10 @@
     <h2>Get In Touch</h2>
     <p>Please fill out the form below or email us directly at <a href="mailto:info@nextchaptertravel.com">info@nextchaptertravel.com</a>.</p>
     <!-- Basic contact form placeholder -->
-    <form action="#" method="POST">
-        <label>Name: <input type="text" name="name" required></label>
-        <label>Email: <input type="email" name="email" required></label>
-        <label>Message:<br><textarea name="message" rows="5" required></textarea></label>
+    <form action="#" method="POST" novalidate>
+        <label>Name: <input type="text" name="name" required minlength="2" maxlength="100" aria-required="true"></label>
+        <label>Email: <input type="email" name="email" required maxlength="254" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" aria-required="true"></label>
+        <label>Message:<br><textarea name="message" rows="5" required minlength="10" maxlength="1000" aria-required="true"></textarea></label>
         <button type="submit" class="button">Submit</button>
     </form>
 </section>
