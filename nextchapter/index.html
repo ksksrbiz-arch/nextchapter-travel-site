@@ -12,9 +12,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=Jost:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-  <header>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <header role="banner">
     <div class="logo">Next Chapter Travel</div>
-    <nav>
+    <nav role="navigation" aria-label="Main navigation">
       <a href="wdw.html">Walt Disney World</a>
       <a href="cruise.html">Cruise & Rivers</a>
       <a href="aulani.html">Aulani</a>
@@ -22,28 +23,28 @@
       <a href="international.html">International Parks</a>
     </nav>
   </header>
-  <section class="hero starfield">
+  <section class="hero starfield" id="main-content">
     <div class="hero-content">
       <h1>Embark on Your Next Chapter</h1>
       <p>Curated adventures designed for magical experiences across the globe.</p>
       <a href="wdw.html" class="cta-btn">Explore Walt Disney World</a>
     </div>
   </section>
-  <section class="trust-bar">
+  <section class="trust-bar" role="complementary" aria-label="Trust indicators">
     <div class="trust-item">
-      <span class="icon">\ud83c\udde8</span>
+      <span class="icon" aria-hidden="true">\ud83c\udde8</span>
       <p>Authorized Disney Vacation Planners</p>
     </div>
     <div class="trust-item">
-      <span class="icon">\ud83c\udf0d</span>
+      <span class="icon" aria-hidden="true">\ud83c\udf0d</span>
       <p>Worldwide Expertise</p>
     </div>
     <div class="trust-item">
-      <span class="icon">\u2b50</span>
+      <span class="icon" aria-hidden="true">\u2b50</span>
       <p>Five-Star Service</p>
     </div>
   </section>
-  <footer>
+  <footer role="contentinfo">
     <p>&copy; 2026 Next Chapter Travel. All Rights Reserved.</p>
   </footer>
 </body>

@@ -10,12 +10,13 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <section class="video-hero">
-    <video class="hero-video" autoplay muted loop playsinline preload="none">
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <section class="video-hero" role="banner">
+    <video class="hero-video" autoplay muted loop playsinline preload="none" aria-label="Contact us video">
       <source src="videos/contact-hero.mp4" type="video/mp4">
     </video>
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
+    <div class="hero-overlay" aria-hidden="true"></div>
+    <div class="hero-content" id="main-content">
       <h1>Contact Us</h1>
       <p>Ready to start your next adventure? Get in touch and let's plan your perfect journey.</p>
       <a href="index.html" class="btn-primary">Back to Home</a>

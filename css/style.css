@@ -4,6 +4,23 @@ body, html {
   font-family: 'Playfair Display', serif;
 }
 
+/* Skip link for accessibility */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #c5a880;
+  color: #fff;
+  padding: 8px;
+  text-decoration: none;
+  z-index: 100;
+  font-size: 1rem;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
 .video-hero {
   position: relative;
   height: 100vh;
