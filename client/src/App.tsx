@@ -25,6 +25,7 @@ import { AdminTripsList, AdminTripDetail } from "./pages/admin/AdminTrips";
 import AdminMessages from "./pages/admin/AdminMessages";
 import AdminGuides from "./pages/admin/AdminGuides";
 import AdminAlerts from "./pages/admin/AdminAlerts";
+import AdminNotifications from "./pages/admin/AdminNotifications";
 
 function Router() {
   return (
@@ -51,6 +52,7 @@ function Router() {
       <Route path="/admin/messages" component={AdminMessages} />
       <Route path="/admin/guides" component={AdminGuides} />
       <Route path="/admin/alerts" component={AdminAlerts} />
+      <Route path="/admin/notifications" component={AdminNotifications} />
 
       {/* 404 */}
       <Route path="/404" component={NotFound} />

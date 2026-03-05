@@ -15,6 +15,9 @@ import {
   getTravelAlerts, markAlertRead,
   getAllUsers, getUserById, updateUserProfile,
   getAdminStats,
+  createNotification, getNotifications, getUnreadNotificationCount,
+  markNotificationRead, markAllNotificationsRead, broadcastNotification,
+  savePushSubscription, deletePushSubscription,
 } from "./db";
 
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
@@ -411,6 +414,85 @@ export const appRouter = router({
         if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
         await db.insert(travelAlerts).values(input);
         return { success: true };
+      }),
+  }),
+
+  notifications: router({
+    list: protectedProcedure
+      .input(z.object({ limit: z.number().optional() }))
+      .query(async ({ ctx, input }) => {
+        return await getNotifications(ctx.user.id, input.limit ?? 50);
+      }),
+    unreadCount: protectedProcedure.query(async ({ ctx }) => {
+      return await getUnreadNotificationCount(ctx.user.id);
+    }),
+    markRead: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        return await markNotificationRead(input.id, ctx.user.id);
+      }),
+    markAllRead: protectedProcedure.mutation(async ({ ctx }) => {
+      return await markAllNotificationsRead(ctx.user.id);
+    }),
+    // Admin: send to a specific user
+    send: adminProcedure
+      .input(z.object({
+        userId: z.number(),
+        tripId: z.number().optional(),
+        title: z.string(),
+        body: z.string(),
+        type: z.enum(["message", "itinerary", "document", "alert", "booking", "system"]).optional(),
+        channel: z.enum(["in_app", "email", "push", "all"]).optional(),
+        actionUrl: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        return await createNotification({
+          userId: input.userId,
+          tripId: input.tripId ?? null,
+          title: input.title,
+          body: input.body,
+          type: input.type ?? "system",
+          channel: input.channel ?? "in_app",
+          actionUrl: input.actionUrl ?? null,
+        });
+      }),
+    // Admin: broadcast to all clients
+    broadcast: adminProcedure
+      .input(z.object({
+        title: z.string(),
+        body: z.string(),
+        type: z.enum(["message", "itinerary", "document", "alert", "booking", "system"]).optional(),
+        channel: z.enum(["in_app", "email", "push", "all"]).optional(),
+        tripId: z.number().optional(),
+        actionUrl: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        return await broadcastNotification({
+          tripId: input.tripId ?? null,
+          title: input.title,
+          body: input.body,
+          type: input.type ?? "system",
+          channel: input.channel ?? "in_app",
+          actionUrl: input.actionUrl ?? null,
+        });
+      }),
+  }),
+
+  push: router({
+    subscribe: protectedProcedure
+      .input(z.object({
+        endpoint: z.string(),
+        p256dh: z.string(),
+        auth: z.string(),
+        userAgent: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        return await savePushSubscription(ctx.user.id, input.endpoint, input.p256dh, input.auth, input.userAgent);
+      }),
+    unsubscribe: protectedProcedure
+      .input(z.object({ endpoint: z.string() }))
+      .mutation(async ({ input }) => {
+        return await deletePushSubscription(input.endpoint);
       }),
   }),
 

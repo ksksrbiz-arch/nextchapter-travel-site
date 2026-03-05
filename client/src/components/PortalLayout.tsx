@@ -9,6 +9,7 @@ import {
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
+import NotificationBell from "@/components/NotificationBell";
 
 const NAV_ITEMS = [
   { href: "/portal", label: "Dashboard", icon: LayoutDashboard },
@@ -165,6 +166,7 @@ export default function PortalLayout({ children, title, subtitle }: PortalLayout
             <Badge className="bg-secondary/10 text-secondary border-secondary/20 font-sans text-xs hidden sm:flex">
               Client Portal
             </Badge>
+            <NotificationBell />
           </div>
         </header>
 

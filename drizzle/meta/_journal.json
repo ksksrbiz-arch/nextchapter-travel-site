@@ -15,6 +15,13 @@
       "when": 1772746304221,
       "tag": "0001_dear_master_mold",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1772749046478,
+      "tag": "0002_friendly_smiling_tiger",
+      "breakpoints": true
     }
   ]
 }

@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import {
   Users, Plane, MessageSquare, LayoutDashboard, BookOpen,
   LogOut, Menu, X, ChevronRight, Bell, Settings,
-  TrendingUp, Calendar, FileText, Globe, CheckSquare
+  TrendingUp, Calendar, FileText, Globe, CheckSquare, Radio
 } from "lucide-react";
 
 const ADMIN_NAV = [
@@ -19,6 +19,7 @@ const ADMIN_NAV = [
   { href: "/admin/messages", label: "Messages", icon: MessageSquare },
   { href: "/admin/guides", label: "Destination Guides", icon: Globe },
   { href: "/admin/alerts", label: "Send Alerts", icon: Bell },
+  { href: "/admin/notifications", label: "Notifications", icon: Radio },
 ];
 
 function AdminLayout({ children, title, subtitle }: { children: React.ReactNode; title?: string; subtitle?: string }) {

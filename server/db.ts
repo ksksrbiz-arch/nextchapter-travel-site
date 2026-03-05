@@ -2,9 +2,9 @@ import { eq, and, or, desc, asc } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
   users, trips, itineraryItems, documents, messages, packingItems,
-  bookings, destinationGuides, travelAlerts,
+  bookings, destinationGuides, travelAlerts, notifications, pushSubscriptions,
   InsertUser, Trip, ItineraryItem, Document, Message, PackingItem,
-  Booking, DestinationGuide, TravelAlert,
+  Booking, DestinationGuide, TravelAlert, Notification, InsertNotification, PushSubscription,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -340,6 +340,86 @@ export async function markAlertRead(id: number) {
   const db = await getDb();
   if (!db) throw new Error("DB unavailable");
   await db.update(travelAlerts).set({ isRead: true }).where(eq(travelAlerts.id, id));
+  return { success: true };
+}
+
+// ─── Notifications ───────────────────────────────────────────────────────────
+
+export async function createNotification(data: InsertNotification) {
+  const db = await getDb();
+  if (!db) throw new Error("DB unavailable");
+  const result = await db.insert(notifications).values(data);
+  return { id: Number((result as any)[0]?.insertId ?? 0), ...data };
+}
+
+export async function getNotifications(userId: number, limit = 50) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(notifications)
+    .where(eq(notifications.userId, userId))
+    .orderBy(desc(notifications.createdAt))
+    .limit(limit);
+}
+
+export async function getUnreadNotificationCount(userId: number) {
+  const db = await getDb();
+  if (!db) return 0;
+  const result = await db.select().from(notifications)
+    .where(and(eq(notifications.userId, userId), eq(notifications.isRead, false)));
+  return result.length;
+}
+
+export async function markNotificationRead(id: number, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("DB unavailable");
+  await db.update(notifications).set({ isRead: true })
+    .where(and(eq(notifications.id, id), eq(notifications.userId, userId)));
+  return { success: true };
+}
+
+export async function markAllNotificationsRead(userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("DB unavailable");
+  await db.update(notifications).set({ isRead: true })
+    .where(and(eq(notifications.userId, userId), eq(notifications.isRead, false)));
+  return { success: true };
+}
+
+export async function broadcastNotification(data: Omit<InsertNotification, 'userId'>) {
+  const db = await getDb();
+  if (!db) throw new Error("DB unavailable");
+  const allClients = await db.select().from(users).where(eq(users.role, 'user'));
+  if (allClients.length === 0) return { count: 0 };
+  await db.insert(notifications).values(allClients.map(u => ({ ...data, userId: u.id })));
+  return { count: allClients.length };
+}
+
+// ─── Push Subscriptions ───────────────────────────────────────────────────────
+
+export async function savePushSubscription(userId: number, endpoint: string, p256dh: string, auth: string, userAgent?: string) {
+  const db = await getDb();
+  if (!db) throw new Error("DB unavailable");
+  // Upsert by endpoint
+  const existing = await db.select().from(pushSubscriptions).where(eq(pushSubscriptions.endpoint, endpoint)).limit(1);
+  if (existing.length > 0) {
+    await db.update(pushSubscriptions).set({ userId, p256dh, auth, userAgent: userAgent ?? null })
+      .where(eq(pushSubscriptions.endpoint, endpoint));
+  } else {
+    await db.insert(pushSubscriptions).values({ userId, endpoint, p256dh, auth, userAgent: userAgent ?? null });
+  }
+  return { success: true };
+}
+
+export async function getPushSubscriptionsForUser(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(pushSubscriptions).where(eq(pushSubscriptions.userId, userId));
+}
+
+export async function deletePushSubscription(endpoint: string) {
+  const db = await getDb();
+  if (!db) throw new Error("DB unavailable");
+  await db.delete(pushSubscriptions).where(eq(pushSubscriptions.endpoint, endpoint));
   return { success: true };
 }
 

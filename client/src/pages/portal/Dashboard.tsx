@@ -9,6 +9,7 @@ import {
   Globe, Bell, MapPin, Clock, ArrowRight
 } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
+import PushNotificationSettings from "@/components/PushNotificationSettings";
 
 const STATUS_COLORS: Record<string, string> = {
   planning: "bg-blue-100 text-blue-800",
@@ -176,6 +177,12 @@ export default function PortalDashboard() {
           ))}
         </div>
       )}
+
+      {/* Push Notification opt-in */}
+      <div className="mt-8">
+        <h3 className="text-lg font-serif font-semibold text-foreground mb-4">Notification Settings</h3>
+        <PushNotificationSettings />
+      </div>
     </PortalLayout>
   );
 }

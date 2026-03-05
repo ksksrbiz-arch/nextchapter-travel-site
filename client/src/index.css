@@ -228,3 +228,16 @@
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: oklch(0.72 0.09 65 / 0.4); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: oklch(0.72 0.09 65 / 0.7); }
+
+/* Float animation for stat cards */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+.animate-float { animation: float 4s ease-in-out infinite; }
+
+/* Spin for globe orbit ring */
+@keyframes spin {
+  from { transform: rotateX(70deg) rotateZ(0deg); }
+  to { transform: rotateX(70deg) rotateZ(360deg); }
+}

@@ -168,3 +168,35 @@ export const travelAlerts = mysqlTable("travel_alerts", {
 });
 
 export type TravelAlert = typeof travelAlerts.$inferSelect;
+
+// Notifications — multi-channel notification system
+export const notifications = mysqlTable("notifications", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  tripId: int("tripId"),
+  title: varchar("title", { length: 255 }).notNull(),
+  body: text("body").notNull(),
+  type: mysqlEnum("type", ["message", "itinerary", "document", "alert", "booking", "system"]).default("system").notNull(),
+  channel: mysqlEnum("channel", ["in_app", "email", "push", "all"]).default("in_app").notNull(),
+  isRead: boolean("isRead").default(false).notNull(),
+  actionUrl: varchar("actionUrl", { length: 512 }),
+  sentAt: timestamp("sentAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Notification = typeof notifications.$inferSelect;
+export type InsertNotification = typeof notifications.$inferInsert;
+
+// Push subscriptions — browser push notification endpoints
+export const pushSubscriptions = mysqlTable("push_subscriptions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  endpoint: text("endpoint").notNull(),
+  p256dh: text("p256dh").notNull(),
+  auth: text("auth").notNull(),
+  userAgent: text("userAgent"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PushSubscription = typeof pushSubscriptions.$inferSelect;
