@@ -58,3 +58,25 @@
 
 ## Pending
 - [ ] Jessica's real headshot photo (skipped by user request — add when available)
+
+## Mobile Optimization (Deep Pass)
+- [x] PWA manifest.json with icons, theme color, display: standalone
+- [x] Viewport meta tag audit (index.html)
+- [x] Mobile bottom navigation bar for client portal (replaces sidebar on mobile)
+- [x] Safe area insets for notched phones (env(safe-area-inset-*))
+- [x] Touch target minimum 44px on all interactive elements
+- [x] Landing page hero: full-screen mobile, readable font sizes
+- [x] Landing page features grid: 1-col on mobile
+- [x] Landing page About section: stacked layout on mobile
+- [x] Portal Dashboard: card layout optimized for thumb reach
+- [x] Portal Itinerary: timeline optimized for mobile scroll
+- [x] Portal Documents: upload button prominent on mobile
+- [x] Portal Messages: chat bubble layout, keyboard-aware input
+- [x] Portal Packing List: large checkboxes, easy tap targets
+- [x] Portal Bookings: horizontal scroll cards on mobile
+- [x] Notification bell: full-width drawer on mobile
+- [x] Admin mobile: collapsible sidebar → bottom sheet
+- [x] Smooth page transitions (CSS animations + stagger)
+- [x] Mobile typography scale (fluid type)
+- [x] Sticky CTAs on mobile landing page
+- [x] Add to Home Screen prompt (beforeinstallprompt via manifest)

@@ -1,0 +1,35 @@
+{
+  "name": "Next Chapter Travel — Jessica Seiders",
+  "short_name": "NCT Travel",
+  "description": "Your personal travel portal — manage your trip, documents, and stay connected with Jessica.",
+  "start_url": "/portal",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1a2744",
+  "theme_color": "#1a2744",
+  "categories": ["travel", "lifestyle"],
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "My Itinerary",
+      "url": "/portal/itinerary",
+      "description": "View your trip itinerary"
+    },
+    {
+      "name": "Documents",
+      "url": "/portal/documents",
+      "description": "Access your travel documents"
+    },
+    {
+      "name": "Message Jessica",
+      "url": "/portal/messages",
+      "description": "Send a message to your travel advisor"
+    }
+  ]
+}

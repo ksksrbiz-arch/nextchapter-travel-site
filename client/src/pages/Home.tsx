@@ -7,39 +7,46 @@ import { useEffect, useRef, useState } from "react";
 import {
   MapPin, MessageSquare, FileText, CheckSquare, Calendar,
   Plane, Shield, Star, ArrowRight, BookOpen, Globe, Users,
-  Facebook, Anchor, Ship, Sparkles
+  Facebook, Sparkles, Menu, X
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const FEATURES = [
   {
     icon: Calendar,
     title: "Day-by-Day Itinerary",
     desc: "Every moment of your trip organized beautifully, from sunrise excursions to evening dining reservations.",
+    color: "bg-blue-50 text-blue-600",
   },
   {
     icon: FileText,
     title: "Document Vault",
     desc: "Passports, boarding passes, hotel confirmations — all your travel documents secured in one place.",
+    color: "bg-green-50 text-green-600",
   },
   {
     icon: Globe,
     title: "Destination Guides",
     desc: "Curated local tips, currency info, emergency contacts, and insider knowledge for every destination.",
+    color: "bg-teal-50 text-teal-600",
   },
   {
     icon: MessageSquare,
     title: "Direct Messaging",
     desc: "Reach Jessica instantly with questions, changes, or just to share your excitement before departure.",
+    color: "bg-purple-50 text-purple-600",
   },
   {
     icon: CheckSquare,
     title: "Smart Packing Lists",
     desc: "Never forget a thing. Customized packing checklists organized by category for every trip.",
+    color: "bg-amber-50 text-amber-600",
   },
   {
     icon: Plane,
     title: "Booking Tracker",
     desc: "Real-time status on flights, hotels, tours, and transfers — all your confirmations at a glance.",
+    color: "bg-indigo-50 text-indigo-600",
   },
 ];
 
@@ -64,7 +71,6 @@ const TESTIMONIALS = [
   },
 ];
 
-// Floating destination pins for the interactive globe visual
 const DESTINATIONS = [
   { label: "Disney World", emoji: "🏰", top: "28%", left: "22%", delay: "0s" },
   { label: "Norwegian Fjords", emoji: "🚢", top: "15%", left: "52%", delay: "0.4s" },
@@ -91,47 +97,49 @@ function InteractiveGlobe() {
     setRotateY(x * 12);
   };
 
-  const handleMouseLeave = () => {
-    setRotateX(0);
-    setRotateY(0);
+  // Touch tilt for mobile
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!containerRef.current || !e.touches[0]) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = (e.touches[0].clientX - rect.left) / rect.width - 0.5;
+    const y = (e.touches[0].clientY - rect.top) / rect.height - 0.5;
+    setRotateX(-y * 8);
+    setRotateY(x * 8);
   };
+
+  const handleMouseLeave = () => { setRotateX(0); setRotateY(0); };
+  const handleTouchEnd = () => { setRotateX(0); setRotateY(0); };
 
   return (
     <div
       ref={containerRef}
-      className="relative w-full aspect-square max-w-[480px] mx-auto select-none"
+      className="relative w-full aspect-square max-w-[340px] sm:max-w-[420px] md:max-w-[480px] mx-auto select-none touch-none"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
       style={{ perspective: "800px" }}
     >
-      {/* 3D tilt container */}
       <div
         className="relative w-full h-full transition-transform duration-200 ease-out"
         style={{ transform: `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`, transformStyle: "preserve-3d" }}
       >
-        {/* Outer glow ring */}
         <div className="absolute inset-0 rounded-full"
           style={{ background: "radial-gradient(circle, oklch(0.72 0.09 65 / 0.15) 0%, transparent 70%)" }} />
-
-        {/* Globe sphere */}
         <div className="absolute inset-[10%] rounded-full overflow-hidden shadow-2xl"
           style={{
             background: "linear-gradient(135deg, oklch(0.22 0.06 240) 0%, oklch(0.32 0.08 220) 40%, oklch(0.28 0.07 250) 100%)",
             boxShadow: "inset -20px -20px 60px oklch(0.14 0.04 240 / 0.8), inset 10px 10px 40px oklch(0.72 0.09 65 / 0.1), 0 20px 80px oklch(0.14 0.04 240 / 0.5)"
           }}>
-          {/* Grid lines SVG */}
           <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 200 200">
-            {/* Latitude lines */}
             {[30, 50, 70, 90, 110, 130, 150, 170].map(y => (
               <ellipse key={y} cx="100" cy={y} rx="95" ry="8" fill="none" stroke="oklch(0.72 0.09 65)" strokeWidth="0.5" />
             ))}
-            {/* Longitude lines */}
             {[0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5].map(angle => (
               <ellipse key={angle} cx="100" cy="100" rx="8" ry="95" fill="none" stroke="oklch(0.72 0.09 65)" strokeWidth="0.5"
                 transform={`rotate(${angle} 100 100)`} />
             ))}
           </svg>
-          {/* Continent blobs */}
           <svg className="absolute inset-0 w-full h-full opacity-30" viewBox="0 0 200 200">
             <ellipse cx="60" cy="80" rx="22" ry="18" fill="oklch(0.55 0.12 155)" />
             <ellipse cx="110" cy="70" rx="30" ry="20" fill="oklch(0.55 0.12 155)" />
@@ -139,16 +147,11 @@ function InteractiveGlobe() {
             <ellipse cx="55" cy="120" rx="14" ry="20" fill="oklch(0.55 0.12 155)" />
             <ellipse cx="155" cy="80" rx="10" ry="8" fill="oklch(0.55 0.12 155)" />
           </svg>
-          {/* Shine highlight */}
           <div className="absolute top-[8%] left-[15%] w-[35%] h-[35%] rounded-full opacity-20"
             style={{ background: "radial-gradient(circle, white 0%, transparent 70%)" }} />
         </div>
-
-        {/* Orbiting ring */}
         <div className="absolute inset-[5%] rounded-full border border-secondary/20"
           style={{ animation: "spin 20s linear infinite", transformStyle: "preserve-3d", transform: "rotateX(70deg)" }} />
-
-        {/* Destination pins */}
         {DESTINATIONS.map((dest) => (
           <div
             key={dest.label}
@@ -156,16 +159,14 @@ function InteractiveGlobe() {
             style={{ top: dest.top, left: dest.left, animationDelay: dest.delay }}
             onMouseEnter={() => setHovered(dest.label)}
             onMouseLeave={() => setHovered(null)}
+            onTouchStart={() => setHovered(dest.label)}
+            onTouchEnd={() => setHovered(null)}
           >
             <div className="relative">
-              {/* Pulse ring */}
               <div className="absolute -inset-2 rounded-full bg-secondary/30 animate-ping" style={{ animationDuration: "2s", animationDelay: dest.delay }} />
-              {/* Pin dot */}
-              <div className="relative w-7 h-7 rounded-full bg-secondary/90 border-2 border-white/80 flex items-center justify-center shadow-lg text-sm
-                hover:scale-125 transition-transform duration-200">
+              <div className="relative w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-secondary/90 border-2 border-white/80 flex items-center justify-center shadow-lg text-xs sm:text-sm hover:scale-125 active:scale-125 transition-transform duration-200">
                 {dest.emoji}
               </div>
-              {/* Tooltip */}
               {hovered === dest.label && (
                 <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-xs font-sans px-2.5 py-1.5 rounded-lg whitespace-nowrap shadow-xl border border-secondary/30 z-20">
                   {dest.label}
@@ -175,35 +176,30 @@ function InteractiveGlobe() {
             </div>
           </div>
         ))}
-
-        {/* Center label */}
         <div className="absolute bottom-[8%] left-1/2 -translate-x-1/2 text-center">
-          <div className="text-secondary font-serif text-xs font-semibold tracking-widest uppercase opacity-80">
-            Worldwide
-          </div>
+          <div className="text-secondary font-serif text-xs font-semibold tracking-widest uppercase opacity-80">Worldwide</div>
         </div>
       </div>
-
-      {/* Floating stat cards */}
-      <div className="absolute -bottom-4 -left-4 bg-secondary text-secondary-foreground rounded-xl px-4 py-3 shadow-2xl z-20 animate-float">
-        <div className="flex items-center gap-2">
-          <Users className="w-5 h-5" />
+      {/* Floating stat cards — repositioned for mobile */}
+      <div className="absolute -bottom-3 -left-2 sm:-bottom-4 sm:-left-4 bg-secondary text-secondary-foreground rounded-xl px-3 py-2 sm:px-4 sm:py-3 shadow-2xl z-20 animate-float">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <Users className="w-4 h-4 sm:w-5 sm:h-5" />
           <div>
-            <div className="text-lg font-serif font-bold leading-none">500+</div>
-            <div className="text-xs font-sans opacity-80">Happy Travelers</div>
+            <div className="text-base sm:text-lg font-serif font-bold leading-none">500+</div>
+            <div className="text-[10px] sm:text-xs font-sans opacity-80">Happy Travelers</div>
           </div>
         </div>
       </div>
-      <div className="absolute -top-4 -right-4 bg-card text-card-foreground rounded-xl px-4 py-3 shadow-2xl z-20 border border-border animate-float" style={{ animationDelay: "1s" }}>
+      <div className="absolute -top-3 -right-2 sm:-top-4 sm:-right-4 bg-card text-card-foreground rounded-xl px-3 py-2 sm:px-4 sm:py-3 shadow-2xl z-20 border border-border animate-float" style={{ animationDelay: "1s" }}>
         <div className="flex gap-0.5 mb-1">
-          {[...Array(5)].map((_, i) => <Star key={i} className="w-3.5 h-3.5 fill-secondary text-secondary" />)}
+          {[...Array(5)].map((_, i) => <Star key={i} className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-secondary text-secondary" />)}
         </div>
-        <div className="text-xs font-sans text-muted-foreground">5-Star Rated</div>
+        <div className="text-[10px] sm:text-xs font-sans text-muted-foreground">5-Star Rated</div>
       </div>
-      <div className="absolute top-1/2 -right-6 -translate-y-1/2 bg-primary/90 text-primary-foreground rounded-xl px-3 py-2 shadow-2xl z-20 border border-secondary/20 animate-float" style={{ animationDelay: "0.5s" }}>
-        <div className="flex items-center gap-1.5">
-          <Sparkles className="w-4 h-4 text-secondary" />
-          <div className="text-xs font-sans">8 Destinations</div>
+      <div className="absolute top-1/2 -right-4 sm:-right-6 -translate-y-1/2 bg-primary/90 text-primary-foreground rounded-xl px-2.5 py-2 sm:px-3 shadow-2xl z-20 border border-secondary/20 animate-float" style={{ animationDelay: "0.5s" }}>
+        <div className="flex items-center gap-1 sm:gap-1.5">
+          <Sparkles className="w-3.5 h-3.5 text-secondary" />
+          <div className="text-[10px] sm:text-xs font-sans">8 Destinations</div>
         </div>
       </div>
     </div>
@@ -212,139 +208,213 @@ function InteractiveGlobe() {
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 60);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const portalHref = isAuthenticated ? (user?.role === "admin" ? "/admin" : "/portal") : getLoginUrl();
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-gradient-to-b from-black/60 to-transparent">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
-            <BookOpen className="w-4 h-4 text-secondary-foreground" />
+
+      {/* ── Navigation ── */}
+      <nav className={cn(
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+        scrolled
+          ? "bg-primary/95 backdrop-blur-md shadow-lg"
+          : "bg-gradient-to-b from-black/60 to-transparent"
+      )}
+        style={{ paddingTop: "env(safe-area-inset-top)" }}
+      >
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center flex-shrink-0">
+              <BookOpen className="w-3.5 h-3.5 text-secondary-foreground" />
+            </div>
+            <span className="text-white font-serif text-base sm:text-lg font-semibold tracking-wide leading-tight">
+              Next Chapter Travel
+            </span>
           </div>
-          <span className="text-white font-serif text-lg font-semibold tracking-wide">
-            Next Chapter Travel
-          </span>
-        </div>
-        <div className="flex items-center gap-3">
-          {/* Facebook link in nav */}
-          <a
-            href="https://www.facebook.com/jessica.hoffman.520"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-white/70 hover:text-secondary transition-colors"
-            title="Jessica on Facebook"
-          >
-            <Facebook className="w-4 h-4" />
-          </a>
-          {isAuthenticated ? (
-            <Link href={user?.role === "admin" ? "/admin" : "/portal"}>
-              <Button size="sm" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-sans">
-                My Portal
+
+          {/* Desktop nav actions */}
+          <div className="hidden sm:flex items-center gap-3">
+            <a
+              href="https://www.facebook.com/jessica.hoffman.520"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white/70 hover:text-secondary transition-colors p-2 min-h-[44px] min-w-[44px] flex items-center justify-center"
+            >
+              <Facebook className="w-4 h-4" />
+            </a>
+            {isAuthenticated ? (
+              <Link href={user?.role === "admin" ? "/admin" : "/portal"}>
+                <Button size="sm" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-sans min-h-[44px]">
+                  My Portal
+                </Button>
+              </Link>
+            ) : (
+              <>
+                <a href={getLoginUrl()}>
+                  <Button variant="ghost" size="sm" className="text-white hover:text-white hover:bg-white/20 font-sans min-h-[44px]">
+                    Sign In
+                  </Button>
+                </a>
+                <a href={getLoginUrl()}>
+                  <Button size="sm" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-sans min-h-[44px]">
+                    Get Started
+                  </Button>
+                </a>
+              </>
+            )}
+          </div>
+
+          {/* Mobile: single CTA + hamburger */}
+          <div className="flex sm:hidden items-center gap-2">
+            <a href={portalHref}>
+              <Button size="sm" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-sans text-xs px-3 min-h-[40px]">
+                {isAuthenticated ? "My Portal" : "Get Started"}
               </Button>
-            </Link>
-          ) : (
-            <>
-              <a href={getLoginUrl()}>
-                <Button variant="ghost" size="sm" className="text-white hover:text-white hover:bg-white/20 font-sans">
-                  Sign In
-                </Button>
-              </a>
-              <a href={getLoginUrl()}>
-                <Button size="sm" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-sans">
-                  Get Started
-                </Button>
-              </a>
-            </>
-          )}
+            </a>
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="text-white p-2 min-h-[44px] min-w-[44px] flex items-center justify-center"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile dropdown menu */}
+        {mobileMenuOpen && (
+          <div className="sm:hidden bg-primary/98 backdrop-blur-md border-t border-white/10 px-4 py-4 space-y-1">
+            {[
+              { href: "#about", label: "About Jessica" },
+              { href: "#features", label: "Features" },
+              { href: "#how", label: "How It Works" },
+            ].map(item => (
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center px-4 py-3 rounded-xl text-white/80 hover:text-white hover:bg-white/10 font-sans text-sm min-h-[48px] transition-colors"
+              >
+                {item.label}
+              </a>
+            ))}
+            <a
+              href="https://www.facebook.com/jessica.hoffman.520"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-4 py-3 rounded-xl text-white/80 hover:text-secondary font-sans text-sm min-h-[48px] transition-colors"
+            >
+              <Facebook className="w-4 h-4" />
+              Follow Jessica on Facebook
+            </a>
+          </div>
+        )}
       </nav>
 
-      {/* Hero — Video Editorial */}
-      <section className="relative h-screen min-h-[600px] flex items-center justify-center overflow-hidden">
+      {/* ── Hero — Video Editorial ── */}
+      <section className="relative flex items-center justify-center overflow-hidden"
+        style={{ height: "100dvh", minHeight: "580px" }}>
         <video
-          autoPlay
-          muted
-          loop
-          playsInline
+          autoPlay muted loop playsInline
           className="absolute inset-0 w-full h-full object-cover"
           poster="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1920&q=80"
         >
-          <source
-            src="https://player.vimeo.com/external/434045526.sd.mp4?s=c27eecc69a27dbc4ff2b87d38aae054b&profile_id=165"
-            type="video/mp4"
-          />
+          <source src="https://player.vimeo.com/external/434045526.sd.mp4?s=c27eecc69a27dbc4ff2b87d38aae054b&profile_id=165" type="video/mp4" />
         </video>
         <div className="absolute inset-0 video-overlay" />
-        <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
-          <Badge className="mb-6 bg-secondary/90 text-secondary-foreground border-0 font-sans text-xs tracking-widest uppercase px-4 py-1.5">
+
+        <div className="relative z-10 text-center text-white px-5 max-w-4xl mx-auto w-full">
+          <Badge className="mb-4 sm:mb-6 bg-secondary/90 text-secondary-foreground border-0 font-sans text-[10px] sm:text-xs tracking-widest uppercase px-3 sm:px-4 py-1 sm:py-1.5">
             Partner of Next Chapter Travel
           </Badge>
-          <h1 className="text-5xl md:text-7xl font-serif font-bold mb-6 leading-tight opacity-0 animate-fade-in-up">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-serif font-bold mb-4 sm:mb-6 leading-[1.1] opacity-0 animate-fade-in-up">
             Your Journey,
             <br />
             <span className="italic text-secondary">Perfectly Planned</span>
           </h1>
-          <p className="text-lg md:text-xl text-white/80 mb-10 max-w-2xl mx-auto font-sans font-light leading-relaxed opacity-0 animate-fade-in-up animate-delay-200">
+          <p className="text-base sm:text-lg md:text-xl text-white/80 mb-8 sm:mb-10 max-w-2xl mx-auto font-sans font-light leading-relaxed opacity-0 animate-fade-in-up animate-delay-200">
             Owner & CEO of Next Chapter Travel LLC — Jessica Seiders is your certified travel professional
-            specializing in Disney, cruises, family adventures, and beyond. Everything you need, beautifully organized.
+            specializing in Disney, cruises, family adventures, and beyond.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center opacity-0 animate-fade-in-up animate-delay-300">
-            <a href={getLoginUrl()}>
-              <Button size="lg" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-sans px-8 py-6 text-base">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center opacity-0 animate-fade-in-up animate-delay-300">
+            <a href={getLoginUrl()} className="w-full sm:w-auto">
+              <Button size="lg" className="w-full sm:w-auto bg-secondary text-secondary-foreground hover:bg-secondary/90 font-sans px-6 sm:px-8 py-5 sm:py-6 text-base min-h-[56px]">
                 Access Your Trip Portal
                 <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
             </a>
-            <a href="#about">
-              <Button variant="outline" size="lg" className="border-white/60 text-white hover:bg-white/10 font-sans px-8 py-6 text-base bg-transparent">
+            <a href="#about" className="w-full sm:w-auto">
+              <Button variant="outline" size="lg" className="w-full sm:w-auto border-white/60 text-white hover:bg-white/10 font-sans px-6 sm:px-8 py-5 sm:py-6 text-base bg-transparent min-h-[56px]">
                 Meet Jessica
               </Button>
             </a>
           </div>
         </div>
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/60">
-          <div className="w-px h-12 bg-gradient-to-b from-white/60 to-transparent animate-pulse" />
+
+        <div className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/60">
+          <div className="w-px h-10 sm:h-12 bg-gradient-to-b from-white/60 to-transparent animate-pulse" />
         </div>
       </section>
 
-      {/* About Jessica — with Interactive Globe */}
-      <section id="about" className="py-24 bg-primary text-primary-foreground">
+      {/* ── Sticky mobile CTA (appears after scrolling past hero) ── */}
+      <div className={cn(
+        "sm:hidden fixed bottom-0 left-0 right-0 z-30 transition-all duration-300",
+        scrolled ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
+      )}
+        style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+      >
+        <div className="bg-primary/95 backdrop-blur-md border-t border-white/10 px-4 py-3">
+          <a href={portalHref} className="block">
+            <Button className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 font-sans min-h-[52px] text-base">
+              {isAuthenticated ? "Open My Travel Portal" : "Get Started — It's Free"}
+              <ArrowRight className="ml-2 w-4 h-4" />
+            </Button>
+          </a>
+        </div>
+      </div>
+
+      {/* ── About Jessica — with Interactive Globe ── */}
+      <section id="about" className="py-16 sm:py-24 bg-primary text-primary-foreground">
         <div className="container">
-          <div className="grid md:grid-cols-2 gap-16 items-center">
+          <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-center">
             <div>
-              <Badge className="mb-4 bg-secondary/20 text-secondary border-secondary/30 font-sans text-xs tracking-widest uppercase">
+              <Badge className="mb-3 sm:mb-4 bg-secondary/20 text-secondary border-secondary/30 font-sans text-xs tracking-widest uppercase">
                 Your Travel Advisor
               </Badge>
-              <h2 className="text-4xl md:text-5xl font-serif font-bold mb-6 leading-tight">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold mb-4 sm:mb-6 leading-tight">
                 Meet Jessica Seiders
               </h2>
-              <p className="text-primary-foreground/80 text-lg leading-relaxed mb-6 font-sans">
+              <p className="text-primary-foreground/80 text-base sm:text-lg leading-relaxed mb-4 sm:mb-6 font-sans">
                 Jessica Seiders is the Owner, Manager, and CEO of{" "}
                 <span className="text-secondary font-medium">Next Chapter Travel LLC</span> — a Portland,
                 Oregon-based travel agency dedicated to planning every kind of vacation with precision and
                 heart. A certified Disney specialist with deep expertise across Universal, Norwegian Cruise
-                Line, Royal Caribbean, Carnival Cruises, Expedia, and Viator, Jessica can plan virtually
-                any travel experience you can dream of.
+                Line, Royal Caribbean, Carnival Cruises, Expedia, and Viator.
               </p>
-              <p className="text-primary-foreground/80 text-lg leading-relaxed mb-8 font-sans">
-                With a background that spans healthcare (former ER Tech at Providence Health Systems) and
-                entrepreneurship, Jessica brings a rare combination of calm-under-pressure and meticulous
-                planning to every trip. She believes every traveler deserves a seamless, stress-free
-                experience — and this portal is how she delivers it.
+              <p className="text-primary-foreground/80 text-base sm:text-lg leading-relaxed mb-6 sm:mb-8 font-sans">
+                With a background spanning healthcare (former ER Tech at Providence Health Systems) and
+                entrepreneurship, Jessica brings calm-under-pressure and meticulous planning to every trip.
               </p>
-              <div className="flex flex-wrap gap-3 mb-8">
+              <div className="flex flex-wrap gap-2 sm:gap-3 mb-6 sm:mb-8">
                 {["Disney Specialist", "Universal Studios", "Norwegian Cruise Line", "Royal Caribbean", "Carnival Cruises", "Family Travel"].map((tag) => (
-                  <Badge key={tag} className="bg-secondary/20 text-secondary border-secondary/30 font-sans">
+                  <Badge key={tag} className="bg-secondary/20 text-secondary border-secondary/30 font-sans text-xs sm:text-sm">
                     {tag}
                   </Badge>
                 ))}
               </div>
-              {/* Facebook social link */}
               <a
                 href="https://www.facebook.com/jessica.hoffman.520"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2.5 bg-secondary/10 hover:bg-secondary/20 border border-secondary/30 text-secondary rounded-xl px-5 py-3 font-sans text-sm font-medium transition-all duration-200 hover:scale-105"
+                className="inline-flex items-center gap-2.5 bg-secondary/10 hover:bg-secondary/20 active:bg-secondary/30 border border-secondary/30 text-secondary rounded-xl px-4 sm:px-5 py-3 font-sans text-sm font-medium transition-all duration-200 min-h-[48px]"
               >
                 <Facebook className="w-4 h-4" />
                 Connect with Jessica on Facebook
@@ -352,96 +422,106 @@ export default function Home() {
               </a>
             </div>
 
-            {/* Interactive Globe */}
-            <div className="flex items-center justify-center py-8">
+            {/* Interactive Globe — shown below text on mobile */}
+            <div className="flex items-center justify-center py-6 sm:py-8 order-first md:order-last">
               <InteractiveGlobe />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Features Grid */}
-      <section id="features" className="py-24 bg-background">
+      {/* ── Features Grid ── */}
+      <section id="features" className="py-16 sm:py-24 bg-background">
         <div className="container">
-          <div className="text-center mb-16">
-            <Badge className="mb-4 bg-secondary/10 text-secondary border-secondary/20 font-sans text-xs tracking-widest uppercase">
+          <div className="text-center mb-10 sm:mb-16">
+            <Badge className="mb-3 sm:mb-4 bg-secondary/10 text-secondary border-secondary/20 font-sans text-xs tracking-widest uppercase">
               Everything You Need
             </Badge>
-            <h2 className="text-4xl md:text-5xl font-serif font-bold text-foreground mb-4">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-foreground mb-3 sm:mb-4">
               Your Complete Trip Companion
             </h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto font-sans">
+            <p className="text-muted-foreground text-base sm:text-lg max-w-2xl mx-auto font-sans">
               From planning to landing back home, every feature you need is built right in.
             </p>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {/* 1-col mobile → 2-col tablet → 3-col desktop */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
             {FEATURES.map((feature) => (
               <div
                 key={feature.title}
-                className="group p-8 rounded-2xl border border-border bg-card hover:border-secondary/40 hover:shadow-lg transition-all duration-300"
+                className="group p-5 sm:p-8 rounded-2xl border border-border bg-card hover:border-secondary/40 hover:shadow-lg active:scale-[0.98] transition-all duration-300 flex gap-4 sm:block"
               >
-                <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center mb-5 group-hover:bg-secondary/20 transition-colors">
-                  <feature.icon className="w-6 h-6 text-secondary" />
+                <div className={cn("w-11 h-11 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0 sm:mb-5", feature.color)}>
+                  <feature.icon className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
-                <h3 className="text-xl font-serif font-semibold text-foreground mb-3">
-                  {feature.title}
-                </h3>
-                <p className="text-muted-foreground font-sans leading-relaxed">
-                  {feature.desc}
-                </p>
+                <div>
+                  <h3 className="text-base sm:text-xl font-serif font-semibold text-foreground mb-1 sm:mb-3">
+                    {feature.title}
+                  </h3>
+                  <p className="text-muted-foreground font-sans text-sm sm:text-base leading-relaxed">
+                    {feature.desc}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* How It Works */}
-      <section className="py-24 bg-accent/30">
+      {/* ── How It Works ── */}
+      <section id="how" className="py-16 sm:py-24 bg-accent/30">
         <div className="container">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-serif font-bold text-foreground mb-4">
+          <div className="text-center mb-10 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-foreground mb-3 sm:mb-4">
               How It Works
             </h2>
-            <p className="text-muted-foreground text-lg font-sans">
+            <p className="text-muted-foreground text-base sm:text-lg font-sans">
               Three simple steps to your perfect vacation
             </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8 relative">
-            <div className="hidden md:block absolute top-16 left-1/3 right-1/3 h-px bg-secondary/30" />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 relative">
+            <div className="hidden sm:block absolute top-16 left-1/3 right-1/3 h-px bg-secondary/30" />
             {[
               { step: "01", title: "Book With Jessica", desc: "Connect with Jessica to plan your dream trip. She handles all the details, bookings, and logistics.", icon: MessageSquare },
               { step: "02", title: "Get Your Portal", desc: "Receive access to your personalized travel portal with your complete itinerary and documents.", icon: Shield },
               { step: "03", title: "Travel With Confidence", desc: "Everything you need is in your pocket. Enjoy your trip knowing Jessica is just a message away.", icon: MapPin },
-            ].map((step) => (
-              <div key={step.step} className="text-center relative">
-                <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center mx-auto mb-6 relative z-10">
+            ].map((step, i) => (
+              <div key={step.step} className="flex sm:block items-start sm:items-center sm:text-center gap-5 sm:gap-0 relative">
+                {/* Mobile: vertical connector line */}
+                {i < 2 && (
+                  <div className="sm:hidden absolute left-8 top-16 w-px h-[calc(100%+1.5rem)] bg-secondary/20" />
+                )}
+                <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center flex-shrink-0 sm:mx-auto sm:mb-6 relative z-10">
                   <step.icon className="w-7 h-7 text-primary-foreground" />
                 </div>
-                <div className="text-secondary font-serif text-5xl font-bold mb-3 opacity-20">{step.step}</div>
-                <h3 className="text-xl font-serif font-semibold text-foreground mb-3">{step.title}</h3>
-                <p className="text-muted-foreground font-sans leading-relaxed">{step.desc}</p>
+                <div>
+                  <div className="text-secondary font-serif text-3xl sm:text-5xl font-bold mb-1 sm:mb-3 opacity-20">{step.step}</div>
+                  <h3 className="text-lg sm:text-xl font-serif font-semibold text-foreground mb-2 sm:mb-3">{step.title}</h3>
+                  <p className="text-muted-foreground font-sans text-sm sm:text-base leading-relaxed">{step.desc}</p>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="py-24 bg-primary text-primary-foreground">
+      {/* ── Testimonials ── */}
+      <section className="py-16 sm:py-24 bg-primary text-primary-foreground">
         <div className="container">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-serif font-bold mb-4">What Travelers Say</h2>
+          <div className="text-center mb-10 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold mb-4">What Travelers Say</h2>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
+          {/* Horizontal scroll on mobile */}
+          <div className="flex sm:grid sm:grid-cols-3 gap-4 sm:gap-8 overflow-x-auto sm:overflow-visible pb-4 sm:pb-0 -mx-4 sm:mx-0 px-4 sm:px-0 snap-x snap-mandatory">
             {TESTIMONIALS.map((t) => (
-              <div key={t.name} className="bg-primary-foreground/5 border border-primary-foreground/10 rounded-2xl p-8">
-                <div className="flex gap-1 mb-4">
-                  {[...Array(t.rating)].map((_, i) => <Star key={i} className="w-4 h-4 fill-secondary text-secondary" />)}
+              <div key={t.name} className="bg-primary-foreground/5 border border-primary-foreground/10 rounded-2xl p-5 sm:p-8 flex-shrink-0 w-[85vw] sm:w-auto snap-center">
+                <div className="flex gap-1 mb-3 sm:mb-4">
+                  {[...Array(t.rating)].map((_, i) => <Star key={i} className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-secondary text-secondary" />)}
                 </div>
-                <p className="text-primary-foreground/80 font-sans leading-relaxed mb-6 italic">"{t.quote}"</p>
+                <p className="text-primary-foreground/80 font-sans text-sm sm:text-base leading-relaxed mb-4 sm:mb-6 italic">"{t.quote}"</p>
                 <div>
-                  <div className="font-serif font-semibold">{t.name}</div>
-                  <div className="text-secondary text-sm font-sans flex items-center gap-1 mt-1">
+                  <div className="font-serif font-semibold text-sm sm:text-base">{t.name}</div>
+                  <div className="text-secondary text-xs sm:text-sm font-sans flex items-center gap-1 mt-1">
                     <MapPin className="w-3 h-3" />
                     {t.destination}
                   </div>
@@ -449,23 +529,29 @@ export default function Home() {
               </div>
             ))}
           </div>
+          {/* Scroll indicator dots for mobile */}
+          <div className="flex sm:hidden justify-center gap-1.5 mt-4">
+            {TESTIMONIALS.map((_, i) => (
+              <div key={i} className={cn("w-1.5 h-1.5 rounded-full", i === 0 ? "bg-secondary" : "bg-primary-foreground/20")} />
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-24 bg-background">
+      {/* ── CTA Section ── */}
+      <section className="py-16 sm:py-24 bg-background">
         <div className="container text-center">
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-4xl md:text-5xl font-serif font-bold text-foreground mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-foreground mb-4 sm:mb-6">
               Ready to Start Your
               <span className="text-secondary italic"> Next Chapter?</span>
             </h2>
-            <p className="text-muted-foreground text-lg mb-10 font-sans leading-relaxed">
+            <p className="text-muted-foreground text-base sm:text-lg mb-8 sm:mb-10 font-sans leading-relaxed">
               Certified in Disney, Universal, Norwegian Cruise Line, Royal Caribbean, Carnival, and more —
               Jessica Seiders at Next Chapter Travel LLC has the expertise to plan any adventure you can imagine.
             </p>
-            <a href={getLoginUrl()}>
-              <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 font-sans px-10 py-6 text-base">
+            <a href={getLoginUrl()} className="block sm:inline-block">
+              <Button size="lg" className="w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary/90 font-sans px-8 sm:px-10 py-5 sm:py-6 text-base min-h-[56px]">
                 Access Your Travel Portal
                 <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
@@ -474,10 +560,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-primary text-primary-foreground py-12">
+      {/* ── Footer ── */}
+      <footer className="bg-primary text-primary-foreground py-10 sm:py-12"
+        style={{ paddingBottom: "max(2.5rem, env(safe-area-inset-bottom))" }}>
         <div className="container">
-          <div className="grid md:grid-cols-3 gap-8 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center">
@@ -489,12 +576,11 @@ export default function Home() {
                 Jessica Seiders — Owner & CEO, bringing certified expertise and personal warmth
                 to every trip she plans.
               </p>
-              {/* Social links in footer */}
               <a
                 href="https://www.facebook.com/jessica.hoffman.520"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-primary-foreground/50 hover:text-secondary transition-colors text-sm font-sans"
+                className="inline-flex items-center gap-2 text-primary-foreground/50 hover:text-secondary transition-colors text-sm font-sans min-h-[44px]"
               >
                 <Facebook className="w-4 h-4" />
                 Follow on Facebook
@@ -503,10 +589,10 @@ export default function Home() {
             <div>
               <h4 className="font-serif font-semibold mb-4">Quick Links</h4>
               <ul className="space-y-2 text-sm font-sans text-primary-foreground/60">
-                <li><a href="#features" className="hover:text-secondary transition-colors">Features</a></li>
-                <li><a href="#about" className="hover:text-secondary transition-colors">About Jessica</a></li>
-                <li><a href={getLoginUrl()} className="hover:text-secondary transition-colors">Client Portal</a></li>
-                <li><a href="https://nextchaptertravel.com" target="_blank" rel="noopener noreferrer" className="hover:text-secondary transition-colors">Next Chapter Travel</a></li>
+                <li><a href="#features" className="hover:text-secondary transition-colors py-1 block">Features</a></li>
+                <li><a href="#about" className="hover:text-secondary transition-colors py-1 block">About Jessica</a></li>
+                <li><a href={getLoginUrl()} className="hover:text-secondary transition-colors py-1 block">Client Portal</a></li>
+                <li><a href="https://nextchaptertravel.com" target="_blank" rel="noopener noreferrer" className="hover:text-secondary transition-colors py-1 block">Next Chapter Travel</a></li>
               </ul>
             </div>
             <div>
@@ -520,7 +606,7 @@ export default function Home() {
                     href="https://www.facebook.com/jessica.hoffman.520"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 hover:text-secondary transition-colors"
+                    className="inline-flex items-center gap-1.5 hover:text-secondary transition-colors min-h-[44px]"
                   >
                     <Facebook className="w-3.5 h-3.5" />
                     facebook.com/jessica.hoffman.520
@@ -529,8 +615,8 @@ export default function Home() {
               </ul>
             </div>
           </div>
-          <div className="border-t border-primary-foreground/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-primary-foreground/40 text-sm font-sans">
+          <div className="border-t border-primary-foreground/10 pt-6 sm:pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-primary-foreground/40 text-xs sm:text-sm font-sans text-center sm:text-left">
               © 2026 Next Chapter Travel LLC — Jessica Seiders. All rights reserved.
             </p>
             <div className="flex items-center gap-4 text-primary-foreground/40 text-sm font-sans">
@@ -542,7 +628,7 @@ export default function Home() {
                 href="https://www.facebook.com/jessica.hoffman.520"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-secondary transition-colors"
+                className="hover:text-secondary transition-colors p-1 min-h-[44px] min-w-[44px] flex items-center justify-center"
               >
                 <Facebook className="w-4 h-4" />
               </a>

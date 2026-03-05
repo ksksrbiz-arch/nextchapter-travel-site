@@ -106,9 +106,9 @@ export default function PackingList() {
       {tripId && (
         <div className="mb-8 p-5 rounded-2xl border border-border bg-card">
           <h3 className="font-serif font-semibold text-foreground mb-4">Add Item</h3>
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
             <Select value={newCategory} onValueChange={setNewCategory}>
-              <SelectTrigger className="w-44 font-sans flex-shrink-0">
+              <SelectTrigger className="w-full sm:w-44 font-sans flex-shrink-0 min-h-[48px]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -122,12 +122,12 @@ export default function PackingList() {
               onChange={e => setNewItem(e.target.value)}
               onKeyDown={e => e.key === "Enter" && handleAdd()}
               placeholder="Add an item..."
-              className="flex-1 font-sans"
+              className="flex-1 font-sans min-h-[48px]"
             />
             <Button
               onClick={handleAdd}
               disabled={!newItem.trim() || createItem.isPending}
-              className="bg-primary text-primary-foreground font-sans flex-shrink-0"
+              className="bg-primary text-primary-foreground font-sans flex-shrink-0 min-h-[48px] w-full sm:w-auto"
             >
               {createItem.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
             </Button>
@@ -178,7 +178,7 @@ export default function PackingList() {
               {catItems.map(item => (
                 <div
                   key={item.id}
-                  className={`flex items-center gap-3 p-4 rounded-xl border transition-all ${
+                  className={`flex items-center gap-3 p-4 rounded-xl border transition-all active:scale-[0.98] ${
                     item.isPacked
                       ? "bg-muted/50 border-border opacity-60"
                       : "bg-card border-border hover:border-secondary/30"
@@ -186,7 +186,7 @@ export default function PackingList() {
                 >
                   <button
                     onClick={() => toggleItem.mutate({ id: item.id, isPacked: !item.isPacked })}
-                    className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
+                    className={`w-6 h-6 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors min-w-[24px] min-h-[44px] ${
                       item.isPacked
                         ? "bg-secondary border-secondary"
                         : "border-border hover:border-secondary"

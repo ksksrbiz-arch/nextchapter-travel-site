@@ -33,7 +33,7 @@ function AdminLayout({ children, title, subtitle }: { children: React.ReactNode;
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
-      <div className="p-6 border-b border-sidebar-border">
+      <div className="p-5 border-b border-sidebar-border" style={{ paddingTop: "max(1.25rem, env(safe-area-inset-top))" }}>
         <Link href="/">
           <div className="flex items-center gap-3 cursor-pointer">
             <div className="w-9 h-9 rounded-full bg-sidebar-primary flex items-center justify-center">
@@ -103,16 +103,16 @@ function AdminLayout({ children, title, subtitle }: { children: React.ReactNode;
   );
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
+    <div className="flex h-[100dvh] bg-background overflow-hidden">
       <aside className="hidden md:flex w-64 flex-col bg-sidebar flex-shrink-0">
         <SidebarContent />
       </aside>
 
       {sidebarOpen && (
         <div className="md:hidden fixed inset-0 z-50 flex">
-          <div className="absolute inset-0 bg-black/60" onClick={() => setSidebarOpen(false)} />
-          <aside className="relative w-72 bg-sidebar flex flex-col h-full shadow-2xl">
-            <button className="absolute top-4 right-4 text-sidebar-foreground/60" onClick={() => setSidebarOpen(false)}>
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
+          <aside className="relative w-72 bg-sidebar flex flex-col h-full shadow-2xl animate-in slide-in-from-left duration-300">
+            <button className="absolute top-4 right-4 text-sidebar-foreground/60 p-2 min-h-[44px] min-w-[44px] flex items-center justify-center" onClick={() => setSidebarOpen(false)}>
               <X className="w-5 h-5" />
             </button>
             <SidebarContent />
@@ -121,9 +121,10 @@ function AdminLayout({ children, title, subtitle }: { children: React.ReactNode;
       )}
 
       <main className="flex-1 flex flex-col overflow-hidden">
-        <header className="flex items-center justify-between px-6 py-4 border-b border-border bg-card flex-shrink-0">
-          <div className="flex items-center gap-4">
-            <button className="md:hidden text-muted-foreground" onClick={() => setSidebarOpen(true)}>
+        <header className="flex items-center justify-between px-4 sm:px-6 border-b border-border bg-card flex-shrink-0"
+          style={{ paddingTop: "max(0.75rem, env(safe-area-inset-top))", paddingBottom: "0.75rem" }}>
+          <div className="flex items-center gap-3">
+            <button className="md:hidden text-muted-foreground p-2 min-h-[44px] min-w-[44px] flex items-center justify-center" onClick={() => setSidebarOpen(true)}>
               <Menu className="w-5 h-5" />
             </button>
             <div>
@@ -136,7 +137,7 @@ function AdminLayout({ children, title, subtitle }: { children: React.ReactNode;
           </Badge>
         </header>
 
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 pb-6">
           {children}
         </div>
       </main>
@@ -162,24 +163,24 @@ export default function AdminDashboard() {
   return (
     <AdminLayout title="Dashboard" subtitle="Welcome back, Jessica">
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
         {statCards.map(s => (
           <Card key={s.label}>
-            <CardContent className="p-5">
-              <div className="flex items-center justify-between mb-3">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${s.color}`}>
-                  <s.icon className="w-5 h-5" />
+            <CardContent className="p-3 sm:p-5">
+              <div className="flex items-center justify-between mb-2 sm:mb-3">
+                <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center ${s.color}`}>
+                  <s.icon className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
                 <TrendingUp className="w-4 h-4 text-muted-foreground" />
               </div>
-              <div className="text-2xl font-serif font-bold text-foreground">{s.value}</div>
+              <div className="text-xl sm:text-2xl font-serif font-bold text-foreground">{s.value}</div>
               <div className="text-sm font-sans text-muted-foreground mt-0.5">{s.label}</div>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Recent clients */}
         <Card>
           <CardHeader className="pb-3">

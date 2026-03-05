@@ -134,7 +134,7 @@ export default function PortalDashboard() {
       {trips && trips.length > 0 && (
         <div>
           <h3 className="text-lg font-serif font-semibold text-foreground mb-4">All Trips</h3>
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             {trips.map((trip) => (
               <Card key={trip.id} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-5">
@@ -171,7 +171,7 @@ export default function PortalDashboard() {
       )}
 
       {isLoading && (
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           {[1, 2].map(i => (
             <div key={i} className="h-24 rounded-xl bg-muted animate-pulse" />
           ))}
