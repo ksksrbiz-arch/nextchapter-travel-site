@@ -228,7 +228,7 @@ export default function Home() {
   const portalHref = isAuthenticated ? (user?.role === "admin" ? "/admin" : "/portal") : getLoginUrl();
 
   return (
-    <div className="min-h-screen text-foreground" style={{ background: "transparent" }}>
+    <div className="min-h-screen bg-transparent text-foreground">
 
       {/* ── Navigation ── */}
       <nav className={cn(
@@ -352,10 +352,9 @@ export default function Home() {
       </nav>
 
       {/* ── Hero — Video Editorial ── */}
-      {/* GlobalVideoBackground (fixed z-index:-1) renders the cinematic video behind everything */}
-      <section
-        className="relative flex items-center justify-center overflow-hidden min-h-screen"
-        style={{ height: "100dvh", background: "transparent" }}>
+      {/* GlobalVideoBackground (fixed -z-10) renders the cinematic video behind everything */}
+      <section className="relative flex items-center justify-center overflow-hidden min-h-screen"
+        style={{ height: "100dvh" }}>
 
         <div className="relative z-10 text-center text-white px-5 max-w-4xl mx-auto w-full">
           <Badge className="mb-4 sm:mb-6 bg-secondary/90 text-secondary-foreground border-0 font-sans text-[10px] sm:text-xs tracking-widest uppercase px-3 sm:px-4 py-1 sm:py-1.5">

@@ -20,7 +20,7 @@ export default function PlanMyTrip() {
   }, [setVideoContext]);
 
   return (
-    <div className="min-h-screen text-foreground" style={{ background: "transparent" }}>
+    <div className="min-h-screen bg-transparent text-foreground">
 
       {/* ── Sticky top nav bar ── */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-primary/95 backdrop-blur-md shadow-lg"

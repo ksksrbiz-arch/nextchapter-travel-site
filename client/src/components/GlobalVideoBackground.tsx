@@ -14,13 +14,6 @@ import { Loader2 } from "lucide-react";
  *  - On context change: load new video into inactive slot, fade it in, fade out active
  *  - Respects prefers-reduced-motion: falls back to instant swap with poster image
  *  - Overlay gradient ensures text legibility on all content
- *
- * Rendering fixes applied:
- *  - zIndex set via inline style (not Tailwind class) to avoid stacking context issues
- *  - GPU acceleration via transform: translateZ(0) and will-change: transform
- *  - backfaceVisibility: hidden on video elements to prevent crossfade flicker
- *  - Dark fallback background (#0a1628) shown until first video frame loads
- *  - position: fixed with top/left/width/height explicitly set for maximum browser compat
  */
 
 const FADE_DURATION = 800; // ms for crossfade
@@ -147,41 +140,14 @@ export default function GlobalVideoBackground() {
   const videoBaseClass = "absolute inset-0 w-full h-full object-cover pointer-events-none";
   const transitionStyle = `opacity ${FADE_DURATION}ms cubic-bezier(0.4, 0, 0.2, 1)`;
 
-  // Container style: explicit fixed positioning with GPU acceleration.
-  // Using inline style for zIndex instead of Tailwind's -z-10 to avoid
-  // stacking context conflicts that can hide the video on some browsers.
-  const containerStyle: React.CSSProperties = {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    zIndex: -1,
-    overflow: "hidden",
-    backgroundColor: videoLoaded ? "transparent" : "#0a1628",
-    // GPU acceleration — forces the element onto its own compositor layer
-    transform: "translateZ(0)",
-    WebkitTransform: "translateZ(0)",
-    willChange: "transform",
-  };
-
-  // Video element style: backfaceVisibility prevents flickering during
-  // opacity transitions on Chrome/Safari compositing.
-  const videoStyle = (opacity: number): React.CSSProperties => ({
-    opacity,
-    transition: transitionStyle,
-    backfaceVisibility: "hidden",
-    WebkitBackfaceVisibility: "hidden",
-  });
-
   return (
-    <div style={containerStyle}>
+    <div className="fixed inset-0 overflow-hidden" style={{ zIndex: -1, backgroundColor: videoLoaded ? 'transparent' : '#0a1628', transform: 'translateZ(0)', WebkitTransform: 'translateZ(0)', willChange: 'transform' }}>
       {/* Slot A */}
       <video
         ref={videoARef}
         key={`A-${slotA.key}`}
         className={videoBaseClass}
-        style={videoStyle(slotA.opacity)}
+        style={{ opacity: slotA.opacity, transition: transitionStyle, backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
         src={slotA.entry.src}
         poster={slotA.entry.poster}
         autoPlay
@@ -204,7 +170,7 @@ export default function GlobalVideoBackground() {
         ref={videoBRef}
         key={`B-${slotB.key}`}
         className={videoBaseClass}
-        style={videoStyle(slotB.opacity)}
+        style={{ opacity: slotB.opacity, transition: transitionStyle, backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
         src={slotB.entry.src}
         poster={slotB.entry.poster}
         autoPlay
@@ -222,26 +188,19 @@ export default function GlobalVideoBackground() {
         disableRemotePlayback
       />
 
-      {/* Enhanced gradient overlay for text legibility */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: "linear-gradient(to bottom, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.75) 100%)",
-        }}
-      />
+      {/* Enhanced gradient overlay for text legibility + loading state */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/80" />
 
       {/* Subtle vignette */}
-      <div
-        className="absolute inset-0"
+      <div className="absolute inset-0"
         style={{
-          background: "radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.55) 100%)",
+          background: "radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.6) 100%)"
         }}
       />
 
       {/* Loading skeleton overlay */}
       {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center"
-          style={{ background: "linear-gradient(135deg, rgba(10,22,40,0.85) 0%, rgba(20,30,55,0.7) 50%, rgba(10,22,40,0.85) 100%)" }}>
+        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-900/40 via-slate-800/20 to-slate-900/40 backdrop-blur-sm">
           <div className="flex flex-col items-center gap-4">
             <div className="relative w-16 h-16">
               <div className="absolute inset-0 rounded-full border-2 border-white/10" />
