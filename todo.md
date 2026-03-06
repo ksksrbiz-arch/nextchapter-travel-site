@@ -121,3 +121,16 @@
 - [x] Alerts: dramatic sky/weather video
 - [x] Video preloading + fallback static image (preloadVideo on nav hover)
 - [x] Reduced-motion media query support (instant swap fallback)
+
+## Bug Fixes (Mobile Rendering)
+- [ ] Nav bar: fix gold/cream background showing instead of transparent over video
+- [ ] Hero section: fix height so it fills full screen on mobile
+- [ ] About section: fix overlap/bleed into hero area
+- [ ] iOS Safari: fix video fallback — dark background instead of gold/cream
+- [ ] GlobalVideoBackground: ensure dark fallback color (#0a1628 navy) not cream
+
+## Video Playback Fix (iOS Safari)
+- [ ] Download travel videos locally and upload to project CDN
+- [ ] Replace Pexels cross-origin URLs with CDN-hosted URLs
+- [ ] Fix nav bar gold background showing instead of transparent
+- [ ] Fix About section solid background blocking video

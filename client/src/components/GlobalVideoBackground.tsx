@@ -17,6 +17,26 @@ import { cn } from "@/lib/utils";
 
 const FADE_DURATION = 800; // ms for crossfade
 
+// iOS Safari requires a user gesture for video playback in some cases.
+// We attempt autoplay immediately and retry on first user interaction.
+function tryPlay(el: HTMLVideoElement | null) {
+  if (!el) return;
+  el.muted = true; // must be set programmatically for iOS
+  const p = el.play();
+  if (p !== undefined) {
+    p.catch(() => {
+      // Autoplay blocked — retry on first touch/click
+      const retry = () => {
+        el.play().catch(() => {});
+        document.removeEventListener("touchstart", retry);
+        document.removeEventListener("click", retry);
+      };
+      document.addEventListener("touchstart", retry, { once: true });
+      document.addEventListener("click", retry, { once: true });
+    });
+  }
+}
+
 type VideoSlot = {
   entry: VideoEntry;
   opacity: number;
@@ -33,6 +53,11 @@ export default function GlobalVideoBackground() {
   // Two video refs for A/B crossfade
   const videoARef = useRef<HTMLVideoElement>(null);
   const videoBRef = useRef<HTMLVideoElement>(null);
+
+  // Kick off initial autoplay on mount
+  useEffect(() => {
+    tryPlay(videoARef.current);
+  }, []);
 
   const [slotA, setSlotA] = useState<VideoSlot>({
     entry: currentVideo,
@@ -66,7 +91,7 @@ export default function GlobalVideoBackground() {
       // Start playing B after a tick
       requestAnimationFrame(() => {
         videoBRef.current?.load();
-        videoBRef.current?.play().catch(() => {});
+        tryPlay(videoBRef.current);
         // Fade B in, fade A out
         setTimeout(() => {
           setSlotB(prev => ({ ...prev, opacity: 1 }));
@@ -82,7 +107,7 @@ export default function GlobalVideoBackground() {
       setSlotA({ entry: currentVideo, opacity: 0, key: currentKey });
       requestAnimationFrame(() => {
         videoARef.current?.load();
-        videoARef.current?.play().catch(() => {});
+        tryPlay(videoARef.current);
         setTimeout(() => {
           setSlotA(prev => ({ ...prev, opacity: 1 }));
           setSlotB(prev => ({ ...prev, opacity: 0 }));
@@ -111,7 +136,11 @@ export default function GlobalVideoBackground() {
         muted
         loop
         playsInline
+        // @ts-ignore — webkit-playsinline is required for iOS Safari inline playback
+        webkit-playsinline="true"
         preload="auto"
+        disablePictureInPicture
+        disableRemotePlayback
       />
 
       {/* Slot B */}
@@ -126,7 +155,11 @@ export default function GlobalVideoBackground() {
         muted
         loop
         playsInline
+        // @ts-ignore — webkit-playsinline is required for iOS Safari inline playback
+        webkit-playsinline="true"
         preload="none"
+        disablePictureInPicture
+        disableRemotePlayback
       />
 
       {/* Multi-layer gradient overlay for text legibility */}

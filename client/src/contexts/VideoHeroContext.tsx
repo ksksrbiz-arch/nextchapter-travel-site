@@ -1,78 +1,81 @@
 import { createContext, useContext, useState, useCallback, ReactNode } from "react";
 
-// ─── Video catalog — Pexels free CDN direct MP4 links ─────────────────────────
-// Each entry has a primary HD URL + a poster (first frame) fallback image
+// ─── Video catalog — CDN-hosted MP4s (CloudFront, iOS Safari compatible) ──────
+// All videos are self-hosted on our CDN to ensure iOS Safari autoplay works.
+// Videos are muted, looping, and under 5MB each for fast mobile loading.
 export type VideoEntry = {
   src: string;
   poster: string;
   label: string;
 };
 
+const CDN = "https://d2xsxph8kpxj0f.cloudfront.net/310519663400814556/YzQ4CdxemtnRpcg9zzL4Fa";
+
 export const VIDEO_CATALOG: Record<string, VideoEntry> = {
-  // Landing page — hot air balloons over Cappadocia
+  // Landing page — cinematic travel aerial
   landing: {
-    src: "https://videos.pexels.com/video-files/1448735/1448735-uhd_2560_1440_24fps.mp4",
-    poster: "https://images.pexels.com/videos/1448735/pictures/preview-0.jpg",
+    src: `${CDN}/landing_8f855cd9.mp4`,
+    poster: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1280&q=60",
     label: "Explore the World",
   },
-  // Dashboard — aerial ocean coastline
+  // Dashboard — ocean coastline
   dashboard: {
-    src: "https://videos.pexels.com/video-files/3571264/3571264-uhd_2560_1440_30fps.mp4",
-    poster: "https://images.pexels.com/videos/3571264/pictures/preview-0.jpg",
+    src: `${CDN}/dashboard_7ec357e0.mp4`,
+    poster: "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1280&q=60",
     label: "Your Journey Awaits",
   },
-  // Itinerary — winding mountain road journey
+  // Itinerary — journey / road
   itinerary: {
-    src: "https://videos.pexels.com/video-files/2169880/2169880-uhd_2560_1440_30fps.mp4",
-    poster: "https://images.pexels.com/videos/2169880/pictures/preview-0.jpg",
+    src: `${CDN}/itinerary_61142b31.mp4`,
+    poster: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1280&q=60",
     label: "Day by Day",
   },
-  // Documents — airport terminal
+  // Documents — airport / travel prep
   documents: {
-    src: "https://videos.pexels.com/video-files/3629578/3629578-uhd_2560_1440_25fps.mp4",
-    poster: "https://images.pexels.com/videos/3629578/pictures/preview-0.jpg",
+    src: `${CDN}/documents_94ff49db.mp4`,
+    poster: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1280&q=60",
     label: "Travel Documents",
   },
-  // Messages — cozy cafe / connection
+  // Messages — connection / cafe
   messages: {
-    src: "https://videos.pexels.com/video-files/4812205/4812205-uhd_2560_1440_25fps.mp4",
-    poster: "https://images.pexels.com/videos/4812205/pictures/preview-0.jpg",
+    src: `${CDN}/messages_25dae929.mp4`,
+    poster: "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1280&q=60",
     label: "Stay Connected",
   },
   // Packing — suitcase / travel prep
   packing: {
-    src: "https://videos.pexels.com/video-files/4057072/4057072-uhd_2560_1440_25fps.mp4",
-    poster: "https://images.pexels.com/videos/4057072/pictures/preview-0.jpg",
+    src: `${CDN}/packing_6982a0d7.mp4`,
+    poster: "https://images.unsplash.com/photo-1553361371-9b22f78e8b1d?w=1280&q=60",
     label: "Pack Your Bags",
   },
-  // Bookings — airplane wing / flight
+  // Bookings — flight / airplane
   bookings: {
-    src: "https://videos.pexels.com/video-files/2053100/2053100-uhd_2560_1440_30fps.mp4",
-    poster: "https://images.pexels.com/videos/2053100/pictures/preview-0.jpg",
+    src: `${CDN}/bookings_b2b35912.mp4`,
+    poster: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1280&q=60",
     label: "Your Bookings",
   },
-  // Destination guides — tropical beach paradise
+  // Destination guides — tropical / beach
   guides: {
-    src: "https://videos.pexels.com/video-files/1739010/1739010-uhd_2560_1440_30fps.mp4",
-    poster: "https://images.pexels.com/videos/1739010/pictures/preview-0.jpg",
+    src: `${CDN}/guides_13946e1c.mp4`,
+    poster: "https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=1280&q=60",
     label: "Discover Your Destination",
   },
-  // Alerts — dramatic sky / storm clouds
+  // Alerts — dramatic sky
   alerts: {
-    src: "https://videos.pexels.com/video-files/3571264/3571264-uhd_2560_1440_30fps.mp4",
-    poster: "https://images.pexels.com/videos/3571264/pictures/preview-0.jpg",
+    src: `${CDN}/alerts_8bd7bff5.mp4`,
+    poster: "https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=1280&q=60",
     label: "Travel Alerts",
   },
-  // Disney / theme park context
+  // Disney / theme park context — reuse landing
   disney: {
-    src: "https://videos.pexels.com/video-files/3571264/3571264-uhd_2560_1440_30fps.mp4",
-    poster: "https://images.pexels.com/videos/3571264/pictures/preview-0.jpg",
+    src: `${CDN}/landing_8f855cd9.mp4`,
+    poster: "https://images.unsplash.com/photo-1520342868574-5fa3804e551c?w=1280&q=60",
     label: "The Magic Awaits",
   },
-  // Cruise context
+  // Cruise context — reuse dashboard ocean
   cruise: {
-    src: "https://videos.pexels.com/video-files/1739010/1739010-uhd_2560_1440_30fps.mp4",
-    poster: "https://images.pexels.com/videos/1739010/pictures/preview-0.jpg",
+    src: `${CDN}/dashboard_7ec357e0.mp4`,
+    poster: "https://images.unsplash.com/photo-1548574505-5e239809ee19?w=1280&q=60",
     label: "Set Sail",
   },
 };
@@ -102,7 +105,6 @@ export function VideoHeroProvider({ children }: { children: ReactNode }) {
     if (videoKey === currentKey) return;
 
     setIsTransitioning(true);
-    // Brief transition window — the GlobalVideoBackground handles the actual crossfade
     setTimeout(() => {
       setCurrentKey(videoKey);
       setIsTransitioning(false);
