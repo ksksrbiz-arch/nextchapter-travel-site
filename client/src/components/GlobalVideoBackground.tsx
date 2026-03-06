@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useVideoHero, VideoEntry } from "@/contexts/VideoHeroContext";
 import { cn } from "@/lib/utils";
+import { Loader2 } from "lucide-react";
 
 /**
  * GlobalVideoBackground
@@ -56,15 +57,22 @@ export default function GlobalVideoBackground() {
 
   // Track if any video has loaded (to remove fallback bg)
   const [videoLoaded, setVideoLoaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Kick off initial autoplay on mount
   useEffect(() => {
     const el = videoARef.current;
     if (!el) return;
-    const onCanPlay = () => setVideoLoaded(true);
+    const onCanPlay = () => {
+      setVideoLoaded(true);
+      setIsLoading(false);
+    };
     el.addEventListener('canplay', onCanPlay, { once: true });
     // If already ready
-    if (el.readyState >= 3) setVideoLoaded(true);
+    if (el.readyState >= 3) {
+      setVideoLoaded(true);
+      setIsLoading(false);
+    }
     tryPlay(el);
     return () => el.removeEventListener('canplay', onCanPlay);
   }, []);
@@ -149,6 +157,10 @@ export default function GlobalVideoBackground() {
         // @ts-ignore — webkit-playsinline is required for iOS Safari inline playback
         webkit-playsinline="true"
         preload="auto"
+        onLoadedData={() => {
+          setVideoLoaded(true);
+          setIsLoading(false);
+        }}
         disablePictureInPicture
         disableRemotePlayback
       />
@@ -168,22 +180,40 @@ export default function GlobalVideoBackground() {
         // @ts-ignore — webkit-playsinline is required for iOS Safari inline playback
         webkit-playsinline="true"
         preload="none"
+        onLoadedData={() => {
+          setVideoLoaded(true);
+          setIsLoading(false);
+        }}
         disablePictureInPicture
         disableRemotePlayback
       />
 
-      {/* Multi-layer gradient overlay for text legibility */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/70" />
+      {/* Enhanced gradient overlay for text legibility + loading state */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/80" />
 
       {/* Subtle vignette */}
       <div className="absolute inset-0"
         style={{
-          background: "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.5) 100%)"
+          background: "radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.6) 100%)"
         }}
       />
 
-      {/* Context label — subtle cinematic caption */}
-      <ContextLabel label={currentVideo.label} videoKey={currentKey} />
+      {/* Loading skeleton overlay */}
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-900/40 via-slate-800/20 to-slate-900/40 backdrop-blur-sm">
+          <div className="flex flex-col items-center gap-4">
+            <div className="relative w-16 h-16">
+              <div className="absolute inset-0 rounded-full border-2 border-white/10" />
+              <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-amber-400/80 border-r-amber-400/60 animate-spin" />
+              <Loader2 className="absolute inset-0 m-auto w-6 h-6 text-amber-400/60 animate-pulse" />
+            </div>
+            <p className="text-white/40 text-xs font-sans tracking-widest uppercase">Loading your journey...</p>
+          </div>
+        </div>
+      )}
+
+      {/* Context label — subtle cinematic caption (only show when not loading) */}
+      {!isLoading && <ContextLabel label={currentVideo.label} videoKey={currentKey} />}
     </div>
   );
 }
@@ -232,11 +262,22 @@ function ContextLabel({ label, videoKey }: { label: string; videoKey: string }) 
 // ─── Preloader — preloads next video when user hovers a nav link ───────────────
 
 export function preloadVideo(src: string) {
+  // Preload strategy: use <link rel="preload"> for immediate browser cache
   const link = document.createElement("link");
   link.rel = "preload";
   link.as = "video";
   link.href = src;
+  link.type = "video/mp4";
   document.head.appendChild(link);
-  // Clean up after 10s
-  setTimeout(() => link.remove(), 10000);
+  // Also create a hidden video element for parallel buffering
+  const video = document.createElement("video");
+  video.src = src;
+  video.preload = "metadata";
+  video.style.display = "none";
+  document.body.appendChild(video);
+  // Clean up after 15s
+  setTimeout(() => {
+    link.remove();
+    video.remove();
+  }, 15000);
 }

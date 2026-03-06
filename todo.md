@@ -218,3 +218,10 @@
 - [x] Updated hero subheading, About bio, CTA section, footer description, footer contact, PlanMyTrip trust badge
 - [x] Footer contact now shows thenextchaptertravel.com link with (CEO: Wendy) label
 - [x] TypeScript clean, 0 errors
+
+## Session 10 — Video Loading Aesthetics
+- [x] Add animated loading skeleton to GlobalVideoBackground (spinning loader + "Loading your journey..." text)
+- [x] Enhance gradient overlay: from-black/70 via-black/40 to-black/80 + stronger vignette
+- [x] Optimize video preloading: preload all video pools on PortalLayout mount, stagger with 500ms delay
+- [x] Add onLoadedData handlers to both video slots to clear loading state
+- [x] 21 vitest tests passing, TypeScript clean

@@ -48,6 +48,19 @@ export default function PortalLayout({ children, title, subtitle }: PortalLayout
     if (matched) setVideoContext(matched.videoKey);
   }, [location, setVideoContext]);
 
+  // Preload all video pools on mount for instant transitions
+  useEffect(() => {
+    Object.values(VIDEO_CATALOG).forEach(pool => {
+      if (pool && pool.length > 0) {
+        // Preload first video immediately, rest after a delay
+        preloadVideo(pool[0].src);
+        if (pool.length > 1) {
+          setTimeout(() => preloadVideo(pool[1].src), 500);
+        }
+      }
+    });
+  }, []);
+
   const logoutMutation = trpc.auth.logout.useMutation({
     onSuccess: () => {
       logout();
@@ -114,9 +127,9 @@ export default function PortalLayout({ children, title, subtitle }: PortalLayout
                   setVideoContext(item.videoKey);
                 }}
                 onMouseEnter={() => {
-                  // Preload first video in pool on hover for instant crossfade
+                  // Preload next video in pool on hover for instant crossfade
                   const pool = VIDEO_CATALOG[item.videoKey];
-                  if (pool && pool.length > 0) preloadVideo(pool[0].src);
+                  if (pool && pool.length > 1) preloadVideo(pool[1].src);
                 }}
               >
                 <item.icon className="w-4.5 h-4.5 flex-shrink-0" />
