@@ -227,7 +227,7 @@ export default function Home() {
   const portalHref = isAuthenticated ? (user?.role === "admin" ? "/admin" : "/portal") : getLoginUrl();
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-transparent text-foreground">
 
       {/* ── Navigation ── */}
       <nav className={cn(
@@ -431,7 +431,7 @@ export default function Home() {
       </section>
 
       {/* ── Features Grid ── */}
-      <section id="features" className="py-16 sm:py-24 bg-background">
+      <section id="features" className="py-16 sm:py-24 bg-black/40 backdrop-blur-sm">
         <div className="container">
           <div className="text-center mb-10 sm:mb-16">
             <Badge className="mb-3 sm:mb-4 bg-secondary/10 text-secondary border-secondary/20 font-sans text-xs tracking-widest uppercase">
@@ -539,7 +539,7 @@ export default function Home() {
       </section>
 
       {/* ── CTA Section ── */}
-      <section className="py-16 sm:py-24 bg-background">
+      <section className="py-16 sm:py-24 bg-black/40 backdrop-blur-sm">
         <div className="container text-center">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-foreground mb-4 sm:mb-6">

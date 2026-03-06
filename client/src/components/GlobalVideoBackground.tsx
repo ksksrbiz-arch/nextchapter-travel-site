@@ -54,9 +54,19 @@ export default function GlobalVideoBackground() {
   const videoARef = useRef<HTMLVideoElement>(null);
   const videoBRef = useRef<HTMLVideoElement>(null);
 
+  // Track if any video has loaded (to remove fallback bg)
+  const [videoLoaded, setVideoLoaded] = useState(false);
+
   // Kick off initial autoplay on mount
   useEffect(() => {
-    tryPlay(videoARef.current);
+    const el = videoARef.current;
+    if (!el) return;
+    const onCanPlay = () => setVideoLoaded(true);
+    el.addEventListener('canplay', onCanPlay, { once: true });
+    // If already ready
+    if (el.readyState >= 3) setVideoLoaded(true);
+    tryPlay(el);
+    return () => el.removeEventListener('canplay', onCanPlay);
   }, []);
 
   const [slotA, setSlotA] = useState<VideoSlot>({
@@ -123,7 +133,7 @@ export default function GlobalVideoBackground() {
   const transitionStyle = `opacity ${FADE_DURATION}ms cubic-bezier(0.4, 0, 0.2, 1)`;
 
   return (
-    <div className="fixed inset-0 -z-10 overflow-hidden bg-[#0a1628]">
+    <div className="fixed inset-0 -z-10 overflow-hidden" style={{ backgroundColor: videoLoaded ? 'transparent' : '#0a1628' }}>
       {/* Slot A */}
       <video
         ref={videoARef}

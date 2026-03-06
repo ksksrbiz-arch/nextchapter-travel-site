@@ -2,9 +2,9 @@ import { eq, and, or, desc, asc } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
   users, trips, itineraryItems, documents, messages, packingItems,
-  bookings, destinationGuides, travelAlerts, notifications, pushSubscriptions,
+  bookings, destinationGuides, travelAlerts, notifications, pushSubscriptions, inviteTokens,
   InsertUser, Trip, ItineraryItem, Document, Message, PackingItem,
-  Booking, DestinationGuide, TravelAlert, Notification, InsertNotification, PushSubscription,
+  Booking, DestinationGuide, TravelAlert, Notification, InsertNotification, PushSubscription, InviteToken,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -483,4 +483,52 @@ export async function getAdminStats() {
     totalTrips: allTrips.length,
     unreadMessages: unread.length,
   };
+}
+
+// ─── Invite Tokens ────────────────────────────────────────────────────────────
+import crypto from "crypto";
+
+export async function createInviteToken(
+  email: string,
+  name: string | null,
+  tripId: number | null,
+  createdByUserId: number
+): Promise<InviteToken> {
+  const db = await getDb();
+  if (!db) throw new Error("DB unavailable");
+  const token = crypto.randomBytes(32).toString("hex");
+  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+  await db.insert(inviteTokens).values({
+    token,
+    email,
+    name: name ?? null,
+    tripId: tripId ?? null,
+    createdByUserId,
+    expiresAt,
+  });
+  const [created] = await db.select().from(inviteTokens).where(eq(inviteTokens.token, token)).limit(1);
+  return created;
+}
+
+export async function getInviteToken(token: string): Promise<InviteToken | null> {
+  const db = await getDb();
+  if (!db) return null;
+  const [row] = await db.select().from(inviteTokens).where(eq(inviteTokens.token, token)).limit(1);
+  return row ?? null;
+}
+
+export async function markInviteTokenUsed(token: string, userId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("DB unavailable");
+  await db.update(inviteTokens)
+    .set({ usedAt: new Date(), usedByUserId: userId })
+    .where(eq(inviteTokens.token, token));
+}
+
+export async function getInviteTokensCreatedBy(adminId: number): Promise<InviteToken[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(inviteTokens)
+    .where(eq(inviteTokens.createdByUserId, adminId))
+    .orderBy(desc(inviteTokens.createdAt));
 }

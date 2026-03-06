@@ -123,9 +123,15 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    /* Transparent body so GlobalVideoBackground shows through */
+    background-color: transparent;
+    @apply text-foreground;
     font-family: 'Inter', sans-serif;
     -webkit-font-smoothing: antialiased;
+  }
+  /* Root and main app wrapper must also be transparent */
+  #root {
+    background-color: transparent;
   }
   h1, h2, h3, h4, h5 {
     font-family: 'Playfair Display', serif;

@@ -123,14 +123,32 @@
 - [x] Reduced-motion media query support (instant swap fallback)
 
 ## Bug Fixes (Mobile Rendering)
-- [ ] Nav bar: fix gold/cream background showing instead of transparent over video
+- [x] Nav bar: fix gold/cream background showing instead of transparent over video
 - [ ] Hero section: fix height so it fills full screen on mobile
 - [ ] About section: fix overlap/bleed into hero area
-- [ ] iOS Safari: fix video fallback — dark background instead of gold/cream
-- [ ] GlobalVideoBackground: ensure dark fallback color (#0a1628 navy) not cream
+- [x] iOS Safari: fix video fallback — dark background instead of gold/cream
+- [x] GlobalVideoBackground: ensure dark fallback color (#0a1628 navy) not cream
 
 ## Video Playback Fix (iOS Safari)
-- [ ] Download travel videos locally and upload to project CDN
-- [ ] Replace Pexels cross-origin URLs with CDN-hosted URLs
-- [ ] Fix nav bar gold background showing instead of transparent
-- [ ] Fix About section solid background blocking video
+- [x] Download travel videos locally and upload to project CDN
+- [x] Replace Pexels cross-origin URLs with CDN-hosted URLs
+- [x] Fix nav bar gold background showing instead of transparent (bg-transparent)
+- [x] Fix About section solid background blocking video
+
+## Session 3 — Video Fix, Demo Data & Invite Flow
+- [x] Fix video background display: changed bg-background to bg-transparent in Home.tsx
+- [x] Fix TypeScript error: add currentKey to VideoHeroContextValue type
+- [x] Seed demo data: Sarah Mitchell (Disney World trip) + Linda Johnson (NCL Cruise)
+- [x] Seed Disney World itinerary: 4 days, 16 items (flights, resort, Magic Kingdom, EPCOT, Hollywood Studios)
+- [x] Seed bookings: flights, hotel, park tickets, Magical Express
+- [x] Seed packing list: 16 items across 5 categories
+- [x] Seed messages: 3 conversation messages between Jessica and Sarah
+- [x] Seed Walt Disney World destination guide with tips and emergency numbers
+- [x] Seed travel alert for Lightning Lane booking window
+- [x] Add invite_tokens table to schema + migration applied
+- [x] Add createInviteToken, getInviteToken, markInviteTokenUsed, getInviteTokensCreatedBy helpers to db.ts
+- [x] Add invites router (create, list, validate, accept) to routers.ts
+- [x] Create JoinPage (/join?token=...) with invite validation UI
+- [x] Add /join route to App.tsx
+- [x] Add "Send Portal Invite" button + dialog to AdminClients page
+- [x] 21 vitest tests passing (5 new invite tests)

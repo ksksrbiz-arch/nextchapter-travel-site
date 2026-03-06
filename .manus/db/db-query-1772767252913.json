@@ -1,0 +1,9 @@
+{
+  "query": "\n-- Insert a demo client user (Sarah Mitchell - Disney World family trip)\nINSERT INTO users (openId, name, email, loginMethod, role, phone, createdAt, updatedAt, lastSignedIn)\nVALUES ('demo_client_sarah_001', 'Sarah Mitchell', 'sarah.mitchell@example.com', 'invite', 'user', '503-555-0142', NOW(), NOW(), NOW());\n\n-- Insert a second demo client (The Johnson Family - Cruise)\nINSERT INTO users (openId, name, email, loginMethod, role, phone, createdAt, updatedAt, lastSignedIn)\nVALUES ('demo_client_johnson_002', 'Linda Johnson', 'linda.johnson@example.com', 'invite', 'user', '503-555-0198', NOW(), NOW(), NOW());\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 372pgni6FByAp3r.1b1a45d7b7fa --database YzQ4CdxemtnRpcg9zzL4Fa --execute \n-- Insert a demo client user (Sarah Mitchell - Disney World family trip)\nINSERT INTO users (openId, name, email, loginMethod, role, phone, createdAt, updatedAt, lastSignedIn)\nVALUES ('demo_client_sarah_001', 'Sarah Mitchell', 'sarah.mitchell@example.com', 'invite', 'user', '503-555-0142', NOW(), NOW(), NOW());\n\n-- Insert a second demo client (The Johnson Family - Cruise)\nINSERT INTO users (openId, name, email, loginMethod, role, phone, createdAt, updatedAt, lastSignedIn)\nVALUES ('demo_client_johnson_002', 'Linda Johnson', 'linda.johnson@example.com', 'invite', 'user', '503-555-0198', NOW(), NOW(), NOW());\n",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 113
+}

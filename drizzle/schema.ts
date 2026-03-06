@@ -203,3 +203,19 @@ export const pushSubscriptions = mysqlTable("push_subscriptions", {
 });
 
 export type PushSubscription = typeof pushSubscriptions.$inferSelect;
+
+// Client invite tokens — magic links for onboarding new clients
+export const inviteTokens = mysqlTable("invite_tokens", {
+  id: int("id").autoincrement().primaryKey(),
+  token: varchar("token", { length: 128 }).notNull().unique(),
+  email: varchar("email", { length: 320 }).notNull(),
+  name: varchar("name", { length: 255 }),
+  tripId: int("tripId"),
+  createdByUserId: int("createdByUserId").notNull(),
+  usedAt: timestamp("usedAt"),
+  usedByUserId: int("usedByUserId"),
+  expiresAt: timestamp("expiresAt").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type InviteToken = typeof inviteTokens.$inferSelect;
+export type InsertInviteToken = typeof inviteTokens.$inferInsert;

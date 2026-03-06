@@ -1,0 +1,24 @@
+{
+  "query": "SELECT id, userId, title, destination, status FROM trips ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 372pgni6FByAp3r.1b1a45d7b7fa --database YzQ4CdxemtnRpcg9zzL4Fa --execute SELECT id, userId, title, destination, status FROM trips ORDER BY id;",
+  "rows": [
+    {
+      "id": "1",
+      "userId": "2",
+      "title": "Mitchell Family Disney World Adventure",
+      "destination": "Walt Disney World, Orlando, FL",
+      "status": "confirmed"
+    },
+    {
+      "id": "2",
+      "userId": "3",
+      "title": "Caribbean Cruise — Norwegian Encore",
+      "destination": "Eastern Caribbean: St. Thomas, Nassau, Great Stirrup Cay",
+      "status": "confirmed"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuserId\ttitle\tdestination\tstatus\n1\t2\tMitchell Family Disney World Adventure\tWalt Disney World, Orlando, FL\tconfirmed\n2\t3\tCaribbean Cruise — Norwegian Encore\tEastern Caribbean: St. Thomas, Nassau, Great Stirrup Cay\tconfirmed\n",
+  "stderr": "",
+  "execution_time_ms": 63
+}

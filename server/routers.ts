@@ -18,6 +18,7 @@ import {
   createNotification, getNotifications, getUnreadNotificationCount,
   markNotificationRead, markAllNotificationsRead, broadcastNotification,
   savePushSubscription, deletePushSubscription,
+  createInviteToken, getInviteToken, markInviteTokenUsed, getInviteTokensCreatedBy,
 } from "./db";
 import { broadcastMessage, broadcastTyping, broadcastRead } from "./messageBroker";
 import { storagePut } from "./storage";
@@ -583,6 +584,51 @@ export const appRouter = router({
       .input(z.object({ userId: z.number() }))
       .query(async ({ input }) => {
         return await getTrips(input.userId);
+      }),
+  }),
+  invites: router({
+    // Admin: create an invite link for a new client
+    create: adminProcedure
+      .input(z.object({
+        email: z.string().email(),
+        name: z.string().optional(),
+        tripId: z.number().optional(),
+        origin: z.string().url(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const invite = await createInviteToken(
+          input.email,
+          input.name ?? null,
+          input.tripId ?? null,
+          ctx.user.id
+        );
+        const inviteUrl = `${input.origin}/join?token=${invite.token}`;
+        return { invite, inviteUrl };
+      }),
+    // Admin: list all invites they created
+    list: adminProcedure.query(async ({ ctx }) => {
+      return await getInviteTokensCreatedBy(ctx.user.id);
+    }),
+    // Public: validate a token (used on the join page)
+    validate: publicProcedure
+      .input(z.object({ token: z.string() }))
+      .query(async ({ input }) => {
+        const invite = await getInviteToken(input.token);
+        if (!invite) return { valid: false, reason: "Token not found" };
+        if (invite.usedAt) return { valid: false, reason: "This invite has already been used" };
+        if (new Date() > invite.expiresAt) return { valid: false, reason: "This invite has expired" };
+        return { valid: true, invite: { email: invite.email, name: invite.name, tripId: invite.tripId } };
+      }),
+    // Protected: mark token as used after the user signs in
+    accept: protectedProcedure
+      .input(z.object({ token: z.string() }))
+      .mutation(async ({ ctx, input }) => {
+        const invite = await getInviteToken(input.token);
+        if (!invite) throw new TRPCError({ code: "NOT_FOUND", message: "Invite not found" });
+        if (invite.usedAt) throw new TRPCError({ code: "BAD_REQUEST", message: "Invite already used" });
+        if (new Date() > invite.expiresAt) throw new TRPCError({ code: "BAD_REQUEST", message: "Invite expired" });
+        await markInviteTokenUsed(input.token, ctx.user.id);
+        return { success: true };
       }),
   }),
 });

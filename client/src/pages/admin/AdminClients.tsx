@@ -4,34 +4,175 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 import { Link, useParams } from "wouter";
 import { useState } from "react";
+import { toast } from "sonner";
 import {
   Users, Search, Plane, MessageSquare, ChevronRight,
-  Mail, Calendar, ArrowLeft, Loader2, MapPin
+  Mail, Calendar, ArrowLeft, Loader2, MapPin, UserPlus, Copy, CheckCircle
 } from "lucide-react";
 
 export function AdminClientsList() {
   const { data: clients, isLoading } = trpc.admin.clients.useQuery();
   const [search, setSearch] = useState("");
+  const [showInviteDialog, setShowInviteDialog] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteName, setInviteName] = useState("");
+  const [generatedLink, setGeneratedLink] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  const createInvite = trpc.invites.create.useMutation({
+    onSuccess: (data) => {
+      setGeneratedLink(data.inviteUrl);
+    },
+    onError: (err) => {
+      toast.error("Failed to create invite: " + err.message);
+    },
+  });
+
+  const handleCreateInvite = () => {
+    if (!inviteEmail) return;
+    createInvite.mutate({
+      email: inviteEmail,
+      name: inviteName || undefined,
+      origin: window.location.origin,
+    });
+  };
+
+  const handleCopyLink = () => {
+    if (!generatedLink) return;
+    navigator.clipboard.writeText(generatedLink);
+    setCopied(true);
+    toast.success("Invite link copied to clipboard!");
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleCloseInvite = () => {
+    setShowInviteDialog(false);
+    setInviteEmail("");
+    setInviteName("");
+    setGeneratedLink(null);
+    setCopied(false);
+  };
 
   const filtered = clients?.filter(c =>
     (c.name ?? "").toLowerCase().includes(search.toLowerCase()) ||
     (c.email ?? "").toLowerCase().includes(search.toLowerCase())
   ) ?? [];
-
   return (
     <AdminLayout title="Clients" subtitle="Manage your travel clients">
-      {/* Search */}
-      <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-        <Input
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          placeholder="Search clients by name or email..."
-          className="pl-9 font-sans"
-        />
+      {/* Search + Invite */}
+      <div className="flex gap-3 mb-6">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Search clients by name or email..."
+            className="pl-9 font-sans"
+          />
+        </div>
+        <Button
+          onClick={() => setShowInviteDialog(true)}
+          className="bg-secondary text-secondary-foreground font-sans text-sm flex-shrink-0"
+        >
+          <UserPlus className="w-4 h-4 mr-2" />
+          Send Portal Invite
+        </Button>
       </div>
+
+      {/* Invite Dialog */}
+      <Dialog open={showInviteDialog} onOpenChange={(open) => { if (!open) handleCloseInvite(); }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-serif">Send Portal Invite</DialogTitle>
+            <DialogDescription className="font-sans text-sm">
+              Generate a magic link to invite a client to their travel portal.
+            </DialogDescription>
+          </DialogHeader>
+          {!generatedLink ? (
+            <div className="space-y-4 mt-2">
+              <div>
+                <Label className="font-sans text-sm font-medium">Client Name (optional)</Label>
+                <Input
+                  value={inviteName}
+                  onChange={e => setInviteName(e.target.value)}
+                  placeholder="Sarah Mitchell"
+                  className="mt-1.5 font-sans"
+                />
+              </div>
+              <div>
+                <Label className="font-sans text-sm font-medium">Client Email *</Label>
+                <Input
+                  type="email"
+                  value={inviteEmail}
+                  onChange={e => setInviteEmail(e.target.value)}
+                  placeholder="sarah@example.com"
+                  className="mt-1.5 font-sans"
+                />
+              </div>
+              <div className="flex gap-2 pt-2">
+                <Button
+                  variant="outline"
+                  onClick={handleCloseInvite}
+                  className="flex-1 font-sans"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleCreateInvite}
+                  disabled={!inviteEmail || createInvite.isPending}
+                  className="flex-1 bg-primary text-primary-foreground font-sans"
+                >
+                  {createInvite.isPending ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <Mail className="w-4 h-4 mr-2" />
+                  )}
+                  Generate Invite Link
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4 mt-2">
+              <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <CheckCircle className="w-5 h-5 text-green-600" />
+                  <span className="font-sans font-medium text-green-800 text-sm">Invite link generated!</span>
+                </div>
+                <p className="text-green-700 font-sans text-xs">
+                  This link expires in 7 days. Share it with {inviteName || inviteEmail} to give them access to their portal.
+                </p>
+              </div>
+              <div className="bg-muted rounded-lg p-3">
+                <p className="font-mono text-xs text-muted-foreground break-all">{generatedLink}</p>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleCopyLink}
+                  className="flex-1 bg-primary text-primary-foreground font-sans"
+                >
+                  {copied ? (
+                    <CheckCircle className="w-4 h-4 mr-2" />
+                  ) : (
+                    <Copy className="w-4 h-4 mr-2" />
+                  )}
+                  {copied ? "Copied!" : "Copy Link"}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={handleCloseInvite}
+                  className="font-sans"
+                >
+                  Done
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {isLoading && (
         <div className="flex items-center justify-center py-16">
