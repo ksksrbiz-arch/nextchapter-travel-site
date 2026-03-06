@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useVideoHero, VideoEntry } from "@/contexts/VideoHeroContext";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
@@ -140,14 +140,41 @@ export default function GlobalVideoBackground() {
   const videoBaseClass = "absolute inset-0 w-full h-full object-cover pointer-events-none";
   const transitionStyle = `opacity ${FADE_DURATION}ms cubic-bezier(0.4, 0, 0.2, 1)`;
 
+  // Container style: explicit fixed positioning with GPU acceleration.
+  // Using inline style for zIndex instead of Tailwind's -z-10 to avoid
+  // stacking context conflicts that can hide the video on some browsers.
+  const containerStyle: React.CSSProperties = {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    zIndex: -1,
+    overflow: "hidden",
+    backgroundColor: videoLoaded ? "transparent" : "#0a1628",
+    // GPU acceleration — forces the element onto its own compositor layer
+    transform: "translateZ(0)",
+    WebkitTransform: "translateZ(0)",
+    willChange: "transform",
+  };
+
+  // Video element style: backfaceVisibility prevents flickering during
+  // opacity transitions on Chrome/Safari compositing.
+  const videoStyle = (opacity: number): React.CSSProperties => ({
+    opacity,
+    transition: transitionStyle,
+    backfaceVisibility: "hidden",
+    WebkitBackfaceVisibility: "hidden",
+  });
+
   return (
-    <div className="fixed inset-0 -z-10 overflow-hidden" style={{ backgroundColor: videoLoaded ? 'transparent' : '#0a1628' }}>
+    <div style={containerStyle}>
       {/* Slot A */}
       <video
         ref={videoARef}
         key={`A-${slotA.key}`}
         className={videoBaseClass}
-        style={{ opacity: slotA.opacity, transition: transitionStyle }}
+        style={videoStyle(slotA.opacity)}
         src={slotA.entry.src}
         poster={slotA.entry.poster}
         autoPlay
@@ -170,7 +197,7 @@ export default function GlobalVideoBackground() {
         ref={videoBRef}
         key={`B-${slotB.key}`}
         className={videoBaseClass}
-        style={{ opacity: slotB.opacity, transition: transitionStyle }}
+        style={videoStyle(slotB.opacity)}
         src={slotB.entry.src}
         poster={slotB.entry.poster}
         autoPlay

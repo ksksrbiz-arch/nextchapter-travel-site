@@ -158,7 +158,7 @@ export default function PortalLayout({ children, title, subtitle }: PortalLayout
 
   return (
     <TripProvider>
-    <div className="flex h-[100dvh] bg-background overflow-hidden">
+    <div className="flex h-[100dvh] overflow-hidden" style={{ backgroundColor: "transparent" }}>
       {/* Desktop Sidebar — hidden on mobile */}
       <aside className="hidden md:flex w-64 flex-col bg-sidebar flex-shrink-0">
         <SidebarContent />
@@ -219,7 +219,7 @@ export default function PortalLayout({ children, title, subtitle }: PortalLayout
         </header>
 
         {/* Page content — extra bottom padding on mobile for bottom nav */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-6 pb-24 md:pb-6">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 pb-24 md:pb-6" style={{ backgroundColor: "transparent" }}>
           {children}
         </div>
       </main>

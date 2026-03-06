@@ -88,7 +88,7 @@
 }
 
 .dark {
-  --background: oklch(0.14 0.04 240);
+  --background: transparent;
   --foreground: oklch(0.95 0.005 75);
   --card: oklch(0.18 0.04 240);
   --card-foreground: oklch(0.95 0.005 75);
@@ -122,16 +122,23 @@
   * {
     @apply border-border outline-ring/50;
   }
+  /* Ensure html, body, and #root are fully transparent so the fixed
+     GlobalVideoBackground (z-index: -1) shows through in ALL themes.
+     The .dark class on <html> would otherwise apply a solid background
+     via CSS custom properties, hiding the video. */
+  html {
+    background-color: transparent !important;
+  }
   body {
     /* Transparent body so GlobalVideoBackground shows through */
-    background-color: transparent;
+    background-color: transparent !important;
     @apply text-foreground;
     font-family: 'Inter', sans-serif;
     -webkit-font-smoothing: antialiased;
   }
   /* Root and main app wrapper must also be transparent */
   #root {
-    background-color: transparent;
+    background-color: transparent !important;
   }
   h1, h2, h3, h4, h5 {
     font-family: 'Playfair Display', serif;

@@ -12,7 +12,7 @@ export function ThankYou() {
   }, [setVideoContext]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-primary to-primary/95 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen flex items-center justify-center px-4 py-12" style={{ background: "linear-gradient(to bottom, rgba(10,22,40,0.75) 0%, rgba(10,22,40,0.85) 100%)" }}>
       <div className="max-w-2xl w-full">
         {/* Success icon */}
         <div className="flex justify-center mb-8">

@@ -50,7 +50,7 @@ export default function JoinPage() {
 
   if (!token) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background px-4">
+      <div className="min-h-screen flex items-center justify-center bg-transparent px-4">
         <Card className="max-w-md w-full border-border/50 bg-card/95 backdrop-blur-sm">
           <CardContent className="p-8 text-center">
             <XCircle className="w-12 h-12 text-destructive mx-auto mb-4" />
@@ -69,7 +69,7 @@ export default function JoinPage() {
 
   if (validating || authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="min-h-screen flex items-center justify-center bg-transparent">
         <div className="text-center">
           <Loader2 className="w-10 h-10 animate-spin text-secondary mx-auto mb-4" />
           <p className="text-muted-foreground font-sans text-sm">Verifying your invite...</p>
@@ -80,7 +80,7 @@ export default function JoinPage() {
 
   if (!validation?.valid) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background px-4">
+      <div className="min-h-screen flex items-center justify-center bg-transparent px-4">
         <Card className="max-w-md w-full border-border/50 bg-card/95 backdrop-blur-sm">
           <CardContent className="p-8 text-center">
             <XCircle className="w-12 h-12 text-destructive mx-auto mb-4" />
@@ -106,7 +106,7 @@ export default function JoinPage() {
 
   if (accepted) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background px-4">
+      <div className="min-h-screen flex items-center justify-center bg-transparent px-4">
         <Card className="max-w-md w-full border-border/50 bg-card/95 backdrop-blur-sm">
           <CardContent className="p-8 text-center">
             <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
@@ -126,7 +126,7 @@ export default function JoinPage() {
   if (!invite) return null;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
+    <div className="min-h-screen flex items-center justify-center bg-transparent px-4">
       {/* Background gradient */}
       <div className="fixed inset-0 -z-10 bg-gradient-to-br from-primary/20 via-background to-secondary/10" />
 
