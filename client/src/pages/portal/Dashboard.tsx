@@ -11,6 +11,8 @@ import {
 import { useAuth } from "@/_core/hooks/useAuth";
 import PushNotificationSettings from "@/components/PushNotificationSettings";
 
+import React from "react";
+
 const STATUS_COLORS: Record<string, string> = {
   planning: "bg-blue-100 text-blue-800",
   confirmed: "bg-green-100 text-green-800",
@@ -18,6 +20,108 @@ const STATUS_COLORS: Record<string, string> = {
   completed: "bg-gray-100 text-gray-700",
   cancelled: "bg-red-100 text-red-700",
 };
+
+interface Trip {
+  id: string;
+  title: string;
+  destination: string;
+  startDate: string | Date;
+  endDate?: string | Date;
+  status: string;
+  coverImageUrl?: string;
+}
+
+function TripCountdownWidget({ trip }: { trip: Trip }) {
+  const [countdown, setCountdown] = React.useState<{
+    days: number;
+    hours: number;
+    minutes: number;
+    seconds: number;
+  } | null>(null);
+
+  React.useEffect(() => {
+    const calculateCountdown = () => {
+      const startDate = new Date(trip.startDate).getTime();
+      const now = new Date().getTime();
+      const difference = startDate - now;
+
+      if (difference > 0) {
+        setCountdown({
+          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+          minutes: Math.floor((difference / 1000 / 60) % 60),
+          seconds: Math.floor((difference / 1000) % 60),
+        });
+      } else {
+        setCountdown({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+      }
+    };
+
+    calculateCountdown();
+    const interval = setInterval(calculateCountdown, 1000);
+    return () => clearInterval(interval);
+  }, [trip.startDate]);
+
+  if (!countdown) return null;
+
+  const isActive = trip.status === "active";
+  const isCompleted = trip.status === "completed";
+
+  return (
+    <div className="mb-8 rounded-2xl overflow-hidden bg-gradient-to-br from-secondary/10 via-secondary/5 to-transparent border border-secondary/20 p-6 sm:p-8">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h3 className="text-lg sm:text-xl font-serif font-bold text-foreground flex items-center gap-2">
+            <Clock className="w-5 h-5 text-secondary" />
+            {isActive ? "Currently Traveling" : isCompleted ? "Trip Completed" : "Countdown to Adventure"}
+          </h3>
+          <p className="text-muted-foreground font-sans text-sm mt-1">{trip.title}</p>
+        </div>
+      </div>
+
+      {!isCompleted ? (
+        <div className="grid grid-cols-4 gap-2 sm:gap-4">
+          {[
+            { value: countdown.days, label: "Days" },
+            { value: countdown.hours, label: "Hours" },
+            { value: countdown.minutes, label: "Mins" },
+            { value: countdown.seconds, label: "Secs" },
+          ].map((item) => (
+            <div key={item.label} className="flex flex-col items-center">
+              <div className="w-full aspect-square rounded-xl bg-secondary/20 border border-secondary/30 flex items-center justify-center mb-2 hover:bg-secondary/30 transition-colors">
+                <span className="text-2xl sm:text-4xl font-serif font-bold text-secondary">
+                  {String(item.value).padStart(2, "0")}
+                </span>
+              </div>
+              <span className="text-xs sm:text-sm font-sans font-medium text-muted-foreground">{item.label}</span>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-8">
+          <p className="text-lg font-serif font-semibold text-foreground mb-2">✨ Trip Completed!</p>
+          <p className="text-muted-foreground font-sans text-sm">We hope you had an amazing adventure!</p>
+        </div>
+      )}
+
+      {trip.endDate && !isCompleted && (
+        <div className="mt-6 pt-6 border-t border-secondary/20">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-sans font-medium text-muted-foreground">Trip Progress</span>
+            <span className="text-xs font-sans font-medium text-secondary">
+              {new Date(trip.startDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })} – {new Date(trip.endDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+            </span>
+          </div>
+          <div className="w-full h-2 rounded-full bg-secondary/10 overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-secondary to-secondary/60 rounded-full" style={{
+              width: isActive ? "50%" : "0%",
+            }} />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function PortalDashboard() {
   const { user } = useAuth();
@@ -58,6 +162,11 @@ export default function PortalDashboard() {
             </Button>
           </Link>
         </div>
+      )}
+
+      {/* Trip Countdown Widget */}
+      {activeTrip && activeTrip.startDate && (
+        <TripCountdownWidget trip={activeTrip} />
       )}
 
       {/* Active Trip Hero */}
