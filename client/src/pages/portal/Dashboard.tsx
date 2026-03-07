@@ -22,13 +22,13 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 interface Trip {
-  id: string;
+  id: number;
   title: string;
   destination: string;
-  startDate: string | Date;
-  endDate?: string | Date;
+  startDate: string | Date | null;
+  endDate?: string | Date | null;
   status: string;
-  coverImageUrl?: string;
+  coverImageUrl?: string | null;
 }
 
 function TripCountdownWidget({ trip }: { trip: Trip }) {
@@ -41,6 +41,7 @@ function TripCountdownWidget({ trip }: { trip: Trip }) {
 
   React.useEffect(() => {
     const calculateCountdown = () => {
+      if (!trip.startDate) return;
       const startDate = new Date(trip.startDate).getTime();
       const now = new Date().getTime();
       const difference = startDate - now;
@@ -109,7 +110,7 @@ function TripCountdownWidget({ trip }: { trip: Trip }) {
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-sans font-medium text-muted-foreground">Trip Progress</span>
             <span className="text-xs font-sans font-medium text-secondary">
-              {new Date(trip.startDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })} – {new Date(trip.endDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+              {trip.startDate ? new Date(trip.startDate).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : ""} – {trip.endDate ? new Date(trip.endDate).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : ""}
             </span>
           </div>
           <div className="w-full h-2 rounded-full bg-secondary/10 overflow-hidden">
