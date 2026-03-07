@@ -22,7 +22,7 @@ import {
 } from "./db";
 import { broadcastMessage, broadcastTyping, broadcastRead } from "./messageBroker";
 import { storagePut } from "./storage";
-import { sendInviteEmail, notifyOwnerOfInquiry } from "./email";
+import { sendInviteEmail } from "./email";
 
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
   if (ctx.user.role !== "admin") {
@@ -645,32 +645,6 @@ export const appRouter = router({
         if (new Date() > invite.expiresAt) throw new TRPCError({ code: "BAD_REQUEST", message: "Invite expired" });
         await markInviteTokenUsed(input.token, ctx.user.id);
         return { success: true };
-      }),
-  }),
-
-  webhooks: router({
-    // TravelJoy form submission webhook
-    traveljoyInquiry: publicProcedure
-      .input(z.object({
-        name: z.string().optional(),
-        email: z.string().email().optional(),
-        phone: z.string().optional(),
-        destination: z.string().optional(),
-        tripType: z.string().optional(),
-        message: z.string().optional(),
-        inquiryUrl: z.string().optional(),
-      }))
-      .mutation(async ({ input }) => {
-        try {
-          const result = await notifyOwnerOfInquiry({
-            inquiryData: input,
-            inquiryUrl: input.inquiryUrl,
-          });
-          return { success: result.success, id: result.success ? result.id : undefined };
-        } catch (err) {
-          console.error("[webhooks.traveljoyInquiry] Error:", err);
-          return { success: false, error: err instanceof Error ? err.message : "Unknown error" };
-        }
       }),
   }),
 });
