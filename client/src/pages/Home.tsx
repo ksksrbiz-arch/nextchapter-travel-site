@@ -73,19 +73,19 @@ const TESTIMONIALS = [
 ];
 
 export default function Home() {
-  const { setVideo } = useVideoHero();
+  const { setVideoContext } = useVideoHero();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    setVideo("https://cdn.manus.im/nextchapter/hero-bg.mp4");
+    setVideoContext("landing");
     
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [setVideo]);
+  }, [setVideoContext]);
 
   return (
     <div className="min-h-screen font-serif selection:bg-secondary/30">
