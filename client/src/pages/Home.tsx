@@ -259,7 +259,7 @@ export default function Home() {
                 {/* Large hero photo */}
                 <div className="relative rounded-2xl overflow-hidden border-2 border-secondary/30 shadow-2xl mb-3">
                   <img
-                    src="/jesshero.jpeg"
+                    src="/jesshero3.jpeg"
                     alt="Jessica Seiders - CFO & Certified Travel Specialist"
                     className="w-full object-cover object-top"
                     style={{ maxHeight: '420px' }}
