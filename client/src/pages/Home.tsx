@@ -250,26 +250,47 @@ export default function Home() {
               </a>
             </div>
 
-            {/* Jessica's Professional Headshot — shown below text on mobile */}
+            {/* Jessica's Photo Gallery — three photos shown in a staggered grid */}
             <div className="flex items-center justify-center py-6 sm:py-8 order-first md:order-last">
-              <div className="relative w-full aspect-square max-w-[340px] sm:max-w-[420px] md:max-w-[480px] mx-auto">
-                {/* Decorative background elements */}
-                <div className="absolute inset-0 rounded-full bg-secondary/10 blur-3xl animate-pulse" />
-                <div className="absolute -inset-4 rounded-full border border-secondary/20 animate-spin-slow" style={{ animationDuration: '20s' }} />
-                
-                {/* Main Image Container */}
-                <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-secondary/30 shadow-2xl">
-                  <img 
-                    src="/assets/jessica-headshot.jpg" 
+              <div className="relative w-full max-w-[420px] md:max-w-[500px] mx-auto">
+                {/* Decorative glow */}
+                <div className="absolute inset-0 bg-secondary/10 blur-3xl rounded-3xl animate-pulse" />
+
+                {/* Large hero photo */}
+                <div className="relative rounded-2xl overflow-hidden border-2 border-secondary/30 shadow-2xl mb-3">
+                  <img
+                    src="/jesshero.jpeg"
                     alt="Jessica Seiders - CFO & Certified Travel Specialist"
-                    className="w-full h-full object-cover"
+                    className="w-full object-cover object-top"
+                    style={{ maxHeight: '420px' }}
                   />
-                  {/* Subtle overlay for branding consistency */}
-                  <div className="absolute inset-0 bg-primary/10 mix-blend-overlay" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent" />
                 </div>
 
-                {/* Floating badge */}
-                <div className="absolute -bottom-4 -right-4 bg-secondary text-secondary-foreground px-4 py-2 rounded-xl shadow-xl font-serif font-bold text-sm sm:text-base animate-float">
+                {/* Two smaller photos side by side */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="relative rounded-2xl overflow-hidden border-2 border-secondary/30 shadow-xl">
+                    <img
+                      src="/jesshero2.jpeg"
+                      alt="Jessica Seiders holding books"
+                      className="w-full object-cover object-top"
+                      style={{ maxHeight: '220px' }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary/30 to-transparent" />
+                  </div>
+                  <div className="relative rounded-2xl overflow-hidden border-2 border-secondary/30 shadow-xl">
+                    <img
+                      src="/jesshero_01.jpeg"
+                      alt="Jessica Seiders at the bookstore"
+                      className="w-full object-cover object-top"
+                      style={{ maxHeight: '220px' }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary/30 to-transparent" />
+                  </div>
+                </div>
+
+                {/* Floating name badge */}
+                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-secondary text-secondary-foreground px-5 py-2 rounded-xl shadow-xl font-serif font-bold text-sm sm:text-base animate-float whitespace-nowrap">
                   Jessica Seiders
                 </div>
               </div>
