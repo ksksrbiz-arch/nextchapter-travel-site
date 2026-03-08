@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { PartnershipDropdown } from "@/components/PartnershipDropdown";
 import { cn } from "@/lib/utils";
+import { jessicaTrips } from "@/data/jessica-trips";
 
 const FEATURES = [
   {
@@ -51,7 +52,7 @@ const FEATURES = [
   },
 ];
 
-const UPCOMING_TRIPS = [
+const WENDY_GROUP_TRIPS = [
   {
     title: "Morocco: Intentional Group Travel",
     date: "May 16-23, 2026",
@@ -102,11 +103,11 @@ export default function Home() {
   const carouselRef = useRef<HTMLDivElement>(null);
 
   const nextSlide = () => {
-    setCarouselIndex((prev) => (prev + 1) % UPCOMING_TRIPS.length);
+    setCarouselIndex((prev) => (prev + 1) % WENDY_GROUP_TRIPS.length);
   };
 
   const prevSlide = () => {
-    setCarouselIndex((prev) => (prev - 1 + UPCOMING_TRIPS.length) % UPCOMING_TRIPS.length);
+    setCarouselIndex((prev) => (prev - 1 + WENDY_GROUP_TRIPS.length) % WENDY_GROUP_TRIPS.length);
   };
 
   useEffect(() => {
@@ -257,10 +258,10 @@ export default function Home() {
                 Your Travel Expert
               </h2>
               <p className="text-muted-foreground text-base sm:text-lg font-sans mb-4 sm:mb-6 leading-relaxed">
-                Jessica Seiders, CFO of Next Chapter Travel LLC, is a certified travel specialist with expertise in Disney, Universal, Norwegian Cruise Line, Royal Caribbean, Carnival, and more. With years of experience crafting unforgettable journeys, Jessica transforms travel dreams into perfectly executed adventures.
+                Hi, I'm Jessica! As the CFO and a Certified Travel Specialist at Next Chapter Travel LLC, I'm passionate about helping you create memories that last a lifetime. Whether it's the magic of Disney, the thrill of a Universal adventure, or the relaxation of a luxury cruise, I'm here to handle every detail.
               </p>
               <p className="text-muted-foreground text-base sm:text-lg font-sans mb-8 sm:mb-10 leading-relaxed">
-                Whether you're planning a romantic getaway, a family vacation, or a group adventure, Jessica handles every detail—from booking to itinerary planning to on-trip support.
+                My goal is to make your travel planning as stress-free as the vacation itself. From hand-picked destinations to personalized itineraries, I'm dedicated to crafting the perfect journey for you and your loved ones.
               </p>
               <Link href="/plan">
                 <Button className="bg-secondary text-secondary-foreground hover:bg-secondary/90 px-8 py-3 text-lg font-sans font-bold rounded-xl">
@@ -351,25 +352,67 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Upcoming Trips Carousel ── */}
+      {/* ── Jessica's Upcoming Trips Section ── */}
+      <section className="py-16 sm:py-24 bg-black/40 backdrop-blur-sm">
+        <div className="container">
+          <div className="text-center mb-10 sm:mb-16">
+            <Badge className="mb-3 sm:mb-4 bg-secondary/10 text-secondary border-secondary/20 font-sans text-xs tracking-widest uppercase">
+              Jessica's Featured Destinations
+            </Badge>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-foreground mb-3 sm:mb-4">
+              Destinations Anyone Can Book
+            </h2>
+            <p className="text-muted-foreground text-base sm:text-lg max-w-2xl mx-auto font-sans">
+              Explore these hand-picked destinations curated by Jessica. Perfect for families, couples, and solo travelers.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            {jessicaTrips.map((trip) => (
+              <div key={trip.id} className="group bg-card/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-border hover:border-secondary/50 transition-all hover:shadow-2xl">
+                <div className="relative h-48 sm:h-64 overflow-hidden">
+                  <img src={trip.image} alt={trip.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                  <div className="absolute top-4 right-4">
+                    <Badge className="bg-secondary text-secondary-foreground border-0 font-sans text-xs">{trip.date}</Badge>
+                  </div>
+                </div>
+                <div className="p-6 sm:p-8">
+                  <div className="flex items-center gap-2 text-secondary/80 font-sans text-xs mb-2">
+                    <MapPin className="w-3 h-3" />
+                    {trip.destination}
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-serif font-bold mb-3">{trip.title}</h3>
+                  <p className="text-muted-foreground text-sm sm:text-base font-sans mb-6 leading-relaxed">{trip.description}</p>
+                  <Link href="/plan">
+                    <Button className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 font-sans font-bold rounded-xl">
+                      Book This Trip
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Wendy's Group Trips Carousel ── */}
       <section className="py-16 sm:py-24 bg-black/20 backdrop-blur-sm">
         <div className="container">
           <div className="text-center mb-12 sm:mb-16">
             <Badge className="mb-3 sm:mb-4 bg-secondary/10 text-secondary border-secondary/20 font-sans text-xs tracking-widest uppercase">
-              Upcoming Adventures
+              Wendy's Signature Group Trips
             </Badge>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-foreground mb-3 sm:mb-4">
-              Explore Our 2026 Group Trips
+              The Next Chapter Group Travel
             </h2>
             <p className="text-muted-foreground text-base sm:text-lg max-w-2xl mx-auto font-sans">
-              Join Jessica and a community of like-minded women on transformative journeys around the world.
+              Join Wendy and a community of like-minded women on transformative journeys around the world.
             </p>
           </div>
 
           {/* Carousel */}
           <div className="relative">
             <div ref={carouselRef} className="relative h-[500px] sm:h-[600px] rounded-3xl overflow-hidden">
-              {UPCOMING_TRIPS.map((trip, idx) => (
+              {WENDY_GROUP_TRIPS.map((trip, idx) => (
                 <div
                   key={idx}
                   className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
@@ -437,7 +480,7 @@ export default function Home() {
 
             {/* Dot Indicators */}
             <div className="flex items-center justify-center gap-2 mt-6 sm:mt-8">
-              {UPCOMING_TRIPS.map((_, idx) => (
+              {WENDY_GROUP_TRIPS.map((_, idx) => (
                 <button
                   key={idx}
                   onClick={() => setCarouselIndex(idx)}
