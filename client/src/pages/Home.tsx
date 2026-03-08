@@ -9,7 +9,7 @@ import {
   Plane, Shield, Star, ArrowRight, BookOpen, Globe, Users,
   Facebook, Sparkles, Menu, X, Compass
 } from "lucide-react";
-import { PartnershipDropdown } from "@/components/PartnershipDropdown";
+
 import { cn } from "@/lib/utils";
 import { jessicaTrips } from "@/data/jessica-trips";
 
@@ -144,7 +144,7 @@ export default function Home() {
               Every Trip, Perfectly Planned
             </h1>
             <p className="text-lg sm:text-xl text-muted-foreground mb-10 sm:mb-12 font-sans leading-relaxed max-w-2xl mx-auto">
-              From Disney magic to Caribbean cruises, Jessica Seiders (CFO) at Next Chapter Travel LLC creates unforgettable journeys with every detail handled.
+              From Disney magic to Caribbean cruises, Jessica Seiders at Next Chapter Travel LLC creates unforgettable journeys with every detail handled.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
               <Link href="/plan">
@@ -206,7 +206,7 @@ export default function Home() {
                 Your Travel Expert
               </h2>
               <p className="text-muted-foreground text-base sm:text-lg font-sans mb-4 sm:mb-6 leading-relaxed">
-                Hi, I'm Jessica! As the CFO and a Certified Travel Specialist at Next Chapter Travel LLC, I'm passionate about helping you create memories that last a lifetime. Whether it's the magic of Disney, the thrill of a Universal adventure, or the relaxation of a luxury cruise, I'm here to handle every detail.
+                Hi, I'm Jessica! As a Certified Travel Specialist at Next Chapter Travel LLC, I'm passionate about helping you create memories that last a lifetime. Whether it's the magic of Disney, the thrill of a Universal adventure, or the relaxation of a luxury cruise, I'm here to handle every detail.
               </p>
               <p className="text-muted-foreground text-base sm:text-lg font-sans mb-8 sm:mb-10 leading-relaxed">
                 My goal is to make your travel planning as stress-free as the vacation itself. From hand-picked destinations to personalized itineraries, I'm dedicated to crafting the perfect journey for you and your loved ones.
@@ -235,7 +235,7 @@ export default function Home() {
                 <div className="relative rounded-2xl overflow-hidden border-2 border-secondary/30 shadow-2xl mb-3">
                   <img
                     src="/jesshero3.jpeg"
-                    alt="Jessica Seiders - CFO & Certified Travel Specialist"
+                    alt="Jessica Seiders - Certified Travel Specialist"
                     className="w-full object-cover object-top"
                     style={{ maxHeight: '420px' }}
                   />
@@ -351,7 +351,7 @@ export default function Home() {
           <div className="max-w-3xl mx-auto">
             <h2 className="text-4xl sm:text-5xl md:text-6xl font-serif font-bold mb-6 sm:mb-8">Ready to Start Your Next Chapter?</h2>
             <p className="text-lg sm:text-xl text-muted-foreground mb-10 sm:mb-12 font-sans leading-relaxed">
-              Certified in Disney, Universal, Norwegian Cruise Line, Royal Caribbean, Carnival, and more — Jessica Seiders (CFO) at Next Chapter Travel LLC has the expertise to plan any adventure you can imagine.
+              Certified in Disney, Universal, Norwegian Cruise Line, Royal Caribbean, Carnival, and more — Jessica Seiders at Next Chapter Travel LLC has the expertise to plan any adventure you can imagine.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
               <Link href="/plan">
