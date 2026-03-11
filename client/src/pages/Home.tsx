@@ -236,8 +236,7 @@ export default function Home() {
                   <img
                     src="/jesshero3.jpeg"
                     alt="Jessica Seiders - Certified Travel Specialist"
-                    className="w-full object-cover object-top"
-                    style={{ maxHeight: '420px' }}
+                    className="w-full h-auto object-contain"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent" />
                 </div>
@@ -247,8 +246,7 @@ export default function Home() {
                   <img
                     src="/jesshero2.jpeg"
                     alt="Jessica Seiders"
-                    className="w-full object-cover object-top"
-                    style={{ maxHeight: '220px' }}
+                    className="w-full h-auto object-contain"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-primary/30 to-transparent" />
                 </div>
