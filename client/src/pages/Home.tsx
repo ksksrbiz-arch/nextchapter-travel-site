@@ -242,26 +242,15 @@ export default function Home() {
                   <div className="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent" />
                 </div>
 
-                {/* Two smaller photos side by side */}
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="relative rounded-2xl overflow-hidden border-2 border-secondary/30 shadow-xl">
-                    <img
-                      src="/assets/jessica-headshot.jpg"
-                      alt="Jessica Seiders - Professional Headshot"
-                      className="w-full object-cover object-top"
-                      style={{ maxHeight: '220px' }}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-primary/30 to-transparent" />
-                  </div>
-                  <div className="relative rounded-2xl overflow-hidden border-2 border-secondary/30 shadow-xl">
-                    <img
-                      src="/jesshero2.jpeg"
-                      alt="Jessica Seiders"
-                      className="w-full object-cover object-top"
-                      style={{ maxHeight: '220px' }}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-primary/30 to-transparent" />
-                  </div>
+                {/* Single supporting photo */}
+                <div className="relative rounded-2xl overflow-hidden border-2 border-secondary/30 shadow-xl">
+                  <img
+                    src="/jesshero2.jpeg"
+                    alt="Jessica Seiders"
+                    className="w-full object-cover object-top"
+                    style={{ maxHeight: '220px' }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary/30 to-transparent" />
                 </div>
 
                 {/* Floating name badge */}
