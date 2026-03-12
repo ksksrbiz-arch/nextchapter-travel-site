@@ -68,19 +68,19 @@ const DESTINATION_EXAMPLES = [
 
 const TESTIMONIALS = [
   {
-    quote: "Jessica handled every change with grace — when our flight was delayed, she had our transfers rebooked before we landed.",
-    name: "The Parkers",
-    trip: "Orlando + Cruise Combo",
+    quote: "I am late leaving this review, but life is busy. I would recommend Jessica 1000%. We took our first trip. She helped me with anything and everything I needed, no matter my budget, answered my questions, and was so super helpful during my trip! I ended up with severe sunburns and could barely walk. She was amazing. I don't think she knows how much she truly helped me and my whole fam out with the whole trip. I will forever be grateful. I would also most definitely use her in the future to travel five-star all around ❤️",
+    name: "Jamie Hardesty",
+    trip: "January 3rd, 2024",
   },
   {
-    quote: "The portal made everything effortless. Passports, boarding passes, dining times — all in one place on my phone.",
-    name: "Morgan T.",
-    trip: "Western Caribbean Cruise",
+    quote: "Jessica was fantastic to work with. She was so helpful. We'll definitely work together again in the future.",
+    name: "Brandy Cheville Bouldin",
+    trip: "September 16th, 2022",
   },
   {
-    quote: "She built a day-by-day plan that balanced kids’ energy with downtime. Best family trip we’ve ever had.",
-    name: "Chen Family",
-    trip: "Oahu + Aulani",
+    quote: "Five, definitely. You did an amazing job explaining everything. We got a great deal. We had an amazing time.",
+    name: "Poppy Wilson",
+    trip: "Portland, Oregon",
   },
 ];
 const JESSICA_CERTIFICATIONS = [
