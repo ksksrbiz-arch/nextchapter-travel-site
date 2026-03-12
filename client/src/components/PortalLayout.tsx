@@ -63,6 +63,8 @@ const NAV_ITEMS = [
   { href: "/portal/memory-curation", label: "Memory Curation", icon: Images, videoKey: "memory-curation" },
   // Phase 5: Memory Archives & Rebooking
   { href: "/portal/memory-archives", label: "Memory Archives", icon: Archive, videoKey: "memory-archives" },
+  // Phase 6: Business Operations & AI Co-pilot
+  { href: "/portal/business-operations", label: "Business Operations", icon: Zap, videoKey: "business-operations" },
 ];
 
 interface PortalLayoutProps {

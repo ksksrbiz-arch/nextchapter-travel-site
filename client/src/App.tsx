@@ -54,6 +54,9 @@ import MemoryCurationPage from "./pages/portal/MemoryCurationPage";
 // Phase 5: Memory Archives & Rebooking
 import MemoryArchivesPage from "./pages/portal/MemoryArchivesPage";
 
+// Phase 6: Business Operations & AI Co-pilot
+import BusinessOperationsPage from "./pages/portal/BusinessOperationsPage";
+
 // Admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import { AdminClientsList, AdminClientDetail } from "./pages/admin/AdminClients";
@@ -115,6 +118,9 @@ function Router() {
 
       {/* Phase 5: Memory Archives & Rebooking */}
       <Route path="/portal/memory-archives" component={MemoryArchivesPage} />
+
+      {/* Phase 6: Business Operations & AI Co-pilot */}
+      <Route path="/portal/business-operations" component={BusinessOperationsPage} />
 
       {/* Admin dashboard */}
       <Route path="/admin" component={AdminDashboard} />
