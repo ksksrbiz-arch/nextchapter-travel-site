@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   LayoutDashboard, Calendar, FileText, Globe, MessageSquare,
   CheckSquare, Plane, Bell, LogOut, BookOpen, X, ChevronRight, Keyboard,
-  DollarSign, Shield, Cloud, Phone, Users, MapPin, AlertTriangle, Wallet, Heart, Building2, Backpack
+  DollarSign, Shield, Cloud, Phone, Users, MapPin, AlertTriangle, Wallet, Heart, Building2, Backpack, Gift, Heart as HeartIcon, Languages
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
@@ -33,7 +33,7 @@ const NAV_ITEMS = [
   { href: "/portal/packing", label: "Packing List", icon: Backpack, videoKey: "packing" },
   { href: "/portal/bookings", label: "Bookings", icon: Plane, videoKey: "bookings" },
   { href: "/portal/alerts", label: "Alerts", icon: Bell, videoKey: "alerts" },
-  // New Travel Agency Features
+  // Phase 1: Core Travel Features
   { href: "/portal/budget", label: "Budget Tracker", icon: Wallet, videoKey: "budget" },
   { href: "/portal/visa", label: "Visa Checklist", icon: Shield, videoKey: "visa" },
   { href: "/portal/weather", label: "Weather & Alerts", icon: Cloud, videoKey: "weather" },
@@ -43,6 +43,10 @@ const NAV_ITEMS = [
   { href: "/portal/travel-documents", label: "Travel Documents", icon: FileText, videoKey: "travel-documents" },
   { href: "/portal/group-travel", label: "Group Travel", icon: Users, videoKey: "group-travel" },
   { href: "/portal/recommendations", label: "Recommendations", icon: MapPin, videoKey: "recommendations" },
+  // Phase 2: Loyalty & Health Features
+  { href: "/portal/loyalty", label: "Loyalty Programs", icon: Gift, videoKey: "loyalty" },
+  { href: "/portal/vaccination", label: "Vaccinations", icon: HeartIcon, videoKey: "vaccination" },
+  { href: "/portal/translation", label: "Translation Helper", icon: Languages, videoKey: "translation" },
 ];
 
 interface PortalLayoutProps {

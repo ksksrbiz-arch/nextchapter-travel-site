@@ -35,6 +35,9 @@ import RecommendationsPage from "./pages/portal/RecommendationsPage";
 import FlightTrackerPage from "./pages/portal/FlightTrackerPage";
 import HotelPage from "./pages/portal/HotelPage";
 import PackingPage from "./pages/portal/PackingPage";
+import LoyaltyPage from "./pages/portal/LoyaltyPage";
+import VaccinationPage from "./pages/portal/VaccinationPage";
+import TranslationPage from "./pages/portal/TranslationPage";
 
 // Admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -77,6 +80,9 @@ function Router() {
       <Route path="/portal/travel-documents" component={TravelDocumentsPage} />
       <Route path="/portal/group-travel" component={GroupTravelPage} />
       <Route path="/portal/recommendations" component={RecommendationsPage} />
+      <Route path="/portal/loyalty" component={LoyaltyPage} />
+      <Route path="/portal/vaccination" component={VaccinationPage} />
+      <Route path="/portal/translation" component={TranslationPage} />
 
       {/* Admin dashboard */}
       <Route path="/admin" component={AdminDashboard} />
