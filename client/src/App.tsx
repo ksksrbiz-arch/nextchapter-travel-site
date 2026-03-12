@@ -32,6 +32,9 @@ import EmergencyPage from "./pages/portal/EmergencyPage";
 import TravelDocumentsPage from "./pages/portal/TravelDocumentsPage";
 import GroupTravelPage from "./pages/portal/GroupTravelPage";
 import RecommendationsPage from "./pages/portal/RecommendationsPage";
+import FlightTrackerPage from "./pages/portal/FlightTrackerPage";
+import HotelPage from "./pages/portal/HotelPage";
+import PackingPage from "./pages/portal/PackingPage";
 
 // Admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -60,7 +63,9 @@ function Router() {
       <Route path="/portal/documents" component={PortalDocuments} />
       <Route path="/portal/guides" component={PortalGuides} />
       <Route path="/portal/messages" component={PortalMessages} />
-      <Route path="/portal/packing" component={PortalPackingList} />
+      <Route path="/portal/flights" component={FlightTrackerPage} />
+      <Route path="/portal/hotel" component={HotelPage} />
+      <Route path="/portal/packing" component={PackingPage} />
       <Route path="/portal/bookings" component={PortalBookings} />
       <Route path="/portal/alerts" component={PortalAlerts} />
       <Route path="/portal/budget" component={BudgetPage} />

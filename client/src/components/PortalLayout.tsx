@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   LayoutDashboard, Calendar, FileText, Globe, MessageSquare,
   CheckSquare, Plane, Bell, LogOut, BookOpen, X, ChevronRight, Keyboard,
-  DollarSign, Shield, Cloud, Phone, Users, MapPin, AlertTriangle, Wallet, Heart
+  DollarSign, Shield, Cloud, Phone, Users, MapPin, AlertTriangle, Wallet, Heart, Building2, Backpack
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
@@ -28,7 +28,9 @@ const NAV_ITEMS = [
   { href: "/portal/documents", label: "Documents", icon: FileText, videoKey: "documents" },
   { href: "/portal/guides", label: "Destination Guides", icon: Globe, videoKey: "guides" },
   { href: "/portal/messages", label: "Messages", icon: MessageSquare, videoKey: "messages" },
-  { href: "/portal/packing", label: "Packing List", icon: CheckSquare, videoKey: "packing" },
+  { href: "/portal/flights", label: "Flight Tracker", icon: Plane, videoKey: "flights" },
+  { href: "/portal/hotel", label: "Hotel Bookings", icon: Building2, videoKey: "hotel" },
+  { href: "/portal/packing", label: "Packing List", icon: Backpack, videoKey: "packing" },
   { href: "/portal/bookings", label: "Bookings", icon: Plane, videoKey: "bookings" },
   { href: "/portal/alerts", label: "Alerts", icon: Bell, videoKey: "alerts" },
   // New Travel Agency Features
