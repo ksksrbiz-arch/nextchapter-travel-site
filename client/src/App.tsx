@@ -49,6 +49,7 @@ import LocationAwareGuidesPage from "./pages/portal/LocationAwareGuidesPage";
 import CrisisManagementPage from "./pages/portal/CrisisManagementPage";
 import FlightAlternativesPage from "./pages/portal/FlightAlternativesPage";
 import ExpenseTrackerPage from "./pages/portal/ExpenseTrackerPage";
+import MemoryCurationPage from "./pages/portal/MemoryCurationPage";
 
 // Admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -105,6 +106,9 @@ function Router() {
       <Route path="/portal/crisis-management" component={CrisisManagementPage} />
       <Route path="/portal/flight-alternatives" component={FlightAlternativesPage} />
       <Route path="/portal/expense-tracker" component={ExpenseTrackerPage} />
+
+      {/* Phase 4.5: Post-Trip Memory Curation */}
+      <Route path="/portal/memory-curation" component={MemoryCurationPage} />
 
       {/* Admin dashboard */}
       <Route path="/admin" component={AdminDashboard} />
