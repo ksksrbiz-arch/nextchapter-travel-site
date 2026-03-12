@@ -45,6 +45,7 @@ import LocalCurrencyPage from "./pages/portal/LocalCurrencyPage";
 // Phase 4: In-Trip Mobile Experience
 import LiveItineraryPage from "./pages/portal/LiveItineraryPage";
 import FamilyCheckInPage from "./pages/portal/FamilyCheckInPage";
+import LocationAwareGuidesPage from "./pages/portal/LocationAwareGuidesPage";
 
 // Admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -97,6 +98,7 @@ function Router() {
       {/* Phase 4: In-Trip Mobile Experience */}
       <Route path="/portal/live-itinerary" component={LiveItineraryPage} />
       <Route path="/portal/family-checkin" component={FamilyCheckInPage} />
+      <Route path="/portal/location-guides" component={LocationAwareGuidesPage} />
 
       {/* Admin dashboard */}
       <Route path="/admin" component={AdminDashboard} />

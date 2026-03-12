@@ -55,6 +55,7 @@ const NAV_ITEMS = [
   // Phase 4: In-Trip Mobile Experience
   { href: "/portal/live-itinerary", label: "Live Itinerary", icon: Clock, videoKey: "live-itinerary" },
   { href: "/portal/family-checkin", label: "Family Check-in", icon: Users, videoKey: "family-checkin" },
+  { href: "/portal/location-guides", label: "Location Guides", icon: Navigation, videoKey: "location-guides" },
 ];
 
 interface PortalLayoutProps {

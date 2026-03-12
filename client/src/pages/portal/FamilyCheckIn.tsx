@@ -8,7 +8,7 @@
  * - Emergency SOS alerts
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   MapPin,
   Send,
@@ -19,10 +19,14 @@ import {
   MessageSquare,
   Phone,
   MoreVertical,
+  Zap,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { getRealtimeSyncService } from "@/_core/services/realtimeSync";
+import { getPushNotificationService } from "@/_core/services/pushNotifications";
+import { getGeofencingService } from "@/_core/services/geofencing";
 
 interface FamilyMember {
   id: string;
@@ -110,6 +114,88 @@ export function FamilyCheckIn() {
   const [showLocationShare, setShowLocationShare] = useState(false);
   const [selectedMember, setSelectedMember] = useState<string | null>(null);
 
+  // WebSocket and services
+  const realtimeSync = useRef(getRealtimeSyncService());
+  const pushNotifications = useRef(getPushNotificationService());
+  const geofencing = useRef(getGeofencingService());
+  const unsubscribers = useRef<Array<() => void>>([]);
+
+  // Initialize WebSocket and geofencing
+  useEffect(() => {
+    initializeServices();
+
+    return () => {
+      unsubscribers.current.forEach((unsub) => unsub());
+      realtimeSync.current.disconnect();
+      geofencing.current.stopMonitoring();
+    };
+  }, []);
+
+  const initializeServices = async () => {
+    try {
+      // Connect to WebSocket
+      const tripId = "trip-123";
+      const userId = "user-456";
+      await realtimeSync.current.connect(tripId, userId);
+
+      // Subscribe to check-in status updates
+      const unsubStatus = realtimeSync.current.subscribe("checkin-status", (msg) => {
+        const { userId: memberId, status } = msg.data;
+        setMembers((prev) =>
+          prev.map((m) =>
+            m.id === memberId ? { ...m, status, lastCheckIn: Date.now() } : m
+          )
+        );
+      });
+
+      // Subscribe to location updates
+      const unsubLocation = realtimeSync.current.subscribe("location-update", (msg) => {
+        const { userId: memberId, latitude, longitude } = msg.data;
+        setMembers((prev) =>
+          prev.map((m) =>
+            m.id === memberId
+              ? {
+                  ...m,
+                  location: { lat: latitude, lng: longitude }
+                }
+              : m
+          )
+        );
+      });
+
+      unsubscribers.current.push(unsubStatus, unsubLocation);
+
+      // Start location tracking
+      realtimeSync.current.startLocationTracking((location) => {
+        console.log("[FamilyCheckIn] Location updated:", location);
+      });
+
+      // Setup geofencing for trip locations (hotels, airports, etc.)
+      geofencing.current.addGeofence({
+        id: "hotel-1",
+        name: "Hotel Orlando",
+        latitude: 28.5421,
+        longitude: -81.379,
+        radiusKm: 0.5,
+        type: "hotel"
+      });
+
+      const unsubEnter = geofencing.current.on("hotel-1", "enter", (data) => {
+        pushNotifications.current.notifyLocationAlert(
+          data.geofence.name,
+          "You've arrived at your destination"
+        );
+      });
+
+      unsubscribers.current.push(unsubEnter);
+
+      // Start geofence monitoring
+      await geofencing.current.startMonitoring();
+    } catch (err) {
+      console.error("[FamilyCheckIn] Failed to initialize services:", err);
+    }
+  };
+
   const handleCheckIn = (memberId: string) => {
     setMembers(
       members.map((member) =>
@@ -125,6 +211,12 @@ export function FamilyCheckIn() {
 
     const member = members.find((m) => m.id === memberId);
     if (member) {
+      // Send via WebSocket
+      realtimeSync.current.sendCheckInStatus("safe");
+
+      // Show notification
+      pushNotifications.current.notifyCheckInReminder(member.name);
+
       addMessage({
         id: `msg-${Date.now()}`,
         from: member.name,
@@ -144,6 +236,12 @@ export function FamilyCheckIn() {
         m.id === memberId ? { ...m, status: "emergency" } : m
       )
     );
+
+    // Send emergency via WebSocket
+    realtimeSync.current.sendCheckInStatus("emergency");
+
+    // Show emergency notification to all members
+    pushNotifications.current.notifyEmergency(member.name, "Emergency SOS activated");
 
     addMessage({
       id: `emergency-${Date.now()}`,

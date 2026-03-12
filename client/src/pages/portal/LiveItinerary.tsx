@@ -8,7 +8,7 @@
  * - Offline-first syncing
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Calendar,
   MapPin,
@@ -20,11 +20,15 @@ import {
   AlertCircle,
   CheckCircle2,
   Loader,
+  Wifi,
+  WifiOff,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getOfflineSyncService } from "@/_core/services/offlineSync";
+import { getRealtimeSyncService } from "@/_core/services/realtimeSync";
+import { getPushNotificationService } from "@/_core/services/pushNotifications";
 
 interface ItineraryItem {
   id: string;
@@ -46,7 +50,12 @@ export function LiveItinerary() {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
   const [isLoading, setIsLoading] = useState(false);
   const [syncStatus, setSyncStatus] = useState<"idle" | "syncing" | "synced" | "error">("idle");
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [connectedToWebSocket, setConnectedToWebSocket] = useState(false);
   const syncService = getOfflineSyncService();
+  const realtimeSync = useRef(getRealtimeSyncService());
+  const pushNotifications = useRef(getPushNotificationService());
+  const unsubscribers = useRef<Array<() => void>>([])
 
   const [formData, setFormData] = useState({
     time: "",
@@ -57,17 +66,83 @@ export function LiveItinerary() {
     attendees: [] as string[],
   });
 
-  // Load itinerary from local storage on mount
+  // Load itinerary and connect to WebSocket
   useEffect(() => {
     loadItinerary();
+    initializeWebSocket();
+    setupOnlineOfflineListeners();
 
-    // Set up real-time listener (would connect to WebSocket in production)
+    // Set up sync interval
     const interval = setInterval(() => {
       syncPendingItems();
     }, 5000);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      // Cleanup WebSocket listeners
+      unsubscribers.current.forEach((unsub) => unsub());
+      realtimeSync.current.disconnect();
+    };
   }, []);
+
+  // Online/offline detection
+  const setupOnlineOfflineListeners = () => {
+    const handleOnline = () => {
+      setIsOnline(true);
+      pushNotifications.current.notifySystem("Back Online", "Syncing changes...");
+      syncPendingItems();
+    };
+
+    const handleOffline = () => {
+      setIsOnline(false);
+      pushNotifications.current.notifySystem("No Connection", "Changes will sync when online");
+    };
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  };
+
+  // Initialize WebSocket connection
+  const initializeWebSocket = async () => {
+    try {
+      // For production, tripId and userId would come from context/auth
+      const tripId = "trip-123";
+      const userId = "user-456";
+
+      await realtimeSync.current.connect(tripId, userId);
+      setConnectedToWebSocket(true);
+
+      // Subscribe to itinerary updates
+      const unsubUpdate = realtimeSync.current.subscribe("itinerary-update", (msg) => {
+        console.log("[LiveItinerary] Received update:", msg);
+        const item = msg.data as ItineraryItem;
+
+        // Update local state
+        setItems((prev) => {
+          const idx = prev.findIndex((i) => i.id === item.id);
+          if (idx >= 0) {
+            prev[idx] = item;
+          } else {
+            prev.push(item);
+          }
+          return [...prev];
+        });
+
+        // Show notification
+        pushNotifications.current.notifyItineraryUpdate(item.activity, "Updated by " + (item.updatedBy || "you"));
+      });
+
+      unsubscribers.current.push(unsubUpdate);
+    } catch (err) {
+      console.error("[LiveItinerary] Failed to connect WebSocket:", err);
+      setConnectedToWebSocket(false);
+    }
+  };
 
   const loadItinerary = async () => {
     setIsLoading(true);
@@ -120,6 +195,7 @@ export function LiveItinerary() {
       attendees: formData.attendees,
       status: "scheduled",
       lastUpdated: Date.now(),
+      updatedBy: "user-456", // In production, get from auth context
     };
 
     // Add to local state
@@ -131,6 +207,14 @@ export function LiveItinerary() {
       entity: "itinerary",
       data: newItem,
     });
+
+    // Send via WebSocket for real-time broadcast
+    if (connectedToWebSocket) {
+      realtimeSync.current.sendItineraryUpdate(newItem);
+    }
+
+    // Show notification
+    pushNotifications.current.notifyItineraryUpdate(newItem.activity, "Added to itinerary");
 
     // Reset form
     setFormData({
@@ -162,6 +246,7 @@ export function LiveItinerary() {
               ...item,
               status: newStatus,
               lastUpdated: Date.now(),
+              updatedBy: "user-456",
             }
           : item
       )
@@ -169,15 +254,26 @@ export function LiveItinerary() {
 
     const item = items.find((i) => i.id === id);
     if (item) {
+      const updatedItem = {
+        ...item,
+        status: newStatus,
+        lastUpdated: Date.now(),
+        updatedBy: "user-456",
+      };
+
       await syncService.queueAction({
         type: "UPDATE",
         entity: "itinerary",
-        data: {
-          ...item,
-          status: newStatus,
-          lastUpdated: Date.now(),
-        },
+        data: updatedItem,
       });
+
+      // Send via WebSocket
+      if (connectedToWebSocket) {
+        realtimeSync.current.sendItineraryUpdate(updatedItem);
+      }
+
+      // Show notification
+      pushNotifications.current.notifyItineraryUpdate(item.activity, `Marked as ${newStatus}`);
     }
   };
 
@@ -226,6 +322,50 @@ export function LiveItinerary() {
 
   return (
     <div className="space-y-6">
+      {/* Connection Status */}
+      <div className="flex gap-2">
+        {/* Online/Offline Indicator */}
+        <Card className={`flex-1 p-3 border ${
+          isOnline
+            ? "bg-emerald-500/10 border-emerald-500/20"
+            : "bg-red-500/10 border-red-500/20"
+        }`}>
+          <div className="flex items-center gap-2 text-sm">
+            {isOnline ? (
+              <>
+                <Wifi className="w-4 h-4 text-emerald-500" />
+                <span className="text-emerald-700">Online</span>
+              </>
+            ) : (
+              <>
+                <WifiOff className="w-4 h-4 text-red-500" />
+                <span className="text-red-700">Offline</span>
+              </>
+            )}
+          </div>
+        </Card>
+
+        {/* WebSocket Status */}
+        <Card className={`flex-1 p-3 border ${
+          connectedToWebSocket
+            ? "bg-blue-500/10 border-blue-500/20"
+            : "bg-gray-500/10 border-gray-500/20"
+        }`}>
+          <div className="flex items-center gap-2 text-sm">
+            {connectedToWebSocket ? (
+              <>
+                <Loader className="w-4 h-4 text-blue-500" />
+                <span className="text-blue-700">Live Sync</span>
+              </>
+            ) : (
+              <>
+                <AlertCircle className="w-4 h-4 text-gray-500" />
+                <span className="text-gray-700">Offline Mode</span>
+              </>
+            )}
+          </div>
+        </Card>
+      </div>
       {/* Sync Status */}
       {syncStatus !== "idle" && (
         <Card className={`p-3 border ${
