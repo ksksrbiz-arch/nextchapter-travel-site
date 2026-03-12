@@ -505,4 +505,5 @@ class BusinessOperationsService {
   }
 }
 
-export default new BusinessOperationsService();
+export const businessOpsService = new BusinessOperationsService();
+export default businessOpsService;

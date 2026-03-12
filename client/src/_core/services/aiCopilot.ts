@@ -434,4 +434,5 @@ What specific area would you like to explore?`;
   }
 }
 
-export default new AICoPilotService();
+export const aiCopilot = new AICoPilotService();
+export default aiCopilot;

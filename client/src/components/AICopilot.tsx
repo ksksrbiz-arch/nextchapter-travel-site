@@ -1,446 +1,342 @@
-import React, { useState } from 'react';
-import {
-  Send, Lightbulb, Zap, MessageSquare, TrendingUp, AlertCircle, Target,
-  Users, Clock, Sparkles, MoreVertical
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import type { CopiloitInsight, AutomationSuggestion, ChatMessage } from '@/_core/services/aiCopilot';
+import React, { useState, useRef, useEffect } from 'react';
+import { Send, Lightbulb, Zap, MoreVertical, ChevronDown } from 'lucide-react';
+import { aiCopilot } from '../_core/services/aiCopilot';
+import { businessOpsService } from '../_core/services/businessOperations';
 
-interface AICopilotProps {
-  userId?: string;
+interface ChatMessage {
+  id: string;
+  sender: 'user' | 'copilot';
+  message: string;
+  timestamp: Date;
 }
 
-export default function AICopilot({ userId = 'user-123' }: AICopilotProps) {
+interface CopiloitInsight {
+  id: string;
+  type: 'opportunity' | 'risk' | 'recommendation' | 'alert';
+  title: string;
+  description: string;
+  impact: 'low' | 'medium' | 'high';
+  confidence: number;
+  suggestedAction?: string;
+}
+
+interface AutomationSuggestion {
+  id: string;
+  type: 'email' | 'booking' | 'followup' | 'upsell' | 'retention';
+  description: string;
+  priority: 'low' | 'medium' | 'high';
+  estimatedImpact: string;
+  confidence: number;
+  targetClient?: string;
+  targetTrip?: string;
+}
+
+export const AICopilot: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [newMessage, setNewMessage] = useState('');
-  const [insights, setInsights] = useState<CopiloitInsight[]>([]);
-  const [suggestions, setSuggestions] = useState<AutomationSuggestion[]>([]);
-  const [userRole, setUserRole] = useState<'ceo' | 'cfo' | 'director' | 'team'>('cfo');
-  const [view, setView] = useState<'chat' | 'insights' | 'suggestions'>('chat');
-  const [healthScore, setHealthScore] = useState(82);
-  const [loading, setLoading] = useState(false);
+  const [inputValue, setInputValue] = useState('');
+  const [activeTab, setActiveTab] = useState<'chat' | 'insights' | 'automation'>('chat');
+  const [userRole, setUserRole] = useState<'ceo' | 'cfo' | 'director'>('ceo');
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Initialize with welcome message and mock insights
-  React.useEffect(() => {
-    const welcomeMsg: ChatMessage = {
-      id: '1',
-      sender: 'copilot',
-      message: `Welcome back! I'm your business intelligence assistant. As ${userRole === 'ceo' ? 'CEO' : userRole === 'cfo' ? 'CFO' : userRole === 'director' ? 'Director' : 'Team Member'}, I have ${3 + Math.floor(Math.random() * 2)} insights ready for you. How can I help optimize operations today?`,
-      timestamp: Date.now(),
-    };
+  const insights = aiCopilot.generateInsights(businessOpsService.generateAnalytics('month'));
+  const suggestions = aiCopilot.generateAutomationSuggestions(businessOpsService.generateAnalytics('month'));
+  const healthScore = businessOpsService.getHealthScore();
+  const healthRecommendations = aiCopilot.getHealthRecommendations(healthScore);
 
-    setMessages([welcomeMsg]);
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
-    // Initialize insights
-    const mockInsights: CopiloitInsight[] = [
-      {
-        id: '1',
-        type: 'opportunity',
-        title: 'Upsell Opportunity Detected',
-        description: 'Michael Chen is a first-time customer with $9,800 spent. Recommend premium upgrade for his Costa Rica trip (+$2,000 expected value).',
-        impact: 'medium',
-        confidence: 0.88,
-        suggestedAction: 'Send premium package proposal',
-        relatedClient: 'client-2',
-        relatedTrip: 'trip-3',
-      },
-      {
-        id: '2',
-        type: 'risk',
-        title: 'At-Risk Client Detected',
-        description: 'Sarah Johnson is a VIP client with 0 bookings in 5 months. Recommend re-engagement campaign to prevent churn.',
-        impact: 'high',
-        confidence: 0.92,
-        suggestedAction: 'Schedule VIP check-in call',
-        relatedClient: 'client-2',
-      },
-      {
-        id: '3',
-        type: 'recommendation',
-        title: 'Team Workload Balancing',
-        description: 'Jessica is managing 14 active trips (1.4x team average) while Wendy has 8. Consider reassigning upcoming bookings.',
-        impact: 'medium',
-        confidence: 0.85,
-        suggestedAction: 'Review trip assignments',
-      },
-      {
-        id: '4',
-        type: 'alert',
-        title: 'High-Value Destination Opportunity',
-        description: 'Miami trips generate highest revenue ($98K/month). Consider creating exclusive Miami packages with 5-star partner resorts.',
-        impact: 'high',
-        confidence: 0.79,
-        suggestedAction: 'Develop Miami luxury collection',
-      },
-    ];
-
-    const mockSuggestions: AutomationSuggestion[] = [
-      {
-        id: '1',
-        type: 'email',
-        description: 'Welcome email for new client with travel preferences survey',
-        targetClient: 'New Clients',
-        priority: 'high',
-        estimatedImpact: '+15% conversion on follow-up bookings',
-        confidence: 0.95,
-      },
-      {
-        id: '2',
-        type: 'followup',
-        description: 'Post-trip satisfaction survey with photo sharing request',
-        targetTrip: 'Completed Trips',
-        priority: 'high',
-        estimatedImpact: '+8% repeat bookings',
-        confidence: 0.92,
-      },
-      {
-        id: '3',
-        type: 'retention',
-        description: 'VIP exclusive offers for clients inactive 3+ months',
-        targetClient: 'VIP At-Risk',
-        priority: 'medium',
-        estimatedImpact: '+$5,200 revenue from retention',
-        confidence: 0.87,
-      },
-      {
-        id: '4',
-        type: 'upsell',
-        description: 'Premium add-on suggestions based on past trips and preferences',
-        targetClient: 'Active Clients',
-        priority: 'medium',
-        estimatedImpact: '+$3,100 additional revenue per month',
-        confidence: 0.81,
-      },
-      {
-        id: '5',
-        type: 'booking',
-        description: 'Automated confirmations and itinerary delivery',
-        targetTrip: 'Confirmed Trips',
-        priority: 'high',
-        estimatedImpact: '+12% guest satisfaction',
-        confidence: 0.94,
-      },
-    ];
-
-    setInsights(mockInsights);
-    setSuggestions(mockSuggestions);
-  }, [userRole]);
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const handleSendMessage = async () => {
-    if (!newMessage.trim() || loading) return;
+    if (!inputValue.trim()) return;
 
-    const userMsg: ChatMessage = {
-      id: Date.now().toString(),
-      sender: 'user',
-      message: newMessage,
-      timestamp: Date.now(),
-      context: { role: userRole },
+    const newMessage = {
+      id: Math.random().toString(36).substr(2, 9),
+      sender: 'user' as const,
+      message: inputValue,
+      timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMsg]);
-    setNewMessage('');
-    setLoading(true);
+    setMessages(prev => [...prev, newMessage]);
+    setInputValue('');
+    setIsLoading(true);
 
-    // Simulate AI response with delay
+    // Simulate AI response delay
     setTimeout(() => {
-      const responses: Record<string, string> = {
-        help: `I can help you with:
-• **Insights**: Client at-risk detection, upsell opportunities, workload optimization
-• **Automation**: Email campaigns, satisfaction surveys, retention offers
-• **Analytics**: Revenue trends, destination performance, team productivity
-• **Recommendations**: Strategic guidance for business growth
+      const copilotResponse = aiCopilot.generateCopilotResponse(inputValue, {
+        userRole,
+        businessData: businessOpsService.generateAnalytics('month'),
+      });
 
-What would you like to focus on?`,
-        client: `You have ${userRole === 'cfo' ? 45 : 52} active clients with:
-• **VIP Tier**: 8 clients ($4.2M lifetime value)
-• **At-Risk**: 3 clients (inactive 3+ months)
-• **New**: 6 clients (last 30 days)
-• **Satisfaction**: 4.7/5.0 average
-
-Would you like recommendations for any specific segment?`,
-        revenue: `Current revenue metrics:
-• **Monthly**: $156,400 (+12.5% growth)
-• **Per Trip**: $8,200 average
-• **Growth Rate**: 12.5% (strong)
-• **Repeat Clients**: 66% (excellent)
-
-Top opportunities:
-1. Miami packages (+$18K potential)
-2. VIP retention (+$12K potential)
-3. Premium tiers (+$8K potential)`,
-        trip: `Current trip status:
-• **Planning**: 8 trips (awaiting confirmations)
-• **Confirmed**: 12 trips (next 60 days)
-• **In Progress**: 3 trips (departing soon)
-• **Completed**: 28 trips (avg satisfaction 4.8/5)
-
-Critical: 3 trips have pending activity confirmations. Shall I escalate?`,
-        team: `Team performance snapshot:
-**Jessica Seiders (CFO)**
-• Trips: 45 managed | Satisfaction: 4.8★ | Hours: 320
-
-**Wendy (Director)**
-• Trips: 52 managed | Satisfaction: 4.9★ | Hours: 420
-
-Recommendation: Rebalance upcoming assignments to Jessica to prevent burnout.`,
-        automation: `Top automation opportunities (confidence 92%+):
-1. **Welcome emails** for new clients (95%)
-2. **Booking confirmations** for all trips (94%)
-3. **Satisfaction surveys** post-trip (92%)
-4. **VIP retention offers** for at-risk clients (88%)
-
-Ready to execute? I can schedule these today.`,
-        goals: `Strategic recommendations based on your health score (${healthScore}/100):
-
-**Growth Phase** (Current): 
-• Focus on premium tier expansion
-• Develop destination-specific packages
-• Recruit team members (expanding trips)
-
-**Next 90 Days**:
-1. Launch Miami luxury collection
-2. Implement VIP retention program
-3. Develop adventure/cultural niche packages
-
-Would you like detailed implementation plans?`,
+      const aiMessage = {
+        id: Math.random().toString(36).substr(2, 9),
+        sender: 'copilot' as const,
+        message: copilotResponse,
+        timestamp: new Date(),
       };
 
-      let response = responses['help'];
-      const msgLower = newMessage.toLowerCase();
-
-      for (const [key, value] of Object.entries(responses)) {
-        if (msgLower.includes(key)) {
-          response = value;
-          break;
-        }
-      }
-
-      const copilotMsg: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        sender: 'copilot',
-        message: response,
-        timestamp: Date.now(),
-      };
-
-      setMessages(prev => [...prev, copilotMsg]);
-      setLoading(false);
-    }, 500 + Math.random() * 1000);
-  };
-
-  const impactColors = {
-    'low': 'bg-blue-500/20 text-blue-300',
-    'medium': 'bg-yellow-500/20 text-yellow-300',
-    'high': 'bg-red-500/20 text-red-300',
-  };
-
-  const typeIcons = {
-    'opportunity': <TrendingUp className="w-4 h-4" />,
-    'risk': <AlertCircle className="w-4 h-4" />,
-    'recommendation': <Lightbulb className="w-4 h-4" />,
-    'alert': <Zap className="w-4 h-4" />,
-  };
-
-  const suggestionIcons = {
-    'email': '📧',
-    'booking': '✈️',
-    'followup': '📞',
-    'upsell': '⬆️',
-    'retention': '💎',
+      setMessages(prev => [...prev, aiMessage]);
+      setIsLoading(false);
+    }, 800);
   };
 
   return (
-    <div className="flex flex-col h-[600px] bg-gray-900/50 rounded-lg border border-gray-800 overflow-hidden">
-      {/* Header with Controls */}
-      <div className="bg-gradient-to-r from-purple-600/20 to-blue-600/20 border-b border-gray-800 p-4">
+    <div className="h-full flex flex-col bg-white rounded-lg shadow-lg overflow-hidden">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-4 sticky top-0 z-10">
         <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-purple-400" />
-            <h2 className="font-semibold">Business Intelligence Co-pilot</h2>
+          <div>
+            <h2 className="text-2xl font-bold">AI Co-Pilot</h2>
+            <p className="text-blue-100 text-sm">Business intelligence & automation assistant</p>
           </div>
-          <div className="text-sm text-gray-400">Health Score: {healthScore}/100</div>
+          <div className="text-right">
+            <p className="text-blue-100 text-sm">Perspective:</p>
+            <select
+              value={userRole}
+              onChange={(e) => setUserRole(e.target.value as typeof userRole)}
+              className="mt-2 px-3 py-1 bg-white text-gray-900 rounded text-sm font-medium"
+            >
+              <option value="ceo">CEO View</option>
+              <option value="cfo">CFO View</option>
+              <option value="director">Director View</option>
+            </select>
+          </div>
         </div>
 
-        <div className="flex gap-2 flex-wrap">
-          <Button
-            size="sm"
-            variant={view === 'chat' ? 'default' : 'outline'}
-            onClick={() => setView('chat')}
-            className="gap-2"
-          >
-            <MessageSquare className="w-4 h-4" />
-            Chat
-          </Button>
-          <Button
-            size="sm"
-            variant={view === 'insights' ? 'default' : 'outline'}
-            onClick={() => setView('insights')}
-            className="gap-2"
-          >
-            <Lightbulb className="w-4 h-4" />
-            Insights ({insights.length})
-          </Button>
-          <Button
-            size="sm"
-            variant={view === 'suggestions' ? 'default' : 'outline'}
-            onClick={() => setView('suggestions')}
-            className="gap-2"
-          >
-            <Zap className="w-4 h-4" />
-            Suggestions ({suggestions.length})
-          </Button>
-
-          <select
-            value={userRole}
-            onChange={e => setUserRole(e.target.value as any)}
-            className="ml-auto bg-gray-800 border border-gray-700 rounded px-2 py-1 text-xs"
-          >
-            <option value="ceo">CEO View</option>
-            <option value="cfo">CFO View</option>
-            <option value="director">Director View</option>
-            <option value="team">Team Member View</option>
-          </select>
+        {/* Tabs */}
+        <div className="flex gap-4">
+          {['chat', 'insights', 'automation'].map(tab => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab as typeof activeTab)}
+              className={`px-4 py-2 rounded-lg font-medium text-sm transition ${
+                activeTab === tab
+                  ? 'bg-white text-blue-600'
+                  : 'text-blue-100 hover:bg-white/10'
+              }`}
+            >
+              {tab === 'chat' && '💬 Chat'}
+              {tab === 'insights' && '💡 Insights'}
+              {tab === 'automation' && '⚙️ Automation'}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Content Area */}
-      <div className="flex-1 overflow-y-auto p-4">
-        {view === 'chat' && (
-          <div className="space-y-4">
-            {messages.map((msg, idx) => (
-              <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div
-                  className={`max-w-xs px-4 py-2 rounded-lg ${
-                    msg.sender === 'user'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-800 text-gray-100 border border-gray-700'
-                  }`}
-                >
-                  <p className="text-sm whitespace-pre-wrap">{msg.message}</p>
-                  <p className="text-xs mt-1 opacity-70">
-                    {new Date(msg.timestamp).toLocaleTimeString()}
+      {/* Main Content */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Chat Panel */}
+        {activeTab === 'chat' && (
+          <div className="flex-1 flex flex-col">
+            <div className="flex-1 overflow-y-auto p-6 space-y-4">
+              {messages.length === 0 ? (
+                <div className="h-full flex flex-col items-center justify-center">
+                  <div className="text-6xl mb-4">🤖</div>
+                  <p className="text-gray-700 font-medium">Hello! I'm your AI Co-Pilot</p>
+                  <p className="text-gray-500 text-sm text-center max-w-xs mt-2">
+                    Ask me about your business performance, client insights, automation opportunities, or get strategic recommendations.
                   </p>
                 </div>
+              ) : (
+                <>
+                  {messages.map((msg) => (
+                    <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                      <div
+                        className={`max-w-xs lg:max-w-md px-4 py-3 rounded-lg ${
+                          msg.sender === 'user'
+                            ? 'bg-blue-600 text-white rounded-br-none'
+                            : 'bg-gray-100 text-gray-900 rounded-bl-none'
+                        }`}    >
+                        <p className="text-sm">{msg.message}</p>
+                        <p className={`text-xs mt-1 ${msg.sender === 'user' ? 'text-blue-100' : 'text-gray-500'}`}>
+                          {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                  {isLoading && (
+                    <div className="flex justify-start">
+                      <div className="bg-gray-100 px-4 py-3 rounded-lg rounded-bl-none">
+                        <div className="flex gap-2">
+                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  <div ref={messagesEndRef} />
+                </>
+              )}
+            </div>
+
+            {/* Input Input */}
+            <div className="border-t border-gray-200 bg-gray-50 p-4">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                  placeholder="Ask me anything about your business..."
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <button
+                  onClick={handleSendMessage}
+                  disabled={isLoading || !inputValue.trim()}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Send size={20} />
+                </button>
               </div>
-            ))}
-            {loading && (
-              <div className="flex justify-start">
-                <div className="bg-gray-800 px-4 py-2 rounded-lg border border-gray-700">
-                  <div className="flex gap-2 items-center">
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse" />
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }} />
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }} />
-                  </div>
-                </div>
-              </div>
-            )}
+            </div>
           </div>
         )}
 
-        {view === 'insights' && (
-          <div className="space-y-3">
-            {insights.map(insight => (
-              <div key={insight.id} className="bg-gray-800/50 rounded-lg p-3 border border-gray-700 hover:border-purple-600/50 transition">
-                <div className="flex items-start justify-between mb-2">
-                  <div className="flex items-start gap-2 flex-1">
-                    <div className="text-gray-400 mt-1">
-                      {typeIcons[insight.type as keyof typeof typeIcons]}
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-sm">{insight.title}</h4>
-                      <p className="text-xs text-gray-400 mt-1">{insight.description}</p>
+        {/* Insights Panel */}
+        {activeTab === 'insights' && (
+          <div className="flex-1 overflow-y-auto p-6">
+            <div className="grid grid-cols-1 gap-4">
+              {insights.map(insight => (
+                <div key={insight.id} className={`border rounded-lg p-4 ${
+                  insight.type === 'opportunity' ? 'border-green-200 bg-green-50' :
+                  insight.type === 'risk' ? 'border-red-200 bg-red-50' :
+                  insight.type === 'recommendation' ? 'border-blue-200 bg-blue-50' :
+                  'border-orange-200 bg-orange-50'
+                }`}>
+                  <div className="flex items-start justify-between mb-2">
+                    <h4 className="font-semibold text-gray-900">{insight.title}</h4>
+                    <span className={`px-2 py-1 rounded text-xs font-semibold whitespace-nowrap ${
+                      insight.impact === 'high' ? 'bg-red-100 text-red-800' :
+                      insight.impact === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-blue-100 text-blue-800'
+                    }`}>
+                      {insight.impact.toUpperCase()}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-700 mb-3">{insight.description}</p>
+                  {insight.suggestedAction && (
+                    <p className="text-sm text-gray-600 italic border-t border-gray-200 pt-2 mt-2">
+                      💡 {insight.suggestedAction}
+                    </p>
+                  )}
+                  <div className="flex items-center justify-between mt-3">
+                    <span className="text-xs text-gray-600">Confidence</span>
+                    <div className="flex items-center gap-2">
+                      <div className="w-20 bg-gray-200 rounded-full h-2">
+                        <div
+                          className="bg-blue-600 h-2 rounded-full"
+                          style={{ width: `${insight.confidence * 100}%` }}
+                        ></div>
+                      </div>
+                      <span className="text-xs font-semibold text-gray-700">{Math.round(insight.confidence * 100)}%</span>
                     </div>
                   </div>
-                  <button className="p-1 hover:bg-gray-700 rounded">
-                    <MoreVertical className="w-4 h-4 text-gray-500" />
+                </div>
+              ))}
+              {insights.length === 0 && (
+                <div className="text-center py-12">
+                  <Lightbulb size={48} className="mx-auto text-gray-300 mb-4" />
+                  <p className="text-gray-500 font-medium">No insights at this time</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Automation Panel */}
+        {activeTab === 'automation' && (
+          <div className="flex-1 overflow-y-auto p-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {suggestions.map(suggestion => (
+                <div key={suggestion.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <p className="font-semibold text-gray-900 capitalize">{suggestion.type}</p>
+                      <p className="text-sm text-gray-600 mt-1">{suggestion.description}</p>
+                    </div>
+                    <span className={`px-2 py-1 rounded text-xs font-semibold whitespace-nowrap ${
+                      suggestion.priority === 'high' ? 'bg-red-100 text-red-800' :
+                      suggestion.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-blue-100 text-blue-800'
+                    }`}>
+                      {suggestion.priority.charAt(0).toUpperCase() + suggestion.priority.slice(1)}
+                    </span>
+                  </div>
+
+                  <div className="space-y-2 mb-4">
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-600">Estimated Impact:</span>
+                      <span className="font-semibold text-gray-900">{suggestion.estimatedImpact}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-600">Confidence:</span>
+                      <span className="font-semibold text-gray-900">{Math.round(suggestion.confidence * 100)}%</span>
+                    </div>
+                  </div>
+
+                  <button className="w-full px-4 py-2 bg-blue-600 text-white rounded font-medium text-sm hover:bg-blue-700 transition">
+                    Execute Action
                   </button>
                 </div>
-
-                <div className="flex items-center gap-2 mt-3 flex-wrap">
-                  <Badge className={impactColors[insight.impact as keyof typeof impactColors]}>
-                    {insight.impact.toUpperCase()}
-                  </Badge>
-                  <Badge variant="outline" className="text-xs">
-                    {Math.round(insight.confidence * 100)}% confident
-                  </Badge>
-                  {insight.suggestedAction && (
-                    <Button size="sm" className="ml-auto text-xs h-auto py-1">
-                      {insight.suggestedAction}
-                    </Button>
-                  )}
+              ))}
+              {suggestions.length === 0 && (
+                <div className="col-span-full text-center py-12">
+                  <Zap size={48} className="mx-auto text-gray-300 mb-4" />
+                  <p className="text-gray-500 font-medium">No recommendations at this time</p>
                 </div>
-              </div>
-            ))}
+              )}
+            </div>
           </div>
         )}
 
-        {view === 'suggestions' && (
-          <div className="space-y-3">
-            {suggestions.map(sugg => (
-              <div key={sugg.id} className="bg-gray-800/50 rounded-lg p-3 border border-gray-700 hover:border-blue-600/50 transition">
-                <div className="flex items-start gap-3 mb-2">
-                  <div className="text-lg">{suggestionIcons[sugg.type as keyof typeof suggestionIcons]}</div>
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-sm">{sugg.description}</h4>
-                    <p className="text-xs text-gray-400 mt-1">
-                      {sugg.targetClient || sugg.targetTrip}
-                    </p>
-                  </div>
-                </div>
+        {/* Sidebar with Health Score & Recommendations */}
+        <div className="w-72 border-l border-gray-200 bg-gray-50 p-6 overflow-y-auto">
+          <div className="bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg p-6 text-white mb-8">
+            <p className="text-sm font-semibold text-white/80 mb-2">Business Health Score</p>
+            <div className="text-5xl font-bold mb-2">{healthScore}</div>
+            <p className="text-lg font-semibold text-white/90">
+              {healthScore >= 85 ? '🎯 Excellent' : healthScore >= 70 ? '✅ Healthy' : healthScore >= 50 ? '⚠️ Improving' : '🔴 Critical'}
+            </p>
+          </div>
 
-                <div className="flex items-center gap-2 flex-wrap mt-3">
-                  <Badge className="bg-green-500/20 text-green-300 text-xs">
-                    {sugg.estimatedImpact}
-                  </Badge>
-                  <Badge variant="outline" className="text-xs">
-                    {Math.round(sugg.confidence * 100)}% confidence
-                  </Badge>
-                  <Badge
-                    className={`text-xs ${
-                      sugg.priority === 'high'
-                        ? 'bg-red-500/20 text-red-300'
-                        : 'bg-yellow-500/20 text-yellow-300'
-                    }`}
-                  >
-                    {sugg.priority.toUpperCase()}
-                  </Badge>
-                  <Button size="sm" className="ml-auto text-xs h-auto py-1">
-                    Execute
-                  </Button>
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <Lightbulb size={20} className="text-yellow-600" />
+              Strategic Recommendations
+            </h3>
+
+            <div className="space-y-3">
+              {healthRecommendations.map((rec, idx) => (
+                <div key={idx} className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <p className="text-sm text-blue-900">{rec}</p>
                 </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-8 p-4 bg-white rounded-lg border border-gray-200">
+            <p className="text-xs text-gray-600 font-semibold uppercase mb-3">Quick Stats</p>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-600">Active Insights</span>
+                <span className="font-semibold text-gray-900">{insights.length}</span>
               </div>
-            ))}
+              <div className="flex justify-between">
+                <span className="text-gray-600">Suggestions</span>
+                <span className="font-semibold text-gray-900">{suggestions.length}</span>
+              </div>
+            </div>
           </div>
-        )}
-      </div>
-
-      {/* Input Area */}
-      {view === 'chat' && (
-        <div className="border-t border-gray-800 p-4 bg-gray-900/50">
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={newMessage}
-              onChange={e => setNewMessage(e.target.value)}
-              onKeyPress={e => e.key === 'Enter' && handleSendMessage()}
-              placeholder="Ask for insights, automation tips, or strategy..."
-              disabled={loading}
-              className="flex-1 bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm outline-none focus:border-blue-600"
-            />
-            <Button
-              size="sm"
-              onClick={handleSendMessage}
-              disabled={!newMessage.trim() || loading}
-              className="gap-2"
-            >
-              <Send className="w-4 h-4" />
-            </Button>
-          </div>
-          <p className="text-xs text-gray-500 mt-2">
-            💡 Try asking about: revenue, clients, team, automation, goals, or help
-          </p>
         </div>
-      )}
+      </div>
     </div>
   );
-}
+};
+
+export default AICopilot;
