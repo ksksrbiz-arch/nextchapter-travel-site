@@ -58,6 +58,7 @@ const NAV_ITEMS = [
   { href: "/portal/location-guides", label: "Location Guides", icon: Navigation, videoKey: "location-guides" },
   { href: "/portal/crisis-management", label: "Crisis Management", icon: AlertTriangle, videoKey: "crisis-management" },
   { href: "/portal/flight-alternatives", label: "Flight Alternatives", icon: Plane, videoKey: "flight-alternatives" },
+  { href: "/portal/expense-tracker", label: "Expense Tracker", icon: DollarSign, videoKey: "expense-tracker" },
 ];
 
 interface PortalLayoutProps {
