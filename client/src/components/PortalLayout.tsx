@@ -6,7 +6,7 @@ import {
   LayoutDashboard, Calendar, FileText, Globe, MessageSquare,
   CheckSquare, Plane, Bell, LogOut, BookOpen, X, ChevronRight, Keyboard,
   DollarSign, Shield, Cloud, Phone, Users, MapPin, AlertTriangle, Wallet, Heart, Building2, Backpack, Gift, Heart as HeartIcon, Languages, Lock, CreditCard,
-  Clock, Navigation, Smartphone, AlertCircle, TrendingUp
+  Clock, Navigation, Smartphone, AlertCircle, TrendingUp, Zap
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
@@ -56,6 +56,8 @@ const NAV_ITEMS = [
   { href: "/portal/live-itinerary", label: "Live Itinerary", icon: Clock, videoKey: "live-itinerary" },
   { href: "/portal/family-checkin", label: "Family Check-in", icon: Users, videoKey: "family-checkin" },
   { href: "/portal/location-guides", label: "Location Guides", icon: Navigation, videoKey: "location-guides" },
+  { href: "/portal/crisis-management", label: "Crisis Management", icon: AlertTriangle, videoKey: "crisis-management" },
+  { href: "/portal/flight-alternatives", label: "Flight Alternatives", icon: Plane, videoKey: "flight-alternatives" },
 ];
 
 interface PortalLayoutProps {

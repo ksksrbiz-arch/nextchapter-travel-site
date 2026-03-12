@@ -46,6 +46,8 @@ import LocalCurrencyPage from "./pages/portal/LocalCurrencyPage";
 import LiveItineraryPage from "./pages/portal/LiveItineraryPage";
 import FamilyCheckInPage from "./pages/portal/FamilyCheckInPage";
 import LocationAwareGuidesPage from "./pages/portal/LocationAwareGuidesPage";
+import CrisisManagementPage from "./pages/portal/CrisisManagementPage";
+import FlightAlternativesPage from "./pages/portal/FlightAlternativesPage";
 
 // Admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -99,6 +101,8 @@ function Router() {
       <Route path="/portal/live-itinerary" component={LiveItineraryPage} />
       <Route path="/portal/family-checkin" component={FamilyCheckInPage} />
       <Route path="/portal/location-guides" component={LocationAwareGuidesPage} />
+      <Route path="/portal/crisis-management" component={CrisisManagementPage} />
+      <Route path="/portal/flight-alternatives" component={FlightAlternativesPage} />
 
       {/* Admin dashboard */}
       <Route path="/admin" component={AdminDashboard} />
