@@ -51,6 +51,9 @@ import FlightAlternativesPage from "./pages/portal/FlightAlternativesPage";
 import ExpenseTrackerPage from "./pages/portal/ExpenseTrackerPage";
 import MemoryCurationPage from "./pages/portal/MemoryCurationPage";
 
+// Phase 5: Memory Archives & Rebooking
+import MemoryArchivesPage from "./pages/portal/MemoryArchivesPage";
+
 // Admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import { AdminClientsList, AdminClientDetail } from "./pages/admin/AdminClients";
@@ -109,6 +112,9 @@ function Router() {
 
       {/* Phase 4.5: Post-Trip Memory Curation */}
       <Route path="/portal/memory-curation" component={MemoryCurationPage} />
+
+      {/* Phase 5: Memory Archives & Rebooking */}
+      <Route path="/portal/memory-archives" component={MemoryArchivesPage} />
 
       {/* Admin dashboard */}
       <Route path="/admin" component={AdminDashboard} />

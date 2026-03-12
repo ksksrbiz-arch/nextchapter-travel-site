@@ -6,7 +6,7 @@ import {
   LayoutDashboard, Calendar, FileText, Globe, MessageSquare,
   CheckSquare, Plane, Bell, LogOut, BookOpen, X, ChevronRight, Keyboard,
   DollarSign, Shield, Cloud, Phone, Users, MapPin, AlertTriangle, Wallet, Heart, Building2, Backpack, Gift, Heart as HeartIcon, Languages, Lock, CreditCard,
-  Clock, Navigation, Smartphone, AlertCircle, TrendingUp, Zap, Images
+  Clock, Navigation, Smartphone, AlertCircle, TrendingUp, Zap, Images, Archive, Compass
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
@@ -61,6 +61,8 @@ const NAV_ITEMS = [
   { href: "/portal/expense-tracker", label: "Expense Tracker", icon: DollarSign, videoKey: "expense-tracker" },
   // Phase 4.5: Post-Trip Memory Curation
   { href: "/portal/memory-curation", label: "Memory Curation", icon: Images, videoKey: "memory-curation" },
+  // Phase 5: Memory Archives & Rebooking
+  { href: "/portal/memory-archives", label: "Memory Archives", icon: Archive, videoKey: "memory-archives" },
 ];
 
 interface PortalLayoutProps {
