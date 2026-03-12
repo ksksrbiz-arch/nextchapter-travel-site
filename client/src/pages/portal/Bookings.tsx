@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { useTrip } from "@/contexts/TripContext";
 import { Plane, Hotel, Ship, Map, Car, ArrowRight, Hash, Calendar, DollarSign, Loader2 } from "lucide-react";
+import { NoBookingsEmptyState } from "@/components/ui/empty-states";
+import { BookingsSkeleton } from "@/components/ui/skeletons";
 
 const TYPE_CONFIG: Record<string, { icon: React.ElementType; color: string; bg: string; label: string }> = {
   flight: { icon: Plane, color: "text-blue-600", bg: "bg-blue-50", label: "Flight" },
@@ -57,20 +59,12 @@ export default function Bookings() {
 
       {/* Loading */}
       {isLoading && (
-        <div className="flex items-center justify-center py-16">
-          <Loader2 className="w-8 h-8 animate-spin text-secondary" />
-        </div>
+        <BookingsSkeleton />
       )}
 
       {/* Empty state */}
       {!isLoading && tripId && (!bookings || bookings.length === 0) && (
-        <div className="text-center py-16">
-          <Plane className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-          <h3 className="text-lg font-serif font-semibold text-foreground mb-2">No Bookings Yet</h3>
-          <p className="text-muted-foreground font-sans text-sm">
-            Jessica will add your flight, hotel, and tour bookings here once confirmed.
-          </p>
-        </div>
+        <NoBookingsEmptyState />
       )}
 
       {/* Bookings list */}

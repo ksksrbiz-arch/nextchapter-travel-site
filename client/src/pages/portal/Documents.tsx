@@ -13,6 +13,10 @@ import {
   FileText, Upload, Plane, Hotel, Shield, File,
   Download, Trash2, Plus, Loader2, Lock
 } from "lucide-react";
+import { validateForm, ValidationRules } from "@/lib/validation";
+import { FormFieldWrapper, FormErrorSummary } from "@/components/ui/form-errors";
+import { NoDocumentsEmptyState } from "@/components/ui/empty-states";
+import { DocumentsSkeleton } from "@/components/ui/skeletons";
 
 const DOC_TYPES = [
   { value: "passport", label: "Passport", icon: "🛂" },
@@ -44,7 +48,34 @@ export default function Documents() {
     notes: "",
   });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [errors, setErrors] = useState<Record<string, string | undefined>>({});
   const fileRef = useRef<HTMLInputElement>(null);
+
+  const validationRules: ValidationRules = {
+    name: {
+      required: "Document name is required",
+      minLength: { value: 2, message: "Name must be at least 2 characters" },
+      maxLength: { value: 100, message: "Name must not exceed 100 characters" },
+    },
+    type: {
+      required: "Document type is required",
+    },
+    file: {
+      required: "Please select a file",
+      validate: (value) => {
+        if (!selectedFile) return "Please select a file";
+        const maxSize = 20 * 1024 * 1024; // 20MB
+        if (selectedFile.size > maxSize) {
+          return "File size must not exceed 20MB";
+        }
+        const validTypes = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
+        if (!validTypes.includes(selectedFile.type)) {
+          return "Only PDF, JPG, PNG, and WebP files are allowed";
+        }
+        return true;
+      },
+    },
+  };
 
   const createDoc = trpc.documents.create.useMutation({
     onSuccess: () => {
@@ -52,6 +83,7 @@ export default function Documents() {
       setOpen(false);
       setForm({ name: "", type: "other", notes: "" });
       setSelectedFile(null);
+      setErrors({});
       refetch();
     },
     onError: (e) => toast.error(e.message),
@@ -63,15 +95,22 @@ export default function Documents() {
   });
 
   const handleUpload = async () => {
-    if (!selectedFile || !form.name) {
-      toast.error("Please provide a name and select a file");
+    // Validate form
+    const formErrors = validateForm(
+      { name: form.name, type: form.type, file: selectedFile },
+      validationRules
+    );
+    setErrors(formErrors);
+
+    if (Object.values(formErrors).some((e) => e)) {
       return;
     }
+
     setUploading(true);
     try {
       // Upload file via fetch to a simple upload endpoint
       const formData = new FormData();
-      formData.append("file", selectedFile);
+      formData.append("file", selectedFile!);
       const res = await fetch("/api/upload", { method: "POST", body: formData });
       if (!res.ok) throw new Error("Upload failed");
       const { url, key } = await res.json();
@@ -81,8 +120,8 @@ export default function Documents() {
         type: form.type as any,
         fileUrl: url,
         fileKey: key,
-        mimeType: selectedFile.type,
-        fileSize: selectedFile.size,
+        mimeType: selectedFile!.type,
+        fileSize: selectedFile!.size,
         notes: form.notes || undefined,
       });
     } catch (e: any) {
@@ -106,7 +145,12 @@ export default function Documents() {
           <Lock className="w-4 h-4 text-green-600" />
           <span>All documents are encrypted and secure</span>
         </div>
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={(newOpen) => {
+          setOpen(newOpen);
+          if (!newOpen) {
+            setErrors({});
+          }
+        }}>
           <DialogTrigger asChild>
             <Button className="bg-primary text-primary-foreground hover:bg-primary/90 font-sans">
               <Plus className="w-4 h-4 mr-2" />
@@ -118,19 +162,38 @@ export default function Documents() {
               <DialogTitle className="font-serif">Upload Document</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 pt-2">
-              <div>
-                <Label className="font-sans text-sm font-medium">Document Name</Label>
+              {Object.values(errors).some((e) => e) && (
+                <FormErrorSummary errors={errors} className="mb-4" />
+              )}
+              <FormFieldWrapper
+                label="Document Name"
+                required
+                error={errors.name}
+              >
                 <Input
                   value={form.name}
-                  onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                  onChange={e => {
+                    setForm(f => ({ ...f, name: e.target.value }));
+                    if (errors.name) {
+                      setErrors(e => ({ ...e, name: undefined }));
+                    }
+                  }}
                   placeholder="e.g., John's Passport"
-                  className="mt-1.5 font-sans"
+                  className="font-sans"
                 />
-              </div>
-              <div>
-                <Label className="font-sans text-sm font-medium">Document Type</Label>
-                <Select value={form.type} onValueChange={v => setForm(f => ({ ...f, type: v as any }))}>
-                  <SelectTrigger className="mt-1.5 font-sans">
+              </FormFieldWrapper>
+              <FormFieldWrapper
+                label="Document Type"
+                required
+                error={errors.type}
+              >
+                <Select value={form.type} onValueChange={v => {
+                  setForm(f => ({ ...f, type: v as any }));
+                  if (errors.type) {
+                    setErrors(e => ({ ...e, type: undefined }));
+                  }
+                }}>
+                  <SelectTrigger className="font-sans">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -141,11 +204,15 @@ export default function Documents() {
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
-              <div>
-                <Label className="font-sans text-sm font-medium">File</Label>
+              </FormFieldWrapper>
+              <FormFieldWrapper
+                label="File"
+                required
+                error={errors.file}
+                helpText="Supported: PDF, JPG, PNG, WebP (max 20MB)"
+              >
                 <div
-                  className="mt-1.5 border-2 border-dashed border-border rounded-xl p-6 text-center cursor-pointer hover:border-secondary/50 hover:bg-secondary/5 transition-colors"
+                  className="border-2 border-dashed border-border rounded-xl p-6 text-center cursor-pointer hover:border-secondary/50 hover:bg-secondary/5 transition-colors"
                   onClick={() => fileRef.current?.click()}
                 >
                   <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
@@ -157,19 +224,25 @@ export default function Documents() {
                     type="file"
                     accept=".pdf,.jpg,.jpeg,.png,.webp"
                     className="hidden"
-                    onChange={e => setSelectedFile(e.target.files?.[0] ?? null)}
+                    onChange={e => {
+                      setSelectedFile(e.target.files?.[0] ?? null);
+                      if (errors.file) {
+                        setErrors(err => ({ ...err, file: undefined }));
+                      }
+                    }}
                   />
                 </div>
-              </div>
-              <div>
-                <Label className="font-sans text-sm font-medium">Notes (optional)</Label>
+              </FormFieldWrapper>
+              <FormFieldWrapper
+                label="Notes (optional)"
+              >
                 <Input
                   value={form.notes}
                   onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
                   placeholder="e.g., Expires Dec 2028"
-                  className="mt-1.5 font-sans"
+                  className="font-sans"
                 />
-              </div>
+              </FormFieldWrapper>
               <Button
                 className="w-full bg-primary text-primary-foreground font-sans"
                 onClick={handleUpload}
@@ -185,26 +258,22 @@ export default function Documents() {
 
       {/* Loading */}
       {isLoading && (
-        <div className="flex items-center justify-center py-16">
-          <Loader2 className="w-8 h-8 animate-spin text-secondary" />
-        </div>
+        <DocumentsSkeleton />
       )}
 
       {/* Empty state */}
       {!isLoading && (!documents || documents.length === 0) && (
-        <div className="text-center py-16">
-          <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-          <h3 className="text-lg font-serif font-semibold text-foreground mb-2">No Documents Yet</h3>
-          <p className="text-muted-foreground font-sans text-sm mb-6">
-            Upload your travel documents to keep them safe and accessible anywhere.
-          </p>
-          <Button
-            className="bg-primary text-primary-foreground font-sans"
-            onClick={() => setOpen(true)}
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Upload Your First Document
-          </Button>
+        <div>
+          <NoDocumentsEmptyState />
+          <div className="text-center mt-6">
+            <Button
+              className="bg-primary text-primary-foreground font-sans"
+              onClick={() => setOpen(true)}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Upload Your First Document
+            </Button>
+          </div>
         </div>
       )}
 

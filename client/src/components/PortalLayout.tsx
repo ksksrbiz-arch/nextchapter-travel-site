@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   LayoutDashboard, Calendar, FileText, Globe, MessageSquare,
-  CheckSquare, Plane, Bell, LogOut, BookOpen, X, ChevronRight
+  CheckSquare, Plane, Bell, LogOut, BookOpen, X, ChevronRight, Keyboard
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
@@ -16,6 +16,9 @@ import { useVideoHero, VIDEO_CATALOG } from "@/contexts/VideoHeroContext";
 import { preloadVideo } from "@/components/GlobalVideoBackground";
 import { TripProvider } from "@/contexts/TripContext";
 import TripSwitcher from "@/components/TripSwitcher";
+import { CommandPalette, useCommandPalette } from "@/components/ui/command-palette";
+import { KeyboardShortcutsHelp, useKeyboardShortcutsHelp } from "@/components/ui/keyboard-shortcuts-help";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 
 const NAV_ITEMS = [
   { href: "/portal", label: "Dashboard", icon: LayoutDashboard, exact: true, videoKey: "dashboard" },
@@ -36,9 +39,21 @@ interface PortalLayoutProps {
 
 export default function PortalLayout({ children, title, subtitle }: PortalLayoutProps) {
   const { user, logout } = useAuth();
-  const [location] = useLocation();
+  const [location, navigate] = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { setVideoContext } = useVideoHero();
+  
+  // Command palette and keyboard shortcuts
+  const commandPalette = useCommandPalette();
+  const shortcutsHelp = useKeyboardShortcutsHelp();
+  
+  // Navigation shortcuts
+  useKeyboardShortcuts([
+    { combo: { key: "1", alt: true }, handler: () => navigate("/portal"), description: "Dashboard" },
+    { combo: { key: "2", alt: true }, handler: () => navigate("/portal/itinerary"), description: "Itinerary" },
+    { combo: { key: "3", alt: true }, handler: () => navigate("/portal/messages"), description: "Messages" },
+    { combo: { key: "4", alt: true }, handler: () => navigate("/portal/packing"), description: "Packing" },
+  ]);
 
   // Set video context based on current route on mount and route change
   useEffect(() => {
@@ -210,6 +225,15 @@ export default function PortalLayout({ children, title, subtitle }: PortalLayout
             </div>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
+            {/* Quick search button (opens command palette) */}
+            <button
+              onClick={commandPalette.open}
+              className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/50 border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors text-sm font-sans"
+              aria-label="Search (⌘K)"
+            >
+              <span className="text-xs">Search...</span>
+              <kbd className="px-1.5 py-0.5 rounded bg-background border border-border text-[10px] font-mono">⌘K</kbd>
+            </button>
             <TripSwitcher />
             <Badge className="bg-secondary/10 text-secondary border-secondary/20 font-sans text-xs hidden sm:flex">
               Client Portal
@@ -226,6 +250,18 @@ export default function PortalLayout({ children, title, subtitle }: PortalLayout
 
       {/* Mobile bottom navigation */}
       <MobileBottomNav />
+      
+      {/* Command palette (⌘K) */}
+      <CommandPalette 
+        isOpen={commandPalette.isOpen} 
+        onClose={commandPalette.close} 
+      />
+      
+      {/* Keyboard shortcuts help (/) */}
+      <KeyboardShortcutsHelp 
+        isOpen={shortcutsHelp.isOpen} 
+        onClose={shortcutsHelp.close} 
+      />
     </div>
     </TripProvider>
   );

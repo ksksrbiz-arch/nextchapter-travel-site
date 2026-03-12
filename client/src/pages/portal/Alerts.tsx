@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Bell, Info, AlertTriangle, AlertOctagon, CheckCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { NoAlertsEmptyState } from "@/components/ui/empty-states";
+import { AlertsSkeleton } from "@/components/ui/skeletons";
 
 const SEVERITY_CONFIG = {
   info: { icon: Info, color: "text-blue-600", bg: "bg-blue-50 border-blue-200", badge: "bg-blue-100 text-blue-800", label: "Info" },
@@ -25,19 +27,11 @@ export default function Alerts() {
   return (
     <PortalLayout title="Travel Alerts" subtitle="Important updates from Jessica">
       {isLoading && (
-        <div className="flex items-center justify-center py-16">
-          <Loader2 className="w-8 h-8 animate-spin text-secondary" />
-        </div>
+        <AlertsSkeleton />
       )}
 
       {!isLoading && (!alerts || alerts.length === 0) && (
-        <div className="text-center py-16">
-          <Bell className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-          <h3 className="text-lg font-serif font-semibold text-foreground mb-2">No Alerts</h3>
-          <p className="text-muted-foreground font-sans text-sm">
-            You're all clear! Jessica will send important travel updates here.
-          </p>
-        </div>
+        <NoAlertsEmptyState />
       )}
 
       {unread.length > 0 && (

@@ -5,6 +5,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Globe, MapPin, DollarSign, Languages, Clock, Sun, Phone, Lightbulb, Loader2, Search } from "lucide-react";
+import { NoGuidesEmptyState, NoResults } from "@/components/ui/empty-states";
+import { GuidesSkeleton } from "@/components/ui/skeletons";
 
 export default function Guides() {
   const { data: guides, isLoading } = trpc.guides.list.useQuery();
@@ -174,20 +176,12 @@ export default function Guides() {
 
       {/* Loading */}
       {isLoading && (
-        <div className="flex items-center justify-center py-16">
-          <Loader2 className="w-8 h-8 animate-spin text-secondary" />
-        </div>
+        <GuidesSkeleton />
       )}
 
       {/* Empty state */}
       {!isLoading && filtered.length === 0 && (
-        <div className="text-center py-16">
-          <Globe className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-          <h3 className="text-lg font-serif font-semibold text-foreground mb-2">No Guides Available</h3>
-          <p className="text-muted-foreground font-sans text-sm">
-            {search ? "No destinations match your search." : "Jessica will add destination guides for your trips."}
-          </p>
-        </div>
+        search ? <NoResults query={search} /> : <NoGuidesEmptyState />
       )}
 
       {/* Guides grid */}

@@ -13,6 +13,8 @@ import { toast } from "sonner";
 import {
   AttachmentPicker, AttachmentPreview, AttachmentBubble, AttachmentMeta
 } from "@/components/ChatAttachment";
+import { NoMessagesEmptyState } from "@/components/ui/empty-states";
+import { MessagesSkeleton } from "@/components/ui/skeletons";
 
 type Message = {
   id: number;
@@ -31,6 +33,7 @@ type Message = {
 export default function Messages() {
   const { user } = useAuth();
   const [input, setInput] = useState("");
+  const [inputError, setInputError] = useState<string | undefined>();
   const [messages, setMessages] = useState<Message[]>([]);
   const [jessicaIsTyping, setJessicaIsTyping] = useState(false);
   const [typingTimeout, setTypingTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
@@ -38,6 +41,8 @@ export default function Messages() {
   const [pendingAttachment, setPendingAttachment] = useState<AttachmentMeta | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const MAX_MESSAGE_LENGTH = 4000;
 
   // Fetch all users to find admin (Jessica)
   const { data: allUsers } = trpc.admin.clients.useQuery(undefined, {
@@ -133,8 +138,22 @@ export default function Messages() {
   });
 
   const handleSend = () => {
-    if ((!input.trim() && !pendingAttachment) || !adminUserId) return;
-    const content = input.trim() || (pendingAttachment ? "" : "");
+    const content = input.trim();
+    
+    // Validation
+    if (!content && !pendingAttachment) {
+      setInputError("Please enter a message or attach a file");
+      return;
+    }
+    
+    if (content && content.length > MAX_MESSAGE_LENGTH) {
+      setInputError(`Message must not exceed ${MAX_MESSAGE_LENGTH} characters`);
+      return;
+    }
+    
+    if (!adminUserId) return;
+    
+    setInputError(undefined);
     const att = pendingAttachment;
 
     // Optimistic update
@@ -177,7 +196,22 @@ export default function Messages() {
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInput(e.target.value);
+    const newValue = e.target.value;
+    setInput(newValue);
+    
+    // Clear error when user starts typing
+    if (inputError) {
+      setInputError(undefined);
+    }
+    
+    // Warn if approaching limit
+    if (newValue.length > MAX_MESSAGE_LENGTH * 0.9) {
+      const remaining = MAX_MESSAGE_LENGTH - newValue.length;
+      if (remaining <= 0) {
+        setInputError(`Message exceeds ${MAX_MESSAGE_LENGTH} character limit`);
+      }
+    }
+    
     e.target.style.height = "auto";
     e.target.style.height = Math.min(e.target.scrollHeight, 120) + "px";
     if (!adminUserId) return;
@@ -216,7 +250,7 @@ export default function Messages() {
     }
   }
 
-  const canSend = (input.trim().length > 0 || !!pendingAttachment) && !!adminUserId && !sendMutation.isPending;
+  const canSend = (input.trim().length > 0 || !!pendingAttachment) && !!adminUserId && !sendMutation.isPending && !inputError;
 
   return (
     <PortalLayout title="Messages" subtitle="Chat with Jessica">
@@ -256,14 +290,7 @@ export default function Messages() {
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-1 bg-muted/20">
           {isLoading && (
-            <div className="flex justify-center py-8">
-              <div className="flex gap-1">
-                {[0, 1, 2].map((i) => (
-                  <div key={i} className="w-2 h-2 rounded-full bg-muted-foreground/30 animate-bounce"
-                    style={{ animationDelay: `${i * 0.15}s` }} />
-                ))}
-              </div>
-            </div>
+            <MessagesSkeleton />
           )}
 
           {!isLoading && messages.length === 0 && (
@@ -373,34 +400,61 @@ export default function Messages() {
         )}
 
         {/* Input Area */}
-        <div className="flex items-end gap-1 sm:gap-2 p-3 sm:p-4 border-t border-border bg-card flex-shrink-0"
+        <div className="flex flex-col gap-2 p-3 sm:p-4 border-t border-border bg-card flex-shrink-0"
           style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}>
+          
+          {inputError && (
+            <div className="flex items-center gap-2 text-xs text-red-600 dark:text-red-400">
+              <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+              </svg>
+              {inputError}
+            </div>
+          )}
 
-          <AttachmentPicker
-            onAttachment={setPendingAttachment}
-            disabled={sendMutation.isPending}
-          />
+          <div className="flex items-end gap-1 sm:gap-2">
+            <AttachmentPicker
+              onAttachment={setPendingAttachment}
+              disabled={sendMutation.isPending}
+            />
 
-          <Textarea
-            ref={textareaRef}
-            value={input}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-            placeholder={pendingAttachment ? "Add a caption..." : "Message Jessica..."}
-            className="flex-1 font-sans border-border resize-none min-h-[44px] max-h-[120px] py-2.5 text-sm leading-relaxed rounded-xl"
-            rows={1}
-          />
-          <Button
-            onClick={handleSend}
-            disabled={!canSend}
-            size="icon"
-            className={cn(
-              "h-11 w-11 rounded-full flex-shrink-0 transition-all duration-200",
-              canSend ? "bg-primary hover:bg-primary/90 active:scale-95" : "bg-muted text-muted-foreground"
-            )}
-          >
-            <Send className="w-4 h-4" />
-          </Button>
+            <div className="flex-1 relative">
+              <Textarea
+                ref={textareaRef}
+                value={input}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                placeholder={pendingAttachment ? "Add a caption..." : "Message Jessica..."}
+                className={cn(
+                  "w-full font-sans border-border resize-none min-h-[44px] max-h-[120px] py-2.5 px-3 text-sm leading-relaxed rounded-xl transition-colors",
+                  inputError && input.length > MAX_MESSAGE_LENGTH * 0.9 ? "border-red-300 focus:border-red-500" : ""
+                )}
+                rows={1}
+              />
+              {input.length > 0 && (
+                <div className={cn(
+                  "absolute bottom-2 right-3 text-xs font-sans",
+                  input.length > MAX_MESSAGE_LENGTH * 0.9
+                    ? "text-red-600 dark:text-red-400 font-medium"
+                    : "text-muted-foreground"
+                )}>
+                  {input.length}/{MAX_MESSAGE_LENGTH}
+                </div>
+              )}
+            </div>
+
+            <Button
+              onClick={handleSend}
+              disabled={!canSend}
+              size="icon"
+              className={cn(
+                "h-11 w-11 rounded-full flex-shrink-0 transition-all duration-200",
+                canSend ? "bg-primary hover:bg-primary/90 active:scale-95" : "bg-muted text-muted-foreground"
+              )}
+            >
+              <Send className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
       </div>
     </PortalLayout>

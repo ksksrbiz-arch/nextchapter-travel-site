@@ -7,7 +7,8 @@ import { useEffect, useRef, useState } from "react";
 import {
   MapPin, MessageSquare, FileText, CheckSquare, Calendar,
   Plane, Shield, Star, ArrowRight, BookOpen, Globe, Users,
-  Facebook, Sparkles, Menu, X, Compass
+  Facebook, Instagram, Sparkles, Menu, X, Compass, ChevronUp,
+  Award, Heart, Ship, Castle
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -82,13 +83,27 @@ const TESTIMONIALS = [
     trip: "Oahu + Aulani",
   },
 ];
+const JESSICA_CERTIFICATIONS = [
+  { icon: Castle, label: "Disney Specialist" },
+  { icon: Ship, label: "Royal Caribbean Expert" },
+  { icon: Globe, label: "Universal Specialist" },
+  { icon: Award, label: "Certified Travel Advisor" },
+];
 
+const JESSICA_PHOTOS = [
+  { src: "/jesshero3.jpeg", alt: "Jessica Seiders - Your Travel Expert" },
+  { src: "/jesshero.jpeg", alt: "Jessica planning a trip" },
+  { src: "/jesshero2.jpeg", alt: "Jessica with happy clients" },
+  { src: "/jesshero_01.jpeg", alt: "Jessica at a destination" },
+];
 
 
 export default function Home() {
   const { setVideoContext } = useVideoHero();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [activePhotoIndex, setActivePhotoIndex] = useState(0);
 
 
 
@@ -97,6 +112,7 @@ export default function Home() {
     
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
+      setShowScrollTop(window.scrollY > 400);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -122,6 +138,7 @@ export default function Home() {
           <div className="hidden md:flex items-center gap-8">
             <a href="#features" className="text-foreground hover:text-secondary transition-colors font-sans text-sm">Features</a>
             <a href="#how-it-works" className="text-foreground hover:text-secondary transition-colors font-sans text-sm">How It Works</a>
+            <a href="#about-jessica" className="text-foreground hover:text-secondary transition-colors font-sans text-sm">About Jessica</a>
               <Link href="/plan-my-trip">
               <Button size="sm" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-sans font-bold">
                 Plan My Trip
@@ -137,31 +154,54 @@ export default function Home() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 hover:bg-secondary/10 rounded-lg transition-colors"
+            className="md:hidden p-3 min-w-[48px] min-h-[48px] flex items-center justify-center hover:bg-secondary/10 rounded-xl transition-colors active:scale-95"
+            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
 
         {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="md:hidden bg-primary/95 backdrop-blur-md border-t border-border">
-            <div className="container py-4 flex flex-col gap-4">
-              <a href="#features" className="text-foreground hover:text-secondary transition-colors font-sans">Features</a>
-              <a href="#how-it-works" className="text-foreground hover:text-secondary transition-colors font-sans">How It Works</a>
-                <Link href="/plan-my-trip">
-                <Button className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 font-sans font-bold">
+        <div className={cn(
+          "md:hidden bg-primary/98 backdrop-blur-lg border-t border-border overflow-hidden transition-all duration-300 ease-out",
+          mobileMenuOpen ? "max-h-[400px] opacity-100" : "max-h-0 opacity-0"
+        )}>
+          <div className="container py-6 flex flex-col gap-3">
+            <a 
+              href="#features" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-foreground hover:text-secondary transition-colors font-sans py-3 px-4 rounded-xl hover:bg-secondary/10 min-h-[48px] flex items-center active:scale-98"
+            >
+              Features
+            </a>
+            <a 
+              href="#how-it-works" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-foreground hover:text-secondary transition-colors font-sans py-3 px-4 rounded-xl hover:bg-secondary/10 min-h-[48px] flex items-center active:scale-98"
+            >
+              How It Works
+            </a>
+            <a 
+              href="#about-jessica" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-foreground hover:text-secondary transition-colors font-sans py-3 px-4 rounded-xl hover:bg-secondary/10 min-h-[48px] flex items-center active:scale-98"
+            >
+              About Jessica
+            </a>
+            <div className="pt-3 border-t border-border/50 flex flex-col gap-3">
+              <Link href="/plan-my-trip" onClick={() => setMobileMenuOpen(false)}>
+                <Button className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 font-sans font-bold min-h-[52px] text-base rounded-xl active:scale-98 transition-transform">
                   Plan My Trip
                 </Button>
               </Link>
               <a href={getLoginUrl()} className="w-full">
-                <Button variant="outline" className="w-full bg-background/40 backdrop-blur-md border-border hover:bg-background/60 font-sans font-bold">
+                <Button variant="outline" className="w-full bg-background/40 backdrop-blur-md border-border hover:bg-background/60 font-sans font-bold min-h-[52px] text-base rounded-xl active:scale-98 transition-transform">
                   Client Portal
                 </Button>
               </a>
             </div>
           </div>
-        )}
+        </div>
       </nav>
 
       {/* ── Hero Section ── */}
@@ -315,65 +355,112 @@ export default function Home() {
       </section>
 
       {/* ── About Jessica Section ── */}
-      <section className="py-16 sm:py-24 relative">
+      <section id="about-jessica" className="py-16 sm:py-24 relative">
         <div className="container">
-          <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
+          <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-start">
             <div className="order-last md:order-first">
               <Badge className="mb-4 sm:mb-6 bg-secondary/10 text-secondary border-secondary/20 font-sans text-xs tracking-widest uppercase">
-                Meet Jessica
+                Meet Your Travel Expert
               </Badge>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold mb-6 sm:mb-8">
-                Your Travel Expert
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold mb-4 sm:mb-6">
+                Jessica Seiders
               </h2>
-              <p className="text-muted-foreground text-base sm:text-lg font-sans mb-4 sm:mb-6 leading-relaxed">
-                Hi, I'm Jessica! As a Certified Travel Specialist at Next Chapter Travel LLC, I'm passionate about helping you create memories that last a lifetime. Whether it's the magic of Disney, the thrill of a Universal adventure, or the relaxation of a luxury cruise, I'm here to handle every detail.
+              <p className="text-secondary font-sans font-semibold text-lg mb-6">
+                Founder & Certified Travel Advisor
               </p>
-              <p className="text-muted-foreground text-base sm:text-lg font-sans mb-8 sm:mb-10 leading-relaxed">
-                My goal is to make your travel planning as stress-free as the vacation itself. From hand-picked destinations to personalized itineraries, I'm dedicated to crafting the perfect journey for you and your loved ones.
-              </p>
-              <Link href="/plan-my-trip">
-                <Button className="bg-secondary text-secondary-foreground hover:bg-secondary/90 px-8 py-3 text-lg font-sans font-bold rounded-xl">
-                  Start Planning With Jessica
-                </Button>
-              </Link>
-              <div className="mt-10 sm:mt-12 pt-10 sm:pt-12 border-t border-border">
-                <p className="text-sm font-sans text-muted-foreground mb-4">Connect with Jessica on social media:</p>
-                <a href="https://www.facebook.com/nextchaptertravel" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-secondary hover:text-secondary/80 transition-colors">
-                  <Facebook className="w-5 h-5" />
-                  <span className="font-sans font-semibold">Facebook</span>
+              
+              {/* Certification Badges - Mobile scrollable */}
+              <div className="flex flex-wrap gap-2 sm:gap-3 mb-6 sm:mb-8">
+                {JESSICA_CERTIFICATIONS.map((cert) => (
+                  <div key={cert.label} className="flex items-center gap-2 bg-secondary/10 border border-secondary/20 px-3 py-2 rounded-xl text-sm font-sans">
+                    <cert.icon className="w-4 h-4 text-secondary" />
+                    <span className="text-foreground">{cert.label}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="space-y-4 sm:space-y-5 text-muted-foreground text-base sm:text-lg font-sans leading-relaxed">
+                <p>
+                  Hi, I'm Jessica! As the founder of Next Chapter Travel LLC, I bring over a decade of travel expertise and an unwavering passion for creating unforgettable vacation experiences.
+                </p>
+                <p>
+                  Whether it's the magic of Disney parks, the thrill of Universal adventures, the relaxation of an all-inclusive beach resort, or the wonder of a luxury cruise, I handle every detail so you can focus on making memories.
+                </p>
+                <p className="flex items-start gap-3">
+                  <Heart className="w-5 h-5 text-secondary mt-1 flex-shrink-0" />
+                  <span><strong className="text-foreground">My Promise:</strong> I treat every trip like it's my own family's vacation — with that same level of care, attention, and excitement.</span>
+                </p>
+              </div>
+
+              <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4">
+                <Link href="/plan-my-trip">
+                  <Button className="w-full sm:w-auto bg-secondary text-secondary-foreground hover:bg-secondary/90 px-8 py-6 text-lg font-sans font-bold rounded-xl min-h-[56px] active:scale-98 transition-transform">
+                    Start Planning With Me
+                  </Button>
+                </Link>
+                <a href="#how-it-works">
+                  <Button variant="outline" className="w-full sm:w-auto border-secondary/30 hover:bg-secondary/10 px-8 py-6 text-lg font-sans font-bold rounded-xl min-h-[56px] active:scale-98 transition-transform">
+                    See How It Works
+                  </Button>
                 </a>
+              </div>
+
+              <div className="mt-8 sm:mt-10 pt-6 sm:pt-8 border-t border-border">
+                <p className="text-sm font-sans text-muted-foreground mb-4">Connect with me:</p>
+                <div className="flex flex-wrap gap-4">
+                  <a href="https://www.facebook.com/nextchaptertravel" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-secondary hover:text-secondary/80 transition-colors bg-secondary/10 px-4 py-3 rounded-xl min-h-[48px] active:scale-98">
+                    <Facebook className="w-5 h-5" />
+                    <span className="font-sans font-semibold">Facebook</span>
+                  </a>
+                  <a href="https://www.instagram.com/nextchaptertravelllc" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-secondary hover:text-secondary/80 transition-colors bg-secondary/10 px-4 py-3 rounded-xl min-h-[48px] active:scale-98">
+                    <Instagram className="w-5 h-5" />
+                    <span className="font-sans font-semibold">Instagram</span>
+                  </a>
+                </div>
               </div>
             </div>
 
-            {/* Jessica's Photo Gallery — three photos shown in a staggered grid */}
-            <div className="flex items-center justify-center py-6 sm:py-8 order-first md:order-last">
+            {/* Jessica's Interactive Photo Gallery */}
+            <div className="flex flex-col items-center py-4 sm:py-8 order-first md:order-last">
               <div className="relative w-full max-w-[420px] md:max-w-[500px] mx-auto">
                 {/* Decorative glow */}
                 <div className="absolute inset-0 bg-secondary/10 blur-3xl rounded-3xl animate-pulse" />
 
-                {/* Large hero photo */}
-                <div className="relative rounded-2xl overflow-hidden border-2 border-secondary/30 shadow-2xl mb-3">
+                {/* Main featured photo */}
+                <div className="relative rounded-2xl overflow-hidden border-2 border-secondary/30 shadow-2xl mb-4">
                   <img
-                    src="/jesshero3.jpeg"
-                    alt="Jessica Seiders - Certified Travel Specialist"
-                    className="w-full h-auto object-contain"
+                    src={JESSICA_PHOTOS[activePhotoIndex].src}
+                    alt={JESSICA_PHOTOS[activePhotoIndex].alt}
+                    className="w-full h-auto object-contain transition-opacity duration-300"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent" />
+                  
+                  {/* Floating name badge */}
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-secondary text-secondary-foreground px-5 py-2 rounded-xl shadow-xl font-serif font-bold text-sm sm:text-base whitespace-nowrap">
+                    Jessica Seiders
+                  </div>
                 </div>
 
-                {/* Single supporting photo */}
-                <div className="relative rounded-2xl overflow-hidden border-2 border-secondary/30 shadow-xl">
-                  <img
-                    src="/jesshero2.jpeg"
-                    alt="Jessica Seiders"
-                    className="w-full h-auto object-contain"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary/30 to-transparent" />
-                </div>
-
-                {/* Floating name badge */}
-                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-secondary text-secondary-foreground px-5 py-2 rounded-xl shadow-xl font-serif font-bold text-sm sm:text-base animate-float whitespace-nowrap">
-                  Jessica Seiders
+                {/* Thumbnail gallery - scrollable on mobile */}
+                <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide">
+                  {JESSICA_PHOTOS.map((photo, index) => (
+                    <button
+                      key={photo.src}
+                      onClick={() => setActivePhotoIndex(index)}
+                      className={cn(
+                        "relative flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden border-2 transition-all duration-200 snap-center active:scale-95",
+                        activePhotoIndex === index 
+                          ? "border-secondary ring-2 ring-secondary/30 ring-offset-2 ring-offset-primary" 
+                          : "border-border/50 hover:border-secondary/50 opacity-70 hover:opacity-100"
+                      )}
+                    >
+                      <img
+                        src={photo.src}
+                        alt={photo.alt}
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>
@@ -495,17 +582,19 @@ export default function Home() {
             </div>
             <div>
               <h4 className="font-bold mb-4 font-sans text-sm uppercase tracking-widest">Quick Links</h4>
-              <ul className="space-y-2 font-sans text-sm">
-                <li><a href="#features" className="text-primary-foreground/60 hover:text-primary-foreground transition-colors">Features</a></li>
-                <li><a href="#how-it-works" className="text-primary-foreground/60 hover:text-primary-foreground transition-colors">How It Works</a></li>
-                <li><Link href="/plan-my-trip" className="text-primary-foreground/60 hover:text-primary-foreground transition-colors">Plan My Trip</Link></li>
+              <ul className="space-y-3 font-sans text-sm">
+                <li><a href="#features" className="text-primary-foreground/60 hover:text-primary-foreground transition-colors py-1 inline-block">Features</a></li>
+                <li><a href="#how-it-works" className="text-primary-foreground/60 hover:text-primary-foreground transition-colors py-1 inline-block">How It Works</a></li>
+                <li><a href="#about-jessica" className="text-primary-foreground/60 hover:text-primary-foreground transition-colors py-1 inline-block">About Jessica</a></li>
+                <li><Link href="/plan-my-trip" className="text-primary-foreground/60 hover:text-primary-foreground transition-colors py-1 inline-block">Plan My Trip</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="font-bold mb-4 font-sans text-sm uppercase tracking-widest">Company</h4>
-              <ul className="space-y-2 font-sans text-sm">
-                <li><a href="https://www.travelingwomenofficial.com" target="_blank" rel="noopener noreferrer" className="text-primary-foreground/60 hover:text-primary-foreground transition-colors">Traveling Women Official</a></li>
-                <li><a href="https://www.facebook.com/nextchaptertravel" target="_blank" rel="noopener noreferrer" className="text-primary-foreground/60 hover:text-primary-foreground transition-colors">Facebook</a></li>
+              <ul className="space-y-3 font-sans text-sm">
+                <li><a href="https://www.travelingwomenofficial.com" target="_blank" rel="noopener noreferrer" className="text-primary-foreground/60 hover:text-primary-foreground transition-colors py-1 inline-block">Traveling Women Official</a></li>
+                <li><a href="https://www.facebook.com/nextchaptertravel" target="_blank" rel="noopener noreferrer" className="text-primary-foreground/60 hover:text-primary-foreground transition-colors py-1 inline-block">Facebook</a></li>
+                <li><a href="https://www.instagram.com/nextchaptertravelllc" target="_blank" rel="noopener noreferrer" className="text-primary-foreground/60 hover:text-primary-foreground transition-colors py-1 inline-block">Instagram</a></li>
               </ul>
             </div>
             <div>
@@ -523,6 +612,18 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* ── Scroll to Top Button (Mobile) ── */}
+      <button
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className={cn(
+          "fixed bottom-20 right-4 z-40 w-12 h-12 sm:w-14 sm:h-14 bg-secondary text-secondary-foreground rounded-full shadow-lg flex items-center justify-center transition-all duration-300 active:scale-90",
+          showScrollTop ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
+        )}
+        aria-label="Scroll to top"
+      >
+        <ChevronUp className="w-6 h-6" />
+      </button>
     </div>
   );
 }

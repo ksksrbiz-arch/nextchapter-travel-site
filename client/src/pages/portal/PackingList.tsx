@@ -9,6 +9,8 @@ import { useState, useMemo } from "react";
 import { useTrip } from "@/contexts/TripContext";
 import { toast } from "sonner";
 import { Plus, Trash2, CheckSquare, Loader2, Package } from "lucide-react";
+import { NoPackingItemsEmptyState } from "@/components/ui/empty-states";
+import { PackingListSkeleton } from "@/components/ui/skeletons";
 
 const CATEGORIES = [
   "Clothing", "Toiletries", "Documents", "Electronics", "Medications",
@@ -25,10 +27,11 @@ export default function PackingList() {
 
   const [newItem, setNewItem] = useState("");
   const [newCategory, setNewCategory] = useState("General");
+  const [itemError, setItemError] = useState<string | undefined>();
 
   const createItem = trpc.packing.create.useMutation({
-    onSuccess: () => { setNewItem(""); refetch(); },
-    onError: (e) => toast.error(e.message),
+    onSuccess: () => { setNewItem(""); setItemError(undefined); refetch(); },
+    onError: (e) => setItemError(e.message),
   });
 
   const toggleItem = trpc.packing.toggle.useMutation({
@@ -42,8 +45,28 @@ export default function PackingList() {
   });
 
   const handleAdd = () => {
-    if (!newItem.trim() || !tripId) return;
-    createItem.mutate({ tripId, item: newItem.trim(), category: newCategory });
+    const itemName = newItem.trim();
+    
+    // Validate input
+    if (!itemName) {
+      setItemError("Please enter an item name");
+      return;
+    }
+    
+    if (itemName.length < 2) {
+      setItemError("Item name must be at least 2 characters");
+      return;
+    }
+    
+    if (itemName.length > 100) {
+      setItemError("Item name must not exceed 100 characters");
+      return;
+    }
+    
+    if (!tripId) return;
+    
+    setItemError(undefined);
+    createItem.mutate({ tripId, item: itemName, category: newCategory });
   };
 
   const grouped = useMemo(() => {
@@ -86,6 +109,14 @@ export default function PackingList() {
       {tripId && (
         <div className="mb-8 p-5 rounded-2xl border border-border bg-card">
           <h3 className="font-serif font-semibold text-foreground mb-4">Add Item</h3>
+          {itemError && (
+            <div className="mb-3 flex items-center gap-2 text-xs text-red-600 dark:text-red-400">
+              <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+              </svg>
+              {itemError}
+            </div>
+          )}
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
             <Select value={newCategory} onValueChange={setNewCategory}>
               <SelectTrigger className="w-full sm:w-44 font-sans flex-shrink-0 min-h-[48px]">
@@ -99,7 +130,10 @@ export default function PackingList() {
             </Select>
             <Input
               value={newItem}
-              onChange={e => setNewItem(e.target.value)}
+              onChange={e => {
+                setNewItem(e.target.value);
+                if (itemError) setItemError(undefined);
+              }}
               onKeyDown={e => e.key === "Enter" && handleAdd()}
               placeholder="Add an item..."
               className="flex-1 font-sans min-h-[48px]"
@@ -117,20 +151,12 @@ export default function PackingList() {
 
       {/* Loading */}
       {isLoading && (
-        <div className="flex items-center justify-center py-16">
-          <Loader2 className="w-8 h-8 animate-spin text-secondary" />
-        </div>
+        <PackingListSkeleton />
       )}
 
       {/* Empty state */}
       {!isLoading && tripId && totalItems === 0 && (
-        <div className="text-center py-16">
-          <Package className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-          <h3 className="text-lg font-serif font-semibold text-foreground mb-2">Start Your Packing List</h3>
-          <p className="text-muted-foreground font-sans text-sm">
-            Add items above to build your personalized packing checklist.
-          </p>
-        </div>
+        <NoPackingItemsEmptyState onAdd={() => {}} />
       )}
 
       {!tripId && !isLoading && (
