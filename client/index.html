@@ -31,7 +31,8 @@
 
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <!-- Cache-busting: forces fresh load of all assets from latest build -->
+    <script type="module" src="/src/main.tsx?v=2026031316"></script>
     <script type="module">
       const endpoint = import.meta.env.VITE_ANALYTICS_ENDPOINT;
       const siteId = import.meta.env.VITE_ANALYTICS_WEBSITE_ID;
