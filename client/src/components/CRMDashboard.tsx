@@ -195,7 +195,7 @@ export default function CRMDashboard({ userId = 'user-123' }: CRMDashboardProps)
     : trips.filter(t => t.status === filterStatus);
 
   const activeTrips = trips.filter(t => t.status !== 'completed' && t.status !== 'cancelled').length;
-  const completedTrips = trips.filter(t => t.status === 'completed').length;
+  const _completedTrips = trips.filter(t => t.status === 'completed').length;
 
   return (
     <div className="space-y-6">

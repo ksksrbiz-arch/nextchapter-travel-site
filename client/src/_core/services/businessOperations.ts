@@ -407,7 +407,7 @@ class BusinessOperationsService {
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
 
-    const activeClients = allClients.filter(c => c.status === 'active' || c.status === 'vip').length;
+    const _activeClients = allClients.filter(c => c.status === 'active' || c.status === 'vip').length;
     const repeatClients = allClients.filter(c => c.tripsBooked > 1).length;
 
     return {
