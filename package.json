@@ -10,7 +10,10 @@
     "check": "tsc --noEmit",
     "format": "prettier --write .",
     "test": "vitest run",
-    "db:push": "drizzle-kit generate && drizzle-kit migrate"
+    "db:push": "drizzle-kit generate && drizzle-kit migrate",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "prepare": "node -e \"process.env.CI ? process.exit(0) : require(\"child_process\").execSync(\"husky\")\""
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.693.0",
@@ -94,14 +97,21 @@
     "esbuild": "^0.25.0",
     "pnpm": "^10.15.1",
     "postcss": "^8.4.47",
-    "prettier": "^3.6.2",
+    "prettier": "^3.0.0",
     "tailwindcss": "^4.1.14",
     "tsx": "^4.19.1",
     "tw-animate-css": "^1.4.0",
     "typescript": "5.9.3",
     "vite": "^7.3.1",
     "vite-plugin-manus-runtime": "^0.0.57",
-    "vitest": "^2.1.4"
+    "vitest": "^2.1.4",
+    "eslint": "^9.0.0",
+    "@eslint/js": "^9.0.0",
+    "typescript-eslint": "^8.0.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.0",
+    "husky": "^9.0.0",
+    "lint-staged": "^15.0.0"
   },
   "packageManager": "pnpm@10.4.1+sha512.c753b6c3ad7afa13af388fa6d808035a008e30ea9993f58c6663e2bc5ff21679aa834db094987129aa4d488b86df57f7b634981b2f827cdcacc698cc0cfb88af",
   "pnpm": {
@@ -117,5 +127,13 @@
   "overrides": {
     "fast-xml-parser": ">=5.3.5",
     "rollup": ">=4.59.0"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix --max-warnings=0"
+    ],
+    "*.{ts,tsx,js,jsx,json,css,md}": [
+      "prettier --write --ignore-unknown"
+    ]
   }
 }
