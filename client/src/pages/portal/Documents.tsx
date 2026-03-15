@@ -3,18 +3,42 @@ import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useState, useRef } from "react";
 import { toast } from "sonner";
 import {
-  FileText, Upload, Plane, Hotel, Shield, File,
-  Download, Trash2, Plus, Loader2, Lock
+  FileText,
+  Upload,
+  Plane,
+  Hotel,
+  Shield,
+  File,
+  Download,
+  Trash2,
+  Plus,
+  Loader2,
+  Lock,
 } from "lucide-react";
 import { validateForm, ValidationRules } from "@/lib/validation";
-import { FormFieldWrapper, FormErrorSummary } from "@/components/ui/form-errors";
+import {
+  FormFieldWrapper,
+  FormErrorSummary,
+} from "@/components/ui/form-errors";
 import { NoDocumentsEmptyState } from "@/components/ui/empty-states";
 import { DocumentsSkeleton } from "@/components/ui/skeletons";
 
@@ -39,7 +63,11 @@ const TYPE_ICONS: Record<string, string> = {
 };
 
 export default function Documents() {
-  const { data: documents, isLoading, refetch } = trpc.documents.list.useQuery({});
+  const {
+    data: documents,
+    isLoading,
+    refetch,
+  } = trpc.documents.list.useQuery({});
   const [uploading, setUploading] = useState(false);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
@@ -62,13 +90,18 @@ export default function Documents() {
     },
     file: {
       required: "Please select a file",
-      validate: (value) => {
+      validate: value => {
         if (!selectedFile) return "Please select a file";
         const maxSize = 20 * 1024 * 1024; // 20MB
         if (selectedFile.size > maxSize) {
           return "File size must not exceed 20MB";
         }
-        const validTypes = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
+        const validTypes = [
+          "application/pdf",
+          "image/jpeg",
+          "image/png",
+          "image/webp",
+        ];
         if (!validTypes.includes(selectedFile.type)) {
           return "Only PDF, JPG, PNG, and WebP files are allowed";
         }
@@ -86,12 +119,15 @@ export default function Documents() {
       setErrors({});
       refetch();
     },
-    onError: (e) => toast.error(e.message),
+    onError: e => toast.error(e.message),
   });
 
   const deleteDoc = trpc.documents.delete.useMutation({
-    onSuccess: () => { toast.success("Document removed"); refetch(); },
-    onError: (e) => toast.error(e.message),
+    onSuccess: () => {
+      toast.success("Document removed");
+      refetch();
+    },
+    onError: e => toast.error(e.message),
   });
 
   const handleUpload = async () => {
@@ -102,7 +138,7 @@ export default function Documents() {
     );
     setErrors(formErrors);
 
-    if (Object.values(formErrors).some((e) => e)) {
+    if (Object.values(formErrors).some(e => e)) {
       return;
     }
 
@@ -111,7 +147,10 @@ export default function Documents() {
       // Upload file via fetch to a simple upload endpoint
       const formData = new FormData();
       formData.append("file", selectedFile!);
-      const res = await fetch("/api/upload", { method: "POST", body: formData });
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
       if (!res.ok) throw new Error("Upload failed");
       const { url, key } = await res.json();
 
@@ -131,26 +170,35 @@ export default function Documents() {
     }
   };
 
-  const groupedDocs = DOC_TYPES.reduce((acc, type) => {
-    const docs = documents?.filter(d => d.type === type.value) ?? [];
-    if (docs.length > 0) acc[type.value] = docs;
-    return acc;
-  }, {} as Record<string, typeof documents>);
+  const groupedDocs = DOC_TYPES.reduce(
+    (acc, type) => {
+      const docs = documents?.filter(d => d.type === type.value) ?? [];
+      if (docs.length > 0) acc[type.value] = docs;
+      return acc;
+    },
+    {} as Record<string, typeof documents>
+  );
 
   return (
-    <PortalLayout title="Document Vault" subtitle="Your travel documents, securely stored">
+    <PortalLayout
+      title="Document Vault"
+      subtitle="Your travel documents, securely stored"
+    >
       {/* Header actions */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2 text-muted-foreground font-sans text-sm">
           <Lock className="w-4 h-4 text-green-600" />
           <span>All documents are encrypted and secure</span>
         </div>
-        <Dialog open={open} onOpenChange={(newOpen) => {
-          setOpen(newOpen);
-          if (!newOpen) {
-            setErrors({});
-          }
-        }}>
+        <Dialog
+          open={open}
+          onOpenChange={newOpen => {
+            setOpen(newOpen);
+            if (!newOpen) {
+              setErrors({});
+            }
+          }}
+        >
           <DialogTrigger asChild>
             <Button className="bg-primary text-primary-foreground hover:bg-primary/90 font-sans">
               <Plus className="w-4 h-4 mr-2" />
@@ -162,7 +210,7 @@ export default function Documents() {
               <DialogTitle className="font-serif">Upload Document</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 pt-2">
-              {Object.values(errors).some((e) => e) && (
+              {Object.values(errors).some(e => e) && (
                 <FormErrorSummary errors={errors} className="mb-4" />
               )}
               <FormFieldWrapper
@@ -187,18 +235,25 @@ export default function Documents() {
                 required
                 error={errors.type}
               >
-                <Select value={form.type} onValueChange={v => {
-                  setForm(f => ({ ...f, type: v as any }));
-                  if (errors.type) {
-                    setErrors(e => ({ ...e, type: undefined }));
-                  }
-                }}>
+                <Select
+                  value={form.type}
+                  onValueChange={v => {
+                    setForm(f => ({ ...f, type: v as any }));
+                    if (errors.type) {
+                      setErrors(e => ({ ...e, type: undefined }));
+                    }
+                  }}
+                >
                   <SelectTrigger className="font-sans">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     {DOC_TYPES.map(t => (
-                      <SelectItem key={t.value} value={t.value} className="font-sans">
+                      <SelectItem
+                        key={t.value}
+                        value={t.value}
+                        className="font-sans"
+                      >
                         {t.icon} {t.label}
                       </SelectItem>
                     ))}
@@ -217,7 +272,9 @@ export default function Documents() {
                 >
                   <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
                   <p className="text-sm font-sans text-muted-foreground">
-                    {selectedFile ? selectedFile.name : "Click to select file (PDF, JPG, PNG)"}
+                    {selectedFile
+                      ? selectedFile.name
+                      : "Click to select file (PDF, JPG, PNG)"}
                   </p>
                   <input
                     ref={fileRef}
@@ -233,12 +290,12 @@ export default function Documents() {
                   />
                 </div>
               </FormFieldWrapper>
-              <FormFieldWrapper
-                label="Notes (optional)"
-              >
+              <FormFieldWrapper label="Notes (optional)">
                 <Input
                   value={form.notes}
-                  onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
+                  onChange={e =>
+                    setForm(f => ({ ...f, notes: e.target.value }))
+                  }
                   placeholder="e.g., Expires Dec 2028"
                   className="font-sans"
                 />
@@ -248,7 +305,9 @@ export default function Documents() {
                 onClick={handleUpload}
                 disabled={uploading || createDoc.isPending}
               >
-                {(uploading || createDoc.isPending) && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                {(uploading || createDoc.isPending) && (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                )}
                 Upload Document
               </Button>
             </div>
@@ -257,9 +316,7 @@ export default function Documents() {
       </div>
 
       {/* Loading */}
-      {isLoading && (
-        <DocumentsSkeleton />
-      )}
+      {isLoading && <DocumentsSkeleton />}
 
       {/* Empty state */}
       {!isLoading && (!documents || documents.length === 0) && (
@@ -290,26 +347,46 @@ export default function Documents() {
               </Badge>
             </h3>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {docs?.map((doc) => (
-                <Card key={doc.id} className="hover:shadow-md transition-shadow">
+              {docs?.map(doc => (
+                <Card
+                  key={doc.id}
+                  className="hover:shadow-md transition-shadow"
+                >
                   <CardContent className="p-5">
                     <div className="flex items-start gap-3">
                       <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-lg flex-shrink-0">
                         {TYPE_ICONS[doc.type] ?? "📄"}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-sans font-medium text-foreground text-sm truncate">{doc.name}</h4>
+                        <h4 className="font-sans font-medium text-foreground text-sm truncate">
+                          {doc.name}
+                        </h4>
                         {doc.notes && (
-                          <p className="text-muted-foreground font-sans text-xs mt-0.5 truncate">{doc.notes}</p>
+                          <p className="text-muted-foreground font-sans text-xs mt-0.5 truncate">
+                            {doc.notes}
+                          </p>
                         )}
                         <p className="text-muted-foreground font-sans text-xs mt-1">
-                          {new Date(doc.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                          {new Date(doc.createdAt).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          })}
                         </p>
                       </div>
                     </div>
                     <div className="flex gap-2 mt-4">
-                      <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="flex-1">
-                        <Button variant="outline" size="sm" className="w-full font-sans text-xs">
+                      <a
+                        href={doc.fileUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1"
+                      >
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full font-sans text-xs"
+                        >
                           <Download className="w-3.5 h-3.5 mr-1.5" />
                           View
                         </Button>

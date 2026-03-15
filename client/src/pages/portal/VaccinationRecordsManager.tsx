@@ -1,5 +1,14 @@
 import { useState } from "react";
-import { Heart, Plus, Trash2, AlertCircle, Calendar, Syringe, FileText, Clock } from "lucide-react";
+import {
+  Heart,
+  Plus,
+  Trash2,
+  AlertCircle,
+  Calendar,
+  Syringe,
+  FileText,
+  Clock,
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -42,13 +51,13 @@ const VACCINE_TYPES = [
 const DISEASE_COVERAGE: Record<string, string[]> = {
   "COVID-19": ["COVID-19 endemic areas"],
   "Yellow Fever": ["Africa", "South America", "Southeast Asia"],
-  "Typhoid": ["South/Southeast Asia", "Africa", "Latin America"],
+  Typhoid: ["South/Southeast Asia", "Africa", "Latin America"],
   "Hepatitis A": ["Most developing countries"],
   "Hepatitis B": ["Recommended for all travelers"],
   "Japanese Encephalitis": ["Southeast/East Asia"],
-  "Rabies": ["Areas with high rabies risk"],
-  "Tetanus": ["Recommended for all travelers"],
-  "Polio": ["Endemic in Afghanistan/Pakistan"],
+  Rabies: ["Areas with high rabies risk"],
+  Tetanus: ["Recommended for all travelers"],
+  Polio: ["Endemic in Afghanistan/Pakistan"],
 };
 
 export function VaccinationRecordsManager() {
@@ -99,7 +108,8 @@ export function VaccinationRecordsManager() {
     const newErrors: Record<string, string> = {};
     if (!formData.vaccineName) newErrors.vaccineName = "Vaccine name required";
     if (!formData.disease) newErrors.disease = "Disease required";
-    if (!formData.dateAdministered) newErrors.dateAdministered = "Date administered required";
+    if (!formData.dateAdministered)
+      newErrors.dateAdministered = "Date administered required";
     if (!formData.provider) newErrors.provider = "Provider required";
     if (!formData.location) newErrors.location = "Location required";
     setErrors(newErrors);
@@ -141,18 +151,24 @@ export function VaccinationRecordsManager() {
   };
 
   const handleDeleteRecord = (id: string) => {
-    setRecords(records.filter((r) => r.id !== id));
+    setRecords(records.filter(r => r.id !== id));
   };
 
   const isExpiringSoon = (nextDate?: string) => {
     if (!nextDate) return false;
-    const daysUntilExpiry = Math.ceil((new Date(nextDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+    const daysUntilExpiry = Math.ceil(
+      (new Date(nextDate).getTime() - new Date().getTime()) /
+        (1000 * 60 * 60 * 24)
+    );
     return daysUntilExpiry > 0 && daysUntilExpiry <= 30;
   };
 
   const isUpcoming = (nextDate?: string) => {
     if (!nextDate) return false;
-    const daysUntilDue = Math.ceil((new Date(nextDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+    const daysUntilDue = Math.ceil(
+      (new Date(nextDate).getTime() - new Date().getTime()) /
+        (1000 * 60 * 60 * 24)
+    );
     return daysUntilDue > 30;
   };
 
@@ -160,7 +176,7 @@ export function VaccinationRecordsManager() {
     const colors: Record<string, string> = {
       "COVID-19": "bg-blue-500/20 text-blue-300",
       "Yellow Fever": "bg-yellow-500/20 text-yellow-300",
-      "Typhoid": "bg-green-500/20 text-green-300",
+      Typhoid: "bg-green-500/20 text-green-300",
       "Hepatitis A": "bg-orange-500/20 text-orange-300",
       "Hepatitis B": "bg-orange-500/20 text-orange-300",
       "Japanese Encephalitis": "bg-red-500/20 text-red-300",
@@ -172,25 +188,40 @@ export function VaccinationRecordsManager() {
     <div className="space-y-6">
       {/* Summary */}
       <Card className="bg-gradient-to-br from-emerald-950/30 to-teal-950/30 border-emerald-500/20 p-6">
-        <h3 className="text-sm font-medium text-muted-foreground mb-4">Vaccination Status</h3>
+        <h3 className="text-sm font-medium text-muted-foreground mb-4">
+          Vaccination Status
+        </h3>
 
         <div className="grid grid-cols-3 gap-3">
           <div className="p-3 bg-black/20 rounded-lg">
             <p className="text-xs text-muted-foreground">Total Vaccines</p>
-            <p className="text-2xl font-bold text-foreground">{records.length}</p>
+            <p className="text-2xl font-bold text-foreground">
+              {records.length}
+            </p>
           </div>
 
           <div className="p-3 bg-black/20 rounded-lg border border-emerald-500/30">
             <p className="text-xs text-emerald-300">Up to Date</p>
             <p className="text-2xl font-bold text-emerald-400">
-              {records.filter((r) => !r.nextDoseDate || new Date(r.nextDoseDate) > new Date()).length}
+              {
+                records.filter(
+                  r => !r.nextDoseDate || new Date(r.nextDoseDate) > new Date()
+                ).length
+              }
             </p>
           </div>
 
           <div className="p-3 bg-black/20 rounded-lg border border-amber-500/30">
             <p className="text-xs text-amber-300">Pending</p>
             <p className="text-2xl font-bold text-amber-400">
-              {records.filter((r) => r.nextDoseDate && new Date(r.nextDoseDate) <= new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)).length}
+              {
+                records.filter(
+                  r =>
+                    r.nextDoseDate &&
+                    new Date(r.nextDoseDate) <=
+                      new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+                ).length
+              }
             </p>
           </div>
         </div>
@@ -214,14 +245,14 @@ export function VaccinationRecordsManager() {
               <FormFieldWrapper error={errors.vaccineName}>
                 <select
                   value={formData.vaccineName}
-                  onChange={(e) => {
+                  onChange={e => {
                     setFormData({ ...formData, vaccineName: e.target.value });
                     setErrors({ ...errors, vaccineName: "" });
                   }}
                   className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/50"
                 >
                   <option value="">Select Vaccine</option>
-                  {VACCINE_TYPES.map((vaccine) => (
+                  {VACCINE_TYPES.map(vaccine => (
                     <option key={vaccine} value={vaccine}>
                       {vaccine}
                     </option>
@@ -234,7 +265,7 @@ export function VaccinationRecordsManager() {
                   type="text"
                   placeholder="Disease/Condition"
                   value={formData.disease}
-                  onChange={(e) => {
+                  onChange={e => {
                     setFormData({ ...formData, disease: e.target.value });
                     setErrors({ ...errors, disease: "" });
                   }}
@@ -248,8 +279,11 @@ export function VaccinationRecordsManager() {
                 <input
                   type="date"
                   value={formData.dateAdministered}
-                  onChange={(e) => {
-                    setFormData({ ...formData, dateAdministered: e.target.value });
+                  onChange={e => {
+                    setFormData({
+                      ...formData,
+                      dateAdministered: e.target.value,
+                    });
                     setErrors({ ...errors, dateAdministered: "" });
                   }}
                   className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/50"
@@ -260,7 +294,9 @@ export function VaccinationRecordsManager() {
                 type="date"
                 placeholder="Next Dose Date"
                 value={formData.nextDoseDate}
-                onChange={(e) => setFormData({ ...formData, nextDoseDate: e.target.value })}
+                onChange={e =>
+                  setFormData({ ...formData, nextDoseDate: e.target.value })
+                }
                 className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/50"
               />
             </div>
@@ -271,7 +307,7 @@ export function VaccinationRecordsManager() {
                   type="text"
                   placeholder="Healthcare Provider"
                   value={formData.provider}
-                  onChange={(e) => {
+                  onChange={e => {
                     setFormData({ ...formData, provider: e.target.value });
                     setErrors({ ...errors, provider: "" });
                   }}
@@ -284,7 +320,7 @@ export function VaccinationRecordsManager() {
                   type="text"
                   placeholder="Location (City, State)"
                   value={formData.location}
-                  onChange={(e) => {
+                  onChange={e => {
                     setFormData({ ...formData, location: e.target.value });
                     setErrors({ ...errors, location: "" });
                   }}
@@ -298,13 +334,17 @@ export function VaccinationRecordsManager() {
                 type="text"
                 placeholder="Batch Number (optional)"
                 value={formData.batchNumber}
-                onChange={(e) => setFormData({ ...formData, batchNumber: e.target.value })}
+                onChange={e =>
+                  setFormData({ ...formData, batchNumber: e.target.value })
+                }
                 className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
               />
 
               <select
                 value={formData.arm}
-                onChange={(e) => setFormData({ ...formData, arm: e.target.value })}
+                onChange={e =>
+                  setFormData({ ...formData, arm: e.target.value })
+                }
                 className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/50"
               >
                 <option value="Left">Left Arm</option>
@@ -316,7 +356,9 @@ export function VaccinationRecordsManager() {
               type="text"
               placeholder="Certificate ID (optional)"
               value={formData.certificateId}
-              onChange={(e) => setFormData({ ...formData, certificateId: e.target.value })}
+              onChange={e =>
+                setFormData({ ...formData, certificateId: e.target.value })
+              }
               className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
             />
 
@@ -324,7 +366,9 @@ export function VaccinationRecordsManager() {
               type="text"
               placeholder="Countries/Regions Required (optional)"
               value={formData.countryRequired}
-              onChange={(e) => setFormData({ ...formData, countryRequired: e.target.value })}
+              onChange={e =>
+                setFormData({ ...formData, countryRequired: e.target.value })
+              }
               className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
             />
 
@@ -350,16 +394,24 @@ export function VaccinationRecordsManager() {
       {/* Records List */}
       {records.length > 0 ? (
         <div className="space-y-3">
-          {records.map((record) => (
+          {records.map(record => (
             <Card key={record.id} className="p-4 border-border/50">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
                     <Syringe className="w-5 h-5 text-primary" />
-                    <h4 className="font-semibold text-foreground">{record.vaccineName}</h4>
-                    <Badge className={`text-xs ${getDiseaseColor(record.disease)}`}>{record.disease}</Badge>
+                    <h4 className="font-semibold text-foreground">
+                      {record.vaccineName}
+                    </h4>
+                    <Badge
+                      className={`text-xs ${getDiseaseColor(record.disease)}`}
+                    >
+                      {record.disease}
+                    </Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground">{record.provider}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {record.provider}
+                  </p>
                 </div>
 
                 <button
@@ -382,12 +434,16 @@ export function VaccinationRecordsManager() {
               <div className="grid grid-cols-2 gap-3 mb-3 p-3 bg-black/20 rounded-lg text-sm">
                 <div>
                   <p className="text-xs text-muted-foreground">Administered</p>
-                  <p className="font-medium text-foreground">{new Date(record.dateAdministered).toLocaleDateString()}</p>
+                  <p className="font-medium text-foreground">
+                    {new Date(record.dateAdministered).toLocaleDateString()}
+                  </p>
                 </div>
 
                 <div className="text-right">
                   <p className="text-xs text-muted-foreground">Location</p>
-                  <p className="font-medium text-foreground">{record.location}</p>
+                  <p className="font-medium text-foreground">
+                    {record.location}
+                  </p>
                 </div>
 
                 <div>
@@ -398,7 +454,9 @@ export function VaccinationRecordsManager() {
                 {record.nextDoseDate && (
                   <div className="text-right">
                     <p className="text-xs text-muted-foreground">Next Dose</p>
-                    <p className={`font-medium ${isUpcoming(record.nextDoseDate) ? "text-amber-400" : "text-foreground"}`}>
+                    <p
+                      className={`font-medium ${isUpcoming(record.nextDoseDate) ? "text-amber-400" : "text-foreground"}`}
+                    >
                       {new Date(record.nextDoseDate).toLocaleDateString()}
                     </p>
                   </div>
@@ -411,7 +469,9 @@ export function VaccinationRecordsManager() {
                   <div className="flex items-center gap-2">
                     <FileText className="w-3 h-3 text-muted-foreground" />
                     <span className="text-muted-foreground">Batch:</span>
-                    <span className="font-mono text-foreground">{record.batchNumber}</span>
+                    <span className="font-mono text-foreground">
+                      {record.batchNumber}
+                    </span>
                   </div>
                 )}
 
@@ -419,7 +479,9 @@ export function VaccinationRecordsManager() {
                   <div className="flex items-center gap-2">
                     <FileText className="w-3 h-3 text-muted-foreground" />
                     <span className="text-muted-foreground">Certificate:</span>
-                    <span className="font-mono text-foreground">{record.certificateId}</span>
+                    <span className="font-mono text-foreground">
+                      {record.certificateId}
+                    </span>
                   </div>
                 )}
 
@@ -427,7 +489,9 @@ export function VaccinationRecordsManager() {
                   <div className="flex items-center gap-2">
                     <Calendar className="w-3 h-3 text-muted-foreground" />
                     <span className="text-muted-foreground">Required for:</span>
-                    <span className="text-foreground">{record.countryRequired}</span>
+                    <span className="text-foreground">
+                      {record.countryRequired}
+                    </span>
                   </div>
                 )}
               </div>

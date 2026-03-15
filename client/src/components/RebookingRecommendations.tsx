@@ -1,124 +1,204 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
-  Star, MapPin, Calendar, DollarSign, Users, Zap, ChevronRight,
-  Bookmark, Share2, Heart, Activity, Briefcase, TrendingUp, Check
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import memoryArchives from '@/_core/services/memoryArchives';
-import type { TripRecommendation } from '@/_core/services/memoryArchives';
+  Star,
+  MapPin,
+  Calendar,
+  DollarSign,
+  Users,
+  Zap,
+  ChevronRight,
+  Bookmark,
+  Share2,
+  Heart,
+  Activity,
+  Briefcase,
+  TrendingUp,
+  Check,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import memoryArchives from "@/_core/services/memoryArchives";
+import type { TripRecommendation } from "@/_core/services/memoryArchives";
 
 interface RebookingRecommendationsProps {
   baseMemoryId?: string;
 }
 
 export default function RebookingRecommendations({
-  baseMemoryId = 'mem-orlando-2024',
+  baseMemoryId = "mem-orlando-2024",
 }: RebookingRecommendationsProps) {
-  const [recommendations, setRecommendations] = React.useState<TripRecommendation[]>([]);
-  const [selectedRecommendation, setSelectedRecommendation] = useState<TripRecommendation | null>(null);
+  const [recommendations, setRecommendations] = React.useState<
+    TripRecommendation[]
+  >([]);
+  const [selectedRecommendation, setSelectedRecommendation] =
+    useState<TripRecommendation | null>(null);
   const [savedTrips, setSavedTrips] = useState<Set<string>>(new Set());
-  const [filterByBudget, setFilterByBudget] = useState<'all' | 'under' | 'exact' | 'over'>('all');
-  const [filterByDuration, setFilterByDuration] = useState<'all' | 'short' | 'standard' | 'extended'>('all');
+  const [filterByBudget, setFilterByBudget] = useState<
+    "all" | "under" | "exact" | "over"
+  >("all");
+  const [filterByDuration, setFilterByDuration] = useState<
+    "all" | "short" | "standard" | "extended"
+  >("all");
 
   // Initialize with mock recommendations
   React.useEffect(() => {
     const mockRecommendations: TripRecommendation[] = [
       {
-        id: 'rec-1',
-        title: 'Return to Orlando',
-        destination: 'Orlando',
-        description: 'Experience Orlando again with fresh perspectives and new attractions that opened this year',
-        reason: 'You loved your previous trip to Orlando (excited experience)',
+        id: "rec-1",
+        title: "Return to Orlando",
+        destination: "Orlando",
+        description:
+          "Experience Orlando again with fresh perspectives and new attractions that opened this year",
+        reason: "You loved your previous trip to Orlando (excited experience)",
         confidence: 0.92,
-        similarity: ['same destination', 'family-friendly', 'exciting atmosphere'],
+        similarity: [
+          "same destination",
+          "family-friendly",
+          "exciting atmosphere",
+        ],
         estimatedBudget: 3200,
         duration: 10,
-        bestSeason: 'Winter',
-        activities: ['theme parks', 'entertainment', 'dining'],
-        accommodationType: 'Resort Hotel',
-        images: ['https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=500&h=300'],
-        bookingUrl: 'https://example.com/book',
+        bestSeason: "Winter",
+        activities: ["theme parks", "entertainment", "dining"],
+        accommodationType: "Resort Hotel",
+        images: [
+          "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=500&h=300",
+        ],
+        bookingUrl: "https://example.com/book",
       },
       {
-        id: 'rec-2',
-        title: 'Explore Tokyo',
-        destination: 'Tokyo',
-        description: 'Experience the vibrant energy of Tokyo with cutting-edge technology, traditional culture, and world-class dining',
-        reason: 'Based on your adventurous travel style and interest in entertainment',
+        id: "rec-2",
+        title: "Explore Tokyo",
+        destination: "Tokyo",
+        description:
+          "Experience the vibrant energy of Tokyo with cutting-edge technology, traditional culture, and world-class dining",
+        reason:
+          "Based on your adventurous travel style and interest in entertainment",
         confidence: 0.85,
-        similarity: ['adventurous spirit', 'entertainment', 'cultural exploration', 'urban exploration'],
+        similarity: [
+          "adventurous spirit",
+          "entertainment",
+          "cultural exploration",
+          "urban exploration",
+        ],
         estimatedBudget: 2800,
         duration: 12,
-        bestSeason: 'Spring',
-        activities: ['cultural sites', 'food tours', 'nightlife', 'shopping'],
-        accommodationType: 'Boutique Hotel',
-        images: ['https://images.unsplash.com/photo-1540959375944-7049177f343b?w=500&h=300'],
-        bookingUrl: 'https://example.com/book',
+        bestSeason: "Spring",
+        activities: ["cultural sites", "food tours", "nightlife", "shopping"],
+        accommodationType: "Boutique Hotel",
+        images: [
+          "https://images.unsplash.com/photo-1540959375944-7049177f343b?w=500&h=300",
+        ],
+        bookingUrl: "https://example.com/book",
       },
       {
-        id: 'rec-3',
-        title: 'Costa Rican Adventure',
-        destination: 'Costa Rica',
-        description: 'Discover lush rainforests, pristine beaches, and thrilling adventures in this natural paradise',
-        reason: 'Perfect match for your adventurous profile with outdoor activities',
+        id: "rec-3",
+        title: "Costa Rican Adventure",
+        destination: "Costa Rica",
+        description:
+          "Discover lush rainforests, pristine beaches, and thrilling adventures in this natural paradise",
+        reason:
+          "Perfect match for your adventurous profile with outdoor activities",
         confidence: 0.88,
-        similarity: ['adventure activities', 'nature-focused', 'active lifestyle', 'eco-tourism'],
+        similarity: [
+          "adventure activities",
+          "nature-focused",
+          "active lifestyle",
+          "eco-tourism",
+        ],
         estimatedBudget: 2400,
         duration: 9,
-        bestSeason: 'December-April',
-        activities: ['hiking', 'zip-lining', 'wildlife', 'beaches'],
-        accommodationType: 'Eco-Lodge',
-        images: ['https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=500&h=300'],
-        bookingUrl: 'https://example.com/book',
+        bestSeason: "December-April",
+        activities: ["hiking", "zip-lining", "wildlife", "beaches"],
+        accommodationType: "Eco-Lodge",
+        images: [
+          "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=500&h=300",
+        ],
+        bookingUrl: "https://example.com/book",
       },
       {
-        id: 'rec-4',
-        title: 'Greek Islands Escape',
-        destination: 'Greece',
-        description: 'Relax on stunning islands with Mediterranean charm, ancient history, and delicious cuisine',
-        reason: 'Ideal for a more relaxed travel style with cultural elements',
+        id: "rec-4",
+        title: "Greek Islands Escape",
+        destination: "Greece",
+        description:
+          "Relax on stunning islands with Mediterranean charm, ancient history, and delicious cuisine",
+        reason: "Ideal for a more relaxed travel style with cultural elements",
         confidence: 0.79,
-        similarity: ['relaxation focus', 'cultural heritage', 'beaches', 'culinary experiences'],
+        similarity: [
+          "relaxation focus",
+          "cultural heritage",
+          "beaches",
+          "culinary experiences",
+        ],
         estimatedBudget: 2600,
         duration: 10,
-        bestSeason: 'May-June, September-October',
-        activities: ['beach relaxation', 'historical sites', 'local food', 'sailing'],
-        accommodationType: 'Boutique Resort',
-        images: ['https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=500&h=300'],
-        bookingUrl: 'https://example.com/book',
+        bestSeason: "May-June, September-October",
+        activities: [
+          "beach relaxation",
+          "historical sites",
+          "local food",
+          "sailing",
+        ],
+        accommodationType: "Boutique Resort",
+        images: [
+          "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=500&h=300",
+        ],
+        bookingUrl: "https://example.com/book",
       },
       {
-        id: 'rec-5',
-        title: 'Thailand Cultural Tour',
-        destination: 'Thailand',
-        description: 'Immerse yourself in vibrant Thai culture, street food, temples, and island beaches',
-        reason: 'Combines adventure, culture, and budget-friendly travel based on your preferences',
+        id: "rec-5",
+        title: "Thailand Cultural Tour",
+        destination: "Thailand",
+        description:
+          "Immerse yourself in vibrant Thai culture, street food, temples, and island beaches",
+        reason:
+          "Combines adventure, culture, and budget-friendly travel based on your preferences",
         confidence: 0.83,
-        similarity: ['cultural immersion', 'food adventures', 'exotic destinations', 'value for money'],
+        similarity: [
+          "cultural immersion",
+          "food adventures",
+          "exotic destinations",
+          "value for money",
+        ],
         estimatedBudget: 1800,
         duration: 11,
-        bestSeason: 'November-February',
-        activities: ['temple tours', 'food tours', 'island hopping', 'markets'],
-        accommodationType: 'Guesthouse/Hotel',
-        images: ['https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=500&h=300'],
-        bookingUrl: 'https://example.com/book',
+        bestSeason: "November-February",
+        activities: ["temple tours", "food tours", "island hopping", "markets"],
+        accommodationType: "Guesthouse/Hotel",
+        images: [
+          "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=500&h=300",
+        ],
+        bookingUrl: "https://example.com/book",
       },
       {
-        id: 'rec-6',
-        title: 'Paris Romantic Getaway',
-        destination: 'Paris',
-        description: 'Experience the magic of Paris with iconic landmarks, world-class museums, and charming cafes',
-        reason: 'Cultural enrichment and iconic experiences match your travel interests',
+        id: "rec-6",
+        title: "Paris Romantic Getaway",
+        destination: "Paris",
+        description:
+          "Experience the magic of Paris with iconic landmarks, world-class museums, and charming cafes",
+        reason:
+          "Cultural enrichment and iconic experiences match your travel interests",
         confidence: 0.81,
-        similarity: ['cultural attractions', 'romance', 'art and museums', 'fine dining'],
+        similarity: [
+          "cultural attractions",
+          "romance",
+          "art and museums",
+          "fine dining",
+        ],
         estimatedBudget: 3100,
         duration: 8,
-        bestSeason: 'April-May, September-October',
-        activities: ['museums', 'historic sites', 'art galleries', 'fine dining'],
-        accommodationType: 'Luxury Hotel',
-        images: ['https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=500&h=300'],
-        bookingUrl: 'https://example.com/book',
+        bestSeason: "April-May, September-October",
+        activities: [
+          "museums",
+          "historic sites",
+          "art galleries",
+          "fine dining",
+        ],
+        accommodationType: "Luxury Hotel",
+        images: [
+          "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=500&h=300",
+        ],
+        bookingUrl: "https://example.com/book",
       },
     ];
 
@@ -126,13 +206,21 @@ export default function RebookingRecommendations({
   }, []);
 
   const filteredRecommendations = recommendations.filter(rec => {
-    if (filterByBudget === 'under' && rec.estimatedBudget > 2500) return false;
-    if (filterByBudget === 'exact' && (rec.estimatedBudget < 2000 || rec.estimatedBudget > 3000)) return false;
-    if (filterByBudget === 'over' && rec.estimatedBudget < 3000) return false;
+    if (filterByBudget === "under" && rec.estimatedBudget > 2500) return false;
+    if (
+      filterByBudget === "exact" &&
+      (rec.estimatedBudget < 2000 || rec.estimatedBudget > 3000)
+    )
+      return false;
+    if (filterByBudget === "over" && rec.estimatedBudget < 3000) return false;
 
-    if (filterByDuration === 'short' && rec.duration > 7) return false;
-    if (filterByDuration === 'standard' && (rec.duration < 8 || rec.duration > 12)) return false;
-    if (filterByDuration === 'extended' && rec.duration < 12) return false;
+    if (filterByDuration === "short" && rec.duration > 7) return false;
+    if (
+      filterByDuration === "standard" &&
+      (rec.duration < 8 || rec.duration > 12)
+    )
+      return false;
+    if (filterByDuration === "extended" && rec.duration < 12) return false;
 
     return true;
   });
@@ -155,47 +243,52 @@ export default function RebookingRecommendations({
       <div>
         <h2 className="text-3xl font-bold">Rebook Your Magic</h2>
         <p className="text-gray-400 mt-2">
-          Based on your travel memories, here are personalized recommendations for your next adventure
+          Based on your travel memories, here are personalized recommendations
+          for your next adventure
         </p>
       </div>
 
       {/* Filter Controls */}
       <div className="grid md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">Budget Range</label>
+          <label className="block text-sm font-medium text-gray-300 mb-2">
+            Budget Range
+          </label>
           <div className="flex gap-2">
-            {(['all', 'under', 'exact', 'over'] as const).map(option => (
+            {(["all", "under", "exact", "over"] as const).map(option => (
               <Button
                 key={option}
                 size="sm"
-                variant={filterByBudget === option ? 'default' : 'outline'}
+                variant={filterByBudget === option ? "default" : "outline"}
                 onClick={() => setFilterByBudget(option)}
                 className="capitalize flex-1"
               >
-                {option === 'under' && 'Under $2.5K'}
-                {option === 'exact' && '$2-3K'}
-                {option === 'over' && 'Over $3K'}
-                {option === 'all' && 'All'}
+                {option === "under" && "Under $2.5K"}
+                {option === "exact" && "$2-3K"}
+                {option === "over" && "Over $3K"}
+                {option === "all" && "All"}
               </Button>
             ))}
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">Trip Duration</label>
+          <label className="block text-sm font-medium text-gray-300 mb-2">
+            Trip Duration
+          </label>
           <div className="flex gap-2">
-            {(['all', 'short', 'standard', 'extended'] as const).map(option => (
+            {(["all", "short", "standard", "extended"] as const).map(option => (
               <Button
                 key={option}
                 size="sm"
-                variant={filterByDuration === option ? 'default' : 'outline'}
+                variant={filterByDuration === option ? "default" : "outline"}
                 onClick={() => setFilterByDuration(option)}
                 className="capitalize flex-1"
               >
-                {option === 'short' && '1-7 days'}
-                {option === 'standard' && '8-12 days'}
-                {option === 'extended' && '12+ days'}
-                {option === 'all' && 'All'}
+                {option === "short" && "1-7 days"}
+                {option === "standard" && "8-12 days"}
+                {option === "extended" && "12+ days"}
+                {option === "all" && "All"}
               </Button>
             ))}
           </div>
@@ -237,7 +330,9 @@ export default function RebookingRecommendations({
               </div>
 
               {/* Description */}
-              <p className="text-sm text-gray-300 line-clamp-2">{rec.description}</p>
+              <p className="text-sm text-gray-300 line-clamp-2">
+                {rec.description}
+              </p>
 
               {/* Reason */}
               <div className="bg-blue-900/20 border border-blue-800/30 rounded p-2">
@@ -247,7 +342,10 @@ export default function RebookingRecommendations({
               {/* Key Details */}
               <div className="grid grid-cols-3 gap-2 pt-2">
                 <DetailPill icon={Calendar} label={`${rec.duration}d`} />
-                <DetailPill icon={DollarSign} label={`$${rec.estimatedBudget}`} />
+                <DetailPill
+                  icon={DollarSign}
+                  label={`$${rec.estimatedBudget}`}
+                />
                 <DetailPill icon={Activity} label={rec.accommodationType} />
               </div>
 
@@ -275,13 +373,15 @@ export default function RebookingRecommendations({
               <div className="flex gap-2 pt-2">
                 <Button
                   size="sm"
-                  variant={savedTrips.has(rec.id) ? 'default' : 'outline'}
+                  variant={savedTrips.has(rec.id) ? "default" : "outline"}
                   onClick={() => toggleSaveTrip(rec.id)}
-                  className={savedTrips.has(rec.id) ? 'bg-red-600 border-red-600' : ''}
+                  className={
+                    savedTrips.has(rec.id) ? "bg-red-600 border-red-600" : ""
+                  }
                 >
                   <Bookmark
                     className={`w-4 h-4 ${
-                      savedTrips.has(rec.id) ? 'fill-current' : ''
+                      savedTrips.has(rec.id) ? "fill-current" : ""
                     }`}
                   />
                 </Button>
@@ -305,7 +405,9 @@ export default function RebookingRecommendations({
         <div className="text-center py-12 bg-gray-900/50 rounded-lg border border-gray-800">
           <MapPin className="w-12 h-12 text-gray-600 mx-auto mb-3" />
           <p className="text-gray-400">No recommendations match your filters</p>
-          <p className="text-gray-500 text-sm mt-1">Try adjusting your budget or duration filters</p>
+          <p className="text-gray-500 text-sm mt-1">
+            Try adjusting your budget or duration filters
+          </p>
         </div>
       )}
 
@@ -328,7 +430,9 @@ export default function RebookingRecommendations({
           <div className="bg-gray-900 rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-gray-900 border-b border-gray-800 p-4 flex items-center justify-between">
               <div>
-                <h2 className="text-2xl font-bold">{selectedRecommendation.title}</h2>
+                <h2 className="text-2xl font-bold">
+                  {selectedRecommendation.title}
+                </h2>
                 <p className="text-gray-400 flex items-center gap-1 mt-1">
                   <MapPin className="w-4 h-4" />
                   {selectedRecommendation.destination}
@@ -353,7 +457,9 @@ export default function RebookingRecommendations({
               {/* Description */}
               <div>
                 <h3 className="font-semibold text-lg mb-2">About This Trip</h3>
-                <p className="text-gray-300">{selectedRecommendation.description}</p>
+                <p className="text-gray-300">
+                  {selectedRecommendation.description}
+                </p>
               </div>
 
               {/* Why Recommended */}
@@ -362,7 +468,10 @@ export default function RebookingRecommendations({
                 <p className="text-gray-300">{selectedRecommendation.reason}</p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {selectedRecommendation.similarity.map(sim => (
-                    <Badge key={sim} className="bg-blue-500/30 text-blue-300 border-0 text-xs">
+                    <Badge
+                      key={sim}
+                      className="bg-blue-500/30 text-blue-300 border-0 text-xs"
+                    >
                       {sim}
                     </Badge>
                   ))}
@@ -371,14 +480,26 @@ export default function RebookingRecommendations({
 
               {/* Trip Details */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <DetailCard icon={Calendar} label="Duration" value={`${selectedRecommendation.duration} days`} />
+                <DetailCard
+                  icon={Calendar}
+                  label="Duration"
+                  value={`${selectedRecommendation.duration} days`}
+                />
                 <DetailCard
                   icon={DollarSign}
                   label="Estimated Budget"
                   value={`$${selectedRecommendation.estimatedBudget}`}
                 />
-                <DetailCard icon={Activity} label="Accommodation" value={selectedRecommendation.accommodationType} />
-                <DetailCard icon={Zap} label="Match Score" value={`${(selectedRecommendation.confidence * 100).toFixed(0)}%`} />
+                <DetailCard
+                  icon={Activity}
+                  label="Accommodation"
+                  value={selectedRecommendation.accommodationType}
+                />
+                <DetailCard
+                  icon={Zap}
+                  label="Match Score"
+                  value={`${(selectedRecommendation.confidence * 100).toFixed(0)}%`}
+                />
               </div>
 
               {/* Activities */}
@@ -386,7 +507,10 @@ export default function RebookingRecommendations({
                 <h3 className="font-semibold mb-3">Top Activities</h3>
                 <div className="grid grid-cols-2 gap-2">
                   {selectedRecommendation.activities.map(activity => (
-                    <div key={activity} className="bg-gray-800/50 rounded p-3 flex items-center gap-2">
+                    <div
+                      key={activity}
+                      className="bg-gray-800/50 rounded p-3 flex items-center gap-2"
+                    >
                       <Check className="w-4 h-4 text-green-400" />
                       <span className="capitalize">{activity}</span>
                     </div>
@@ -399,18 +523,28 @@ export default function RebookingRecommendations({
                 <Button
                   variant="outline"
                   onClick={() => toggleSaveTrip(selectedRecommendation.id)}
-                  className={savedTrips.has(selectedRecommendation.id) ? 'bg-red-600 border-red-600' : ''}
+                  className={
+                    savedTrips.has(selectedRecommendation.id)
+                      ? "bg-red-600 border-red-600"
+                      : ""
+                  }
                 >
                   <Bookmark
                     className={`w-4 h-4 mr-2 ${
                       savedTrips.has(selectedRecommendation.id)
-                        ? 'fill-current'
-                        : ''
+                        ? "fill-current"
+                        : ""
                     }`}
                   />
-                  {savedTrips.has(selectedRecommendation.id) ? 'Saved' : 'Save Trip'}
+                  {savedTrips.has(selectedRecommendation.id)
+                    ? "Saved"
+                    : "Save Trip"}
                 </Button>
-                <Button onClick={() => window.open(selectedRecommendation.bookingUrl, '_blank')}>
+                <Button
+                  onClick={() =>
+                    window.open(selectedRecommendation.bookingUrl, "_blank")
+                  }
+                >
                   Book Now
                   <ChevronRight className="w-4 h-4 ml-2" />
                 </Button>
@@ -423,13 +557,7 @@ export default function RebookingRecommendations({
   );
 }
 
-function DetailPill({
-  icon: Icon,
-  label,
-}: {
-  icon: any;
-  label: string;
-}) {
+function DetailPill({ icon: Icon, label }: { icon: any; label: string }) {
   return (
     <div className="bg-gray-800/50 rounded px-2 py-1 flex items-center gap-1 justify-center">
       <Icon className="w-3 h-3" />

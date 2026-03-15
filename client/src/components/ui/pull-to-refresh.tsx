@@ -22,7 +22,7 @@ interface PullToRefreshProps {
 /**
  * Pull-to-refresh wrapper for mobile scroll containers.
  * Pull down from top to trigger a refresh action.
- * 
+ *
  * @example
  * ```tsx
  * <PullToRefresh onRefresh={async () => {
@@ -51,32 +51,32 @@ export function PullToRefresh({
 
   const handleTouchStart = (e: TouchEvent) => {
     if (disabled || isRefreshing) return;
-    
+
     // Only start pull if at top of scroll container
     const container = containerRef.current;
     if (container && container.scrollTop > 0) return;
-    
+
     startY.current = e.touches[0].clientY;
     setIsPulling(true);
   };
 
   const handleTouchMove = (e: TouchEvent) => {
     if (!isPulling || disabled || isRefreshing) return;
-    
+
     const deltaY = e.touches[0].clientY - startY.current;
-    
+
     // Only pull down, not up
     if (deltaY < 0) {
       setPullDistance(0);
       return;
     }
-    
+
     // Apply resistance as pull increases
     const resistance = 0.5;
     const pull = Math.min(maxPull, deltaY * resistance);
-    
+
     setPullDistance(pull);
-    
+
     // Prevent scroll while pulling
     if (pull > 10) {
       e.preventDefault();
@@ -85,13 +85,13 @@ export function PullToRefresh({
 
   const handleTouchEnd = async () => {
     if (!isPulling) return;
-    
+
     setIsPulling(false);
-    
+
     if (pullDistance >= threshold && !isRefreshing) {
       setIsRefreshing(true);
       setPullDistance(60); // Hold at indicator position
-      
+
       try {
         await onRefresh();
       } finally {
@@ -130,7 +130,9 @@ export function PullToRefresh({
             <RefreshCw
               className={cn(
                 "w-5 h-5 transition-all",
-                shouldTrigger ? "text-secondary-foreground" : "text-muted-foreground",
+                shouldTrigger
+                  ? "text-secondary-foreground"
+                  : "text-muted-foreground",
                 isRefreshing && "animate-spin"
               )}
               style={{
@@ -170,8 +172,8 @@ export function PullToRefresh({
           {isRefreshing
             ? "Refreshing..."
             : shouldTrigger
-            ? "Release to refresh"
-            : "Pull to refresh"}
+              ? "Release to refresh"
+              : "Pull to refresh"}
         </div>
       )}
     </div>

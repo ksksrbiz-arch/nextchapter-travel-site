@@ -1,5 +1,17 @@
 import { useState, useRef, useEffect } from "react";
-import { Bell, BellRing, Check, CheckCheck, X, Plane, MessageSquare, FileText, Calendar, AlertTriangle, Settings } from "lucide-react";
+import {
+  Bell,
+  BellRing,
+  Check,
+  CheckCheck,
+  X,
+  Plane,
+  MessageSquare,
+  FileText,
+  Calendar,
+  AlertTriangle,
+  Settings,
+} from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -38,27 +50,34 @@ export default function NotificationBell() {
   const [open, setOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
 
-  const { data: unreadCount = 0, refetch: refetchCount } = trpc.notifications.unreadCount.useQuery(undefined, {
-    refetchInterval: 30000, // poll every 30s
-  });
+  const { data: unreadCount = 0, refetch: refetchCount } =
+    trpc.notifications.unreadCount.useQuery(undefined, {
+      refetchInterval: 30000, // poll every 30s
+    });
 
   // Instantly bump unread count when a new message arrives via SSE
   useSSEMessages({
-    onMessage: () => { refetchCount(); },
+    onMessage: () => {
+      refetchCount();
+    },
     enabled: true,
   });
 
-  const { data: notifications = [], refetch: refetchList } = trpc.notifications.list.useQuery(
-    { limit: 30 },
-    { enabled: open }
-  );
+  const { data: notifications = [], refetch: refetchList } =
+    trpc.notifications.list.useQuery({ limit: 30 }, { enabled: open });
 
   const markRead = trpc.notifications.markRead.useMutation({
-    onSuccess: () => { refetchCount(); refetchList(); },
+    onSuccess: () => {
+      refetchCount();
+      refetchList();
+    },
   });
 
   const markAllRead = trpc.notifications.markAllRead.useMutation({
-    onSuccess: () => { refetchCount(); refetchList(); },
+    onSuccess: () => {
+      refetchCount();
+      refetchList();
+    },
   });
 
   // Close on outside click
@@ -79,7 +98,7 @@ export default function NotificationBell() {
     <div className="relative" ref={panelRef}>
       {/* Bell button */}
       <button
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => setOpen(v => !v)}
         className={cn(
           "relative p-2 rounded-xl transition-all duration-200",
           open
@@ -107,7 +126,9 @@ export default function NotificationBell() {
           <div className="flex items-center justify-between px-4 py-3 border-b border-border">
             <div className="flex items-center gap-2">
               <Bell className="w-4 h-4 text-secondary" />
-              <span className="font-serif font-semibold text-foreground">Notifications</span>
+              <span className="font-serif font-semibold text-foreground">
+                Notifications
+              </span>
               {hasUnread && (
                 <Badge className="bg-red-500/10 text-red-600 border-0 text-xs px-1.5 py-0">
                   {unreadCount} new
@@ -141,14 +162,19 @@ export default function NotificationBell() {
                 <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-3">
                   <Bell className="w-6 h-6 text-muted-foreground" />
                 </div>
-                <p className="text-sm font-sans text-muted-foreground">You're all caught up!</p>
-                <p className="text-xs text-muted-foreground/60 mt-1">No notifications yet.</p>
+                <p className="text-sm font-sans text-muted-foreground">
+                  You're all caught up!
+                </p>
+                <p className="text-xs text-muted-foreground/60 mt-1">
+                  No notifications yet.
+                </p>
               </div>
             ) : (
               <div className="divide-y divide-border">
-                {notifications.map((notif) => {
+                {notifications.map(notif => {
                   const Icon = TYPE_ICONS[notif.type] ?? Settings;
-                  const colorClass = TYPE_COLORS[notif.type] ?? TYPE_COLORS.system;
+                  const colorClass =
+                    TYPE_COLORS[notif.type] ?? TYPE_COLORS.system;
                   return (
                     <div
                       key={notif.id}
@@ -158,15 +184,28 @@ export default function NotificationBell() {
                       )}
                       onClick={() => {
                         if (!notif.isRead) markRead.mutate({ id: notif.id });
-                        if (notif.actionUrl) window.location.href = notif.actionUrl;
+                        if (notif.actionUrl)
+                          window.location.href = notif.actionUrl;
                       }}
                     >
-                      <div className={cn("w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5", colorClass)}>
+                      <div
+                        className={cn(
+                          "w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5",
+                          colorClass
+                        )}
+                      >
                         <Icon className="w-4 h-4" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2">
-                          <p className={cn("text-sm font-sans leading-snug", !notif.isRead ? "font-semibold text-foreground" : "text-foreground/80")}>
+                          <p
+                            className={cn(
+                              "text-sm font-sans leading-snug",
+                              !notif.isRead
+                                ? "font-semibold text-foreground"
+                                : "text-foreground/80"
+                            )}
+                          >
                             {notif.title}
                           </p>
                           {!notif.isRead && (

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Plane,
   Clock,
@@ -9,10 +9,10 @@ import {
   Zap,
   TrendingDown,
   MapPinOff,
-} from 'lucide-react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+} from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 interface FlightOption {
   id: string;
@@ -33,7 +33,7 @@ interface FlightOption {
   priceChange: number; // negative = cheaper
   seats: number;
   rating: number;
-  recommendation?: 'best-value' | 'fastest' | 'most-convenient';
+  recommendation?: "best-value" | "fastest" | "most-convenient";
   amenities: string[];
   cancellationFee: boolean;
   rebookingEligible: boolean;
@@ -58,11 +58,11 @@ interface FlightAlternativesProps {
 // Mock flight alternatives database
 const FLIGHT_OPTIONS: FlightOption[] = [
   {
-    id: '1',
-    airline: 'American Airlines',
-    flightNumber: 'AA124',
-    departure: { airport: 'STL', time: Date.now() + 2 * 60 * 60 * 1000 },
-    arrival: { airport: 'MCO', time: Date.now() + 5 * 60 * 60 * 1000 },
+    id: "1",
+    airline: "American Airlines",
+    flightNumber: "AA124",
+    departure: { airport: "STL", time: Date.now() + 2 * 60 * 60 * 1000 },
+    arrival: { airport: "MCO", time: Date.now() + 5 * 60 * 60 * 1000 },
     duration: 180,
     stops: 0,
     price: 189,
@@ -70,17 +70,17 @@ const FLIGHT_OPTIONS: FlightOption[] = [
     priceChange: -90,
     seats: 12,
     rating: 4.7,
-    recommendation: 'best-value',
-    amenities: ['WiFi', 'Snack'],
+    recommendation: "best-value",
+    amenities: ["WiFi", "Snack"],
     cancellationFee: false,
     rebookingEligible: true,
   },
   {
-    id: '2',
-    airline: 'Southwest Airlines',
-    flightNumber: 'SW456',
-    departure: { airport: 'STL', time: Date.now() + 4 * 60 * 60 * 1000 },
-    arrival: { airport: 'MCO', time: Date.now() + 7 * 60 * 60 * 1000 },
+    id: "2",
+    airline: "Southwest Airlines",
+    flightNumber: "SW456",
+    departure: { airport: "STL", time: Date.now() + 4 * 60 * 60 * 1000 },
+    arrival: { airport: "MCO", time: Date.now() + 7 * 60 * 60 * 1000 },
     duration: 180,
     stops: 1,
     price: 156,
@@ -88,17 +88,17 @@ const FLIGHT_OPTIONS: FlightOption[] = [
     priceChange: -93,
     seats: 8,
     rating: 4.5,
-    recommendation: 'fastest',
-    amenities: ['Free Checked Bag', 'WiFi'],
+    recommendation: "fastest",
+    amenities: ["Free Checked Bag", "WiFi"],
     cancellationFee: false,
     rebookingEligible: true,
   },
   {
-    id: '3',
-    airline: 'United Airlines',
-    flightNumber: 'UA789',
-    departure: { airport: 'STL', time: Date.now() + 5 * 60 * 60 * 1000 },
-    arrival: { airport: 'MCO', time: Date.now() + 8 * 60 * 60 * 1000 },
+    id: "3",
+    airline: "United Airlines",
+    flightNumber: "UA789",
+    departure: { airport: "STL", time: Date.now() + 5 * 60 * 60 * 1000 },
+    arrival: { airport: "MCO", time: Date.now() + 8 * 60 * 60 * 1000 },
     duration: 180,
     stops: 0,
     price: 224,
@@ -106,16 +106,16 @@ const FLIGHT_OPTIONS: FlightOption[] = [
     priceChange: -75,
     seats: 3,
     rating: 4.6,
-    amenities: ['Premium Seat', 'Meal'],
+    amenities: ["Premium Seat", "Meal"],
     cancellationFee: true,
     rebookingEligible: false,
   },
   {
-    id: '4',
-    airline: 'Delta Airlines',
-    flightNumber: 'DL101',
-    departure: { airport: 'STL', time: Date.now() + 7 * 60 * 60 * 1000 },
-    arrival: { airport: 'TPA', time: Date.now() + 10 * 60 * 60 * 1000 }, // Diverted to Tampa
+    id: "4",
+    airline: "Delta Airlines",
+    flightNumber: "DL101",
+    departure: { airport: "STL", time: Date.now() + 7 * 60 * 60 * 1000 },
+    arrival: { airport: "TPA", time: Date.now() + 10 * 60 * 60 * 1000 }, // Diverted to Tampa
     duration: 180,
     stops: 0,
     price: 99,
@@ -123,8 +123,8 @@ const FLIGHT_OPTIONS: FlightOption[] = [
     priceChange: -180,
     seats: 25,
     rating: 4.4,
-    recommendation: 'most-convenient',
-    amenities: ['WiFi', 'Meal', 'Entertainment'],
+    recommendation: "most-convenient",
+    amenities: ["WiFi", "Meal", "Entertainment"],
     cancellationFee: false,
     rebookingEligible: true,
   },
@@ -136,8 +136,10 @@ const FlightAlternatives: React.FC<FlightAlternativesProps> = ({
   tripId,
 }) => {
   const [flights, setFlights] = useState<FlightOption[]>([]);
-  const [sortBy, setSortBy] = useState<'price' | 'time' | 'rating'>('price');
-  const [selectedFlight, setSelectedFlight] = useState<FlightOption | null>(null);
+  const [sortBy, setSortBy] = useState<"price" | "time" | "rating">("price");
+  const [selectedFlight, setSelectedFlight] = useState<FlightOption | null>(
+    null
+  );
   const [bookingInProgress, setBookingInProgress] = useState(false);
 
   useEffect(() => {
@@ -148,11 +150,11 @@ const FlightAlternatives: React.FC<FlightAlternativesProps> = ({
 
   const sortedFlights = [...flights].sort((a, b) => {
     switch (sortBy) {
-      case 'price':
+      case "price":
         return a.price - b.price;
-      case 'time':
+      case "time":
         return a.duration - b.duration;
-      case 'rating':
+      case "rating":
         return b.rating - a.rating;
       default:
         return 0;
@@ -163,7 +165,7 @@ const FlightAlternatives: React.FC<FlightAlternativesProps> = ({
     setBookingInProgress(true);
     // Simulate booking
     setTimeout(() => {
-      console.log('[FlightAlternatives] Booked flight:', flight.flightNumber);
+      console.log("[FlightAlternatives] Booked flight:", flight.flightNumber);
       setBookingInProgress(false);
       alert(`✅ Successfully rebooked on ${flight.flightNumber}!`);
     }, 2000);
@@ -171,35 +173,35 @@ const FlightAlternatives: React.FC<FlightAlternativesProps> = ({
 
   const getRecommendationBadge = (recommendation?: string) => {
     switch (recommendation) {
-      case 'best-value':
+      case "best-value":
         return (
           <Badge className="bg-emerald-600">
             <TrendingDown className="w-3 h-3 mr-1" />
             Best Value
           </Badge>
         );
-      case 'fastest':
+      case "fastest":
         return (
           <Badge className="bg-blue-600">
             <Zap className="w-3 h-3 mr-1" />
             Fastest
           </Badge>
         );
-      case 'most-convenient':
+      case "most-convenient":
         return (
           <Badge className="bg-purple-600">
             <CheckCircle2 className="w-3 h-3 mr-1" />
             Most Convenient
           </Badge>
         );
-      return null;
+        return null;
     }
   };
 
   const formatTime = (timestamp: number) => {
-    return new Date(timestamp).toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
+    return new Date(timestamp).toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -217,14 +219,17 @@ const FlightAlternatives: React.FC<FlightAlternativesProps> = ({
           <div className="flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
             <div>
-              <h3 className="font-semibold text-amber-900">Disruption Detected</h3>
+              <h3 className="font-semibold text-amber-900">
+                Disruption Detected
+              </h3>
               <p className="text-sm text-amber-800 mt-1">{reason}</p>
               {originalFlight && (
                 <div className="mt-3 p-3 bg-black/5 rounded text-sm">
                   <div className="flex items-center gap-2">
                     <Plane className="w-4 h-4" />
                     <span>
-                      Original: {originalFlight.flightNumber} {formatTime(originalFlight.departure.time)}
+                      Original: {originalFlight.flightNumber}{" "}
+                      {formatTime(originalFlight.departure.time)}
                     </span>
                   </div>
                 </div>
@@ -237,25 +242,25 @@ const FlightAlternatives: React.FC<FlightAlternativesProps> = ({
       {/* Sort Options */}
       <div className="flex gap-2">
         <Button
-          variant={sortBy === 'price' ? 'default' : 'outline'}
+          variant={sortBy === "price" ? "default" : "outline"}
           size="sm"
-          onClick={() => setSortBy('price')}
+          onClick={() => setSortBy("price")}
         >
           <DollarSign className="w-4 h-4 mr-1" />
           Price
         </Button>
         <Button
-          variant={sortBy === 'time' ? 'default' : 'outline'}
+          variant={sortBy === "time" ? "default" : "outline"}
           size="sm"
-          onClick={() => setSortBy('time')}
+          onClick={() => setSortBy("time")}
         >
           <Clock className="w-4 h-4 mr-1" />
           Duration
         </Button>
         <Button
-          variant={sortBy === 'rating' ? 'default' : 'outline'}
+          variant={sortBy === "rating" ? "default" : "outline"}
           size="sm"
-          onClick={() => setSortBy('rating')}
+          onClick={() => setSortBy("rating")}
         >
           ⭐ Rating
         </Button>
@@ -263,13 +268,13 @@ const FlightAlternatives: React.FC<FlightAlternativesProps> = ({
 
       {/* Flight Options List */}
       <div className="space-y-3">
-        {sortedFlights.map((flight) => (
+        {sortedFlights.map(flight => (
           <Card
             key={flight.id}
             className={`p-4 border cursor-pointer transition ${
               selectedFlight?.id === flight.id
-                ? 'border-blue-500/50 bg-blue-500/5'
-                : 'border-border/50 hover:border-border'
+                ? "border-blue-500/50 bg-blue-500/5"
+                : "border-border/50 hover:border-border"
             }`}
             onClick={() => setSelectedFlight(flight)}
           >
@@ -277,24 +282,27 @@ const FlightAlternatives: React.FC<FlightAlternativesProps> = ({
               <div className="flex items-start gap-3 flex-1">
                 {/* Airline Logo/Name */}
                 <div className="text-3xl flex-shrink-0">
-                  {flight.airline === 'American Airlines' && '✈️'}
-                  {flight.airline === 'Southwest Airlines' && '🛫'}
-                  {flight.airline === 'United Airlines' && '🌐'}
-                  {flight.airline === 'Delta Airlines' && '🚀'}
+                  {flight.airline === "American Airlines" && "✈️"}
+                  {flight.airline === "Southwest Airlines" && "🛫"}
+                  {flight.airline === "United Airlines" && "🌐"}
+                  {flight.airline === "Delta Airlines" && "🚀"}
                 </div>
 
                 {/* Flight Details */}
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
                     <h3 className="font-semibold">{flight.flightNumber}</h3>
-                    <span className="text-sm text-muted-foreground">{flight.airline}</span>
+                    <span className="text-sm text-muted-foreground">
+                      {flight.airline}
+                    </span>
                     {getRecommendationBadge(flight.recommendation)}
                   </div>
 
                   {/* Route and Time */}
                   <div className="flex items-center gap-2 text-sm mb-2">
                     <div className="font-mono">
-                      {flight.departure.airport} {formatTime(flight.departure.time)}
+                      {flight.departure.airport}{" "}
+                      {formatTime(flight.departure.time)}
                     </div>
                     <ArrowRightIcon />
                     <div className="font-mono">
@@ -308,7 +316,9 @@ const FlightAlternatives: React.FC<FlightAlternativesProps> = ({
                       <Clock className="w-3 h-3" />
                       {formatDuration(flight.duration)}
                     </span>
-                    <span>{flight.stops === 0 ? 'Nonstop' : `${flight.stops} stop`}</span>
+                    <span>
+                      {flight.stops === 0 ? "Nonstop" : `${flight.stops} stop`}
+                    </span>
                     <span className="flex items-center gap-1">
                       <MapPin className="w-3 h-3" />
                       {flight.seats} seats
@@ -318,8 +328,12 @@ const FlightAlternatives: React.FC<FlightAlternativesProps> = ({
                   {/* Amenities */}
                   {flight.amenities.length > 0 && (
                     <div className="flex gap-2 mt-2 flex-wrap">
-                      {flight.amenities.map((amenity) => (
-                        <Badge key={amenity} variant="outline" className="text-xs">
+                      {flight.amenities.map(amenity => (
+                        <Badge
+                          key={amenity}
+                          variant="outline"
+                          className="text-xs"
+                        >
                           {amenity}
                         </Badge>
                       ))}
@@ -330,14 +344,18 @@ const FlightAlternatives: React.FC<FlightAlternativesProps> = ({
 
               {/* Price and Rating */}
               <div className="text-right flex-shrink-0">
-                <div className="text-2xl font-bold text-emerald-600">${flight.price}</div>
+                <div className="text-2xl font-bold text-emerald-600">
+                  ${flight.price}
+                </div>
                 <div className="text-xs text-muted-foreground line-through">
                   ${flight.originalPrice}
                 </div>
                 <div className="text-sm font-semibold text-emerald-600 mt-1">
                   Save ${Math.abs(flight.priceChange)}
                 </div>
-                <div className="text-xs mt-2 text-yellow-600">⭐ {flight.rating}/5.0</div>
+                <div className="text-xs mt-2 text-yellow-600">
+                  ⭐ {flight.rating}/5.0
+                </div>
               </div>
             </div>
 
@@ -386,7 +404,9 @@ const FlightAlternatives: React.FC<FlightAlternativesProps> = ({
               <div className="p-3 bg-black/5 rounded">
                 <div className="flex items-center gap-4">
                   <div>
-                    <div className="text-2xl font-bold">{selectedFlight.departure.airport}</div>
+                    <div className="text-2xl font-bold">
+                      {selectedFlight.departure.airport}
+                    </div>
                     <div className="text-sm text-muted-foreground">
                       {formatTime(selectedFlight.departure.time)}
                     </div>
@@ -397,11 +417,15 @@ const FlightAlternatives: React.FC<FlightAlternativesProps> = ({
                     </div>
                     <div className="border-t border-border/50 my-2"></div>
                     <div className="text-center text-sm">
-                      {selectedFlight.stops === 0 ? '✓ Nonstop' : `${selectedFlight.stops} stop`}
+                      {selectedFlight.stops === 0
+                        ? "✓ Nonstop"
+                        : `${selectedFlight.stops} stop`}
                     </div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold">{selectedFlight.arrival.airport}</div>
+                    <div className="text-2xl font-bold">
+                      {selectedFlight.arrival.airport}
+                    </div>
                     <div className="text-sm text-muted-foreground">
                       {formatTime(selectedFlight.arrival.time)}
                     </div>
@@ -431,10 +455,15 @@ const FlightAlternatives: React.FC<FlightAlternativesProps> = ({
 
             {/* Important Info */}
             <div>
-              <h4 className="font-semibold text-sm mb-2">Important Information</h4>
+              <h4 className="font-semibold text-sm mb-2">
+                Important Information
+              </h4>
               <ul className="space-y-1 text-sm text-muted-foreground">
                 <li>✓ Rebooking costs are covered</li>
-                <li>{selectedFlight.cancellationFee ? '✗' : '✓'} No cancellation fee</li>
+                <li>
+                  {selectedFlight.cancellationFee ? "✗" : "✓"} No cancellation
+                  fee
+                </li>
                 <li>✓ Trip insurance protection applies</li>
               </ul>
             </div>
@@ -445,7 +474,9 @@ const FlightAlternatives: React.FC<FlightAlternativesProps> = ({
               onClick={() => handleBookFlight(selectedFlight)}
               disabled={bookingInProgress}
             >
-              {bookingInProgress ? 'Booking...' : `Book Now - $${selectedFlight.price}`}
+              {bookingInProgress
+                ? "Booking..."
+                : `Book Now - $${selectedFlight.price}`}
             </Button>
           </div>
         </Card>
@@ -462,7 +493,12 @@ function ArrowRightIcon() {
       stroke="currentColor"
       viewBox="0 0 24 24"
     >
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M9 5l7 7-7 7"
+      />
     </svg>
   );
 }

@@ -18,13 +18,18 @@ export type ValidationErrors = Record<string, string | undefined>;
 /**
  * Validate a single field against rules
  */
-export function validateField(value: any, rules?: ValidationRule): string | undefined {
+export function validateField(
+  value: any,
+  rules?: ValidationRule
+): string | undefined {
   if (!rules) return undefined;
 
   // Required validation
   if (rules.required) {
     if (!value || (typeof value === "string" && !value.trim())) {
-      return typeof rules.required === "string" ? rules.required : "This field is required";
+      return typeof rules.required === "string"
+        ? rules.required
+        : "This field is required";
     }
   }
 
@@ -33,9 +38,13 @@ export function validateField(value: any, rules?: ValidationRule): string | unde
 
   // Min length validation
   if (rules.minLength) {
-    const config = typeof rules.minLength === "number" 
-      ? { value: rules.minLength, message: `Must be at least ${rules.minLength} characters` }
-      : rules.minLength;
+    const config =
+      typeof rules.minLength === "number"
+        ? {
+            value: rules.minLength,
+            message: `Must be at least ${rules.minLength} characters`,
+          }
+        : rules.minLength;
     if (String(value).length < config.value) {
       return config.message;
     }
@@ -43,9 +52,13 @@ export function validateField(value: any, rules?: ValidationRule): string | unde
 
   // Max length validation
   if (rules.maxLength) {
-    const config = typeof rules.maxLength === "number"
-      ? { value: rules.maxLength, message: `Must not exceed ${rules.maxLength} characters` }
-      : rules.maxLength;
+    const config =
+      typeof rules.maxLength === "number"
+        ? {
+            value: rules.maxLength,
+            message: `Must not exceed ${rules.maxLength} characters`,
+          }
+        : rules.maxLength;
     if (String(value).length > config.value) {
       return config.message;
     }
@@ -53,9 +66,10 @@ export function validateField(value: any, rules?: ValidationRule): string | unde
 
   // Pattern validation
   if (rules.pattern) {
-    const config = rules.pattern instanceof RegExp
-      ? { value: rules.pattern, message: "Invalid format" }
-      : rules.pattern;
+    const config =
+      rules.pattern instanceof RegExp
+        ? { value: rules.pattern, message: "Invalid format" }
+        : rules.pattern;
     if (!config.value.test(String(value))) {
       return config.message;
     }
@@ -84,14 +98,14 @@ export function validateForm(
   rules: ValidationRules
 ): ValidationErrors {
   const errors: ValidationErrors = {};
-  
+
   for (const [field, fieldRules] of Object.entries(rules)) {
     const error = validateField(formData[field], fieldRules);
     if (error) {
       errors[field] = error;
     }
   }
-  
+
   return errors;
 }
 
@@ -122,8 +136,10 @@ export const COMMON_RULES = {
     required: "Password is required",
     minLength: { value: 8, message: "Password must be at least 8 characters" },
     validate: (value: string) => {
-      if (!/[A-Z]/.test(value)) return "Must contain at least one uppercase letter";
-      if (!/[a-z]/.test(value)) return "Must contain at least one lowercase letter";
+      if (!/[A-Z]/.test(value))
+        return "Must contain at least one uppercase letter";
+      if (!/[a-z]/.test(value))
+        return "Must contain at least one lowercase letter";
       if (!/[\d]/.test(value)) return "Must contain at least one number";
       return true;
     },
@@ -136,6 +152,9 @@ export const COMMON_RULES = {
   message: {
     required: "Message is required",
     minLength: { value: 1, message: "Message cannot be empty" },
-    maxLength: { value: 1000, message: "Message must not exceed 1000 characters" },
+    maxLength: {
+      value: 1000,
+      message: "Message must not exceed 1000 characters",
+    },
   },
 };

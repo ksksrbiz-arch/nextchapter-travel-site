@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import PortalLayout from '@/components/PortalLayout';
-import MemoryArchives from '@/components/MemoryArchives';
-import RebookingRecommendations from '@/components/RebookingRecommendations';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Archive, Compass } from 'lucide-react';
+import React, { useState } from "react";
+import PortalLayout from "@/components/PortalLayout";
+import MemoryArchives from "@/components/MemoryArchives";
+import RebookingRecommendations from "@/components/RebookingRecommendations";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Archive, Compass } from "lucide-react";
 
 export default function MemoryArchivesPage() {
-  const [activeTab, setActiveTab] = useState('archives');
+  const [activeTab, setActiveTab] = useState("archives");
 
   return (
-    <PortalLayout 
-      title="Memory Archives & Rebooking" 
+    <PortalLayout
+      title="Memory Archives & Rebooking"
       subtitle="Relive your favorite trips and discover your next adventure"
     >
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -19,7 +19,10 @@ export default function MemoryArchivesPage() {
             <Archive className="w-4 h-4" />
             Archives
           </TabsTrigger>
-          <TabsTrigger value="recommendations" className="flex items-center gap-2">
+          <TabsTrigger
+            value="recommendations"
+            className="flex items-center gap-2"
+          >
             <Compass className="w-4 h-4" />
             Recommendations
           </TabsTrigger>

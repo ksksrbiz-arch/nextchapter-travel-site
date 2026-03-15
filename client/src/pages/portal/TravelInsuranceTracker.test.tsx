@@ -28,7 +28,9 @@ describe("TravelInsuranceTracker Component", () => {
     render(<TravelInsuranceTracker />);
 
     // Click add policy button
-    const addBtn = screen.getByRole("button", { name: /Add Insurance Policy/i });
+    const addBtn = screen.getByRole("button", {
+      name: /Add Insurance Policy/i,
+    });
     await user.click(addBtn);
 
     // Fill form
@@ -65,7 +67,9 @@ describe("TravelInsuranceTracker Component", () => {
     const user = userEvent.setup();
     render(<TravelInsuranceTracker />);
 
-    const addBtn = screen.getByRole("button", { name: /Add Insurance Policy/i });
+    const addBtn = screen.getByRole("button", {
+      name: /Add Insurance Policy/i,
+    });
     await user.click(addBtn);
 
     // Try to submit empty form
@@ -95,16 +99,18 @@ describe("TravelInsuranceTracker Component", () => {
     render(<TravelInsuranceTracker />);
 
     // Get initial policy count
-    const initialPolicies = screen.getAllByRole("button", { name: "" }).filter(
-      (btn) => btn.querySelector("svg[class*='w-4 h-4 text-red-500']")
-    );
+    const initialPolicies = screen
+      .getAllByRole("button", { name: "" })
+      .filter(btn => btn.querySelector("svg[class*='w-4 h-4 text-red-500']"));
 
     if (initialPolicies.length > 0) {
       await user.click(initialPolicies[0]);
 
       // Verify policy is removed
       await waitFor(() => {
-        expect(screen.queryByText("Wanderlust Premium")).not.toBeInTheDocument();
+        expect(
+          screen.queryByText("Wanderlust Premium")
+        ).not.toBeInTheDocument();
       });
     }
   });
@@ -120,12 +126,18 @@ describe("TravelInsuranceTracker Component", () => {
     const user = userEvent.setup();
     render(<TravelInsuranceTracker />);
 
-    const addBtn = screen.getByRole("button", { name: /Add Insurance Policy/i });
+    const addBtn = screen.getByRole("button", {
+      name: /Add Insurance Policy/i,
+    });
     await user.click(addBtn);
 
     // Find and click coverage type buttons
-    const medicalCoverageBtn = screen.getByRole("button", { name: /Medical Expenses/i });
-    const evacuationBtn = screen.getByRole("button", { name: /Emergency Evacuation/i });
+    const medicalCoverageBtn = screen.getByRole("button", {
+      name: /Medical Expenses/i,
+    });
+    const evacuationBtn = screen.getByRole("button", {
+      name: /Emergency Evacuation/i,
+    });
 
     await user.click(medicalCoverageBtn);
     await user.click(evacuationBtn);
@@ -139,7 +151,9 @@ describe("TravelInsuranceTracker Component", () => {
     const user = userEvent.setup();
     render(<TravelInsuranceTracker />);
 
-    const addBtn = screen.getByRole("button", { name: /Add Insurance Policy/i });
+    const addBtn = screen.getByRole("button", {
+      name: /Add Insurance Policy/i,
+    });
     await user.click(addBtn);
 
     // Find and click region buttons
@@ -179,9 +193,9 @@ describe("TravelInsuranceTracker Component", () => {
     const { rerender } = render(<TravelInsuranceTracker />);
 
     // Delete the initial policy to test empty state
-    const deleteBtn = screen.getAllByRole("button", { name: "" }).find(
-      (btn) => btn.querySelector("svg[class*='text-red-500']")
-    );
+    const deleteBtn = screen
+      .getAllByRole("button", { name: "" })
+      .find(btn => btn.querySelector("svg[class*='text-red-500']"));
 
     if (deleteBtn) {
       fireEvent.click(deleteBtn);

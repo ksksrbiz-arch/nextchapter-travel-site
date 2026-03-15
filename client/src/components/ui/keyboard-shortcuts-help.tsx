@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { X, Keyboard, Command } from "lucide-react";
-import { useKeyboardShortcuts, formatShortcut, SHORTCUTS } from "@/hooks/useKeyboardShortcuts";
+import {
+  useKeyboardShortcuts,
+  formatShortcut,
+  SHORTCUTS,
+} from "@/hooks/useKeyboardShortcuts";
 
 interface KeyboardShortcut {
   keys: string;
@@ -10,16 +14,56 @@ interface KeyboardShortcut {
 }
 
 const PORTAL_SHORTCUTS: KeyboardShortcut[] = [
-  { keys: formatShortcut(SHORTCUTS.search), description: "Open search", category: "Navigation" },
-  { keys: formatShortcut(SHORTCUTS.escape), description: "Close dialog / Cancel", category: "Navigation" },
-  { keys: formatShortcut(SHORTCUTS.goBack), description: "Go back", category: "Navigation" },
-  { keys: formatShortcut({ key: "1", alt: true }), description: "Go to Dashboard", category: "Navigation" },
-  { keys: formatShortcut({ key: "2", alt: true }), description: "Go to Itinerary", category: "Navigation" },
-  { keys: formatShortcut({ key: "3", alt: true }), description: "Go to Messages", category: "Navigation" },
-  { keys: formatShortcut({ key: "4", alt: true }), description: "Go to Packing", category: "Navigation" },
-  { keys: formatShortcut(SHORTCUTS.new), description: "New message / item", category: "Actions" },
-  { keys: formatShortcut(SHORTCUTS.save), description: "Save changes", category: "Actions" },
-  { keys: formatShortcut(SHORTCUTS.help), description: "Show this help", category: "Help" },
+  {
+    keys: formatShortcut(SHORTCUTS.search),
+    description: "Open search",
+    category: "Navigation",
+  },
+  {
+    keys: formatShortcut(SHORTCUTS.escape),
+    description: "Close dialog / Cancel",
+    category: "Navigation",
+  },
+  {
+    keys: formatShortcut(SHORTCUTS.goBack),
+    description: "Go back",
+    category: "Navigation",
+  },
+  {
+    keys: formatShortcut({ key: "1", alt: true }),
+    description: "Go to Dashboard",
+    category: "Navigation",
+  },
+  {
+    keys: formatShortcut({ key: "2", alt: true }),
+    description: "Go to Itinerary",
+    category: "Navigation",
+  },
+  {
+    keys: formatShortcut({ key: "3", alt: true }),
+    description: "Go to Messages",
+    category: "Navigation",
+  },
+  {
+    keys: formatShortcut({ key: "4", alt: true }),
+    description: "Go to Packing",
+    category: "Navigation",
+  },
+  {
+    keys: formatShortcut(SHORTCUTS.new),
+    description: "New message / item",
+    category: "Actions",
+  },
+  {
+    keys: formatShortcut(SHORTCUTS.save),
+    description: "Save changes",
+    category: "Actions",
+  },
+  {
+    keys: formatShortcut(SHORTCUTS.help),
+    description: "Show this help",
+    category: "Help",
+  },
 ];
 
 interface KeyboardShortcutsHelpProps {
@@ -52,7 +96,9 @@ export function KeyboardShortcutsHelp({
   if (!isOpen) return null;
 
   const allShortcuts = [...PORTAL_SHORTCUTS, ...pageShortcuts];
-  const categories = Array.from(new Set(allShortcuts.map((s) => s.category || "General")));
+  const categories = Array.from(
+    new Set(allShortcuts.map(s => s.category || "General"))
+  );
 
   return (
     <>
@@ -72,9 +118,15 @@ export function KeyboardShortcutsHelp({
                 <Keyboard className="w-5 h-5 text-secondary" />
               </div>
               <div>
-                <h2 className="font-serif font-bold text-lg text-foreground">{title}</h2>
+                <h2 className="font-serif font-bold text-lg text-foreground">
+                  {title}
+                </h2>
                 <p className="text-xs text-muted-foreground font-sans">
-                  Press <kbd className="px-1.5 py-0.5 bg-muted rounded text-xs mx-0.5">/</kbd> anytime to show this
+                  Press{" "}
+                  <kbd className="px-1.5 py-0.5 bg-muted rounded text-xs mx-0.5">
+                    /
+                  </kbd>{" "}
+                  anytime to show this
                 </p>
               </div>
             </div>
@@ -88,14 +140,14 @@ export function KeyboardShortcutsHelp({
 
           {/* Shortcuts list */}
           <div className="max-h-[60vh] overflow-y-auto p-6 space-y-6">
-            {categories.map((category) => (
+            {categories.map(category => (
               <div key={category}>
                 <h3 className="text-xs font-sans font-semibold text-muted-foreground uppercase tracking-wider mb-3">
                   {category}
                 </h3>
                 <div className="space-y-2">
                   {allShortcuts
-                    .filter((s) => (s.category || "General") === category)
+                    .filter(s => (s.category || "General") === category)
                     .map((shortcut, i) => (
                       <div
                         key={i}
@@ -118,7 +170,11 @@ export function KeyboardShortcutsHelp({
           <div className="px-6 py-4 border-t border-border bg-muted/30">
             <p className="text-xs text-muted-foreground font-sans text-center flex items-center justify-center gap-2">
               <Command className="w-3.5 h-3.5" />
-              Pro tip: Use <kbd className="px-1.5 py-0.5 bg-muted rounded text-xs">⌘K</kbd> to quickly search anything
+              Pro tip: Use{" "}
+              <kbd className="px-1.5 py-0.5 bg-muted rounded text-xs">
+                ⌘K
+              </kbd>{" "}
+              to quickly search anything
             </p>
           </div>
         </div>
@@ -130,11 +186,11 @@ export function KeyboardShortcutsHelp({
 /**
  * Hook to manage keyboard shortcuts help dialog state.
  * Includes the "/" shortcut to open the dialog.
- * 
+ *
  * @example
  * ```tsx
  * const { isOpen, open, close } = useKeyboardShortcutsHelp();
- * 
+ *
  * return (
  *   <>
  *     <button onClick={open}>Show shortcuts</button>
@@ -158,6 +214,6 @@ export function useKeyboardShortcutsHelp() {
     isOpen,
     open: () => setIsOpen(true),
     close: () => setIsOpen(false),
-    toggle: () => setIsOpen((v) => !v),
+    toggle: () => setIsOpen(v => !v),
   };
 }

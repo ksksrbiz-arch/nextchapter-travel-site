@@ -92,13 +92,18 @@ describe("admin.clients", () => {
   it("throws FORBIDDEN for non-admin users", async () => {
     const { ctx } = createClientContext();
     const caller = appRouter.createCaller(ctx);
-    await expect(caller.admin.clients()).rejects.toThrow("Admin access required");
+    await expect(caller.admin.clients()).rejects.toThrow(
+      "Admin access required"
+    );
   });
 });
 
 describe("auth.logout", () => {
   it("clears the session cookie and reports success", async () => {
-    const clearedCookies: Array<{ name: string; options: Record<string, unknown> }> = [];
+    const clearedCookies: Array<{
+      name: string;
+      options: Record<string, unknown>;
+    }> = [];
     const ctx: TrpcContext = {
       user: null,
       req: { protocol: "https", headers: {} } as TrpcContext["req"],

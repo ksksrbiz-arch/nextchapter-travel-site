@@ -1,5 +1,15 @@
 import { useState } from "react";
-import { Star, MapPin, Clock, DollarSign, Users, Phone, Globe, Plus, Trash2 } from "lucide-react";
+import {
+  Star,
+  MapPin,
+  Clock,
+  DollarSign,
+  Users,
+  Phone,
+  Globe,
+  Plus,
+  Trash2,
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -33,7 +43,8 @@ const MOCK_RECOMMENDATIONS: Recommendation[] = [
     hours: "5:00 PM - 11:00 PM",
     phone: "(555) 123-4567",
     website: "www.sunsetgrill.com",
-    notes: "Beachfront location with amazing views. Recommended for sunset dinner.",
+    notes:
+      "Beachfront location with amazing views. Recommended for sunset dinner.",
     saved: false,
   },
   {
@@ -67,8 +78,11 @@ const MOCK_RECOMMENDATIONS: Recommendation[] = [
 ];
 
 export function RestaurantActivityRecommendations() {
-  const [recommendations, setRecommendations] = useState<Recommendation[]>(MOCK_RECOMMENDATIONS);
-  const [filter, setFilter] = useState<"all" | "restaurant" | "activity" | "attraction">("all");
+  const [recommendations, setRecommendations] =
+    useState<Recommendation[]>(MOCK_RECOMMENDATIONS);
+  const [filter, setFilter] = useState<
+    "all" | "restaurant" | "activity" | "attraction"
+  >("all");
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     type: "restaurant",
@@ -106,28 +120,35 @@ export function RestaurantActivityRecommendations() {
     };
 
     setRecommendations([newRec, ...recommendations]);
-    setFormData({ type: "restaurant", name: "", category: "", rating: "4.5", price: "$$", address: "", notes: "" });
+    setFormData({
+      type: "restaurant",
+      name: "",
+      category: "",
+      rating: "4.5",
+      price: "$$",
+      address: "",
+      notes: "",
+    });
     setErrors({});
     setShowForm(false);
   };
 
   const handleToggleSave = (id: string) => {
     setRecommendations(
-      recommendations.map((r) =>
-        r.id === id ? { ...r, saved: !r.saved } : r
-      )
+      recommendations.map(r => (r.id === id ? { ...r, saved: !r.saved } : r))
     );
   };
 
   const handleDelete = (id: string) => {
-    setRecommendations(recommendations.filter((r) => r.id !== id));
+    setRecommendations(recommendations.filter(r => r.id !== id));
   };
 
-  const filteredRecs = filter === "all" 
-    ? recommendations 
-    : recommendations.filter((r) => r.type === filter);
+  const filteredRecs =
+    filter === "all"
+      ? recommendations
+      : recommendations.filter(r => r.type === filter);
 
-  const savedCount = recommendations.filter((r) => r.saved).length;
+  const savedCount = recommendations.filter(r => r.saved).length;
 
   const typeLabels = {
     restaurant: "🍽️ Restaurants",
@@ -139,12 +160,16 @@ export function RestaurantActivityRecommendations() {
     <div className="space-y-6">
       {/* Summary */}
       <Card className="bg-gradient-to-br from-amber-950/30 to-orange-950/30 border-amber-500/20 p-6">
-        <h3 className="text-sm font-medium text-muted-foreground mb-4">Recommendations</h3>
+        <h3 className="text-sm font-medium text-muted-foreground mb-4">
+          Recommendations
+        </h3>
 
         <div className="grid grid-cols-3 gap-3">
           <div className="p-3 bg-black/20 rounded-lg">
             <p className="text-xs text-muted-foreground">Total</p>
-            <p className="text-2xl font-bold text-foreground">{recommendations.length}</p>
+            <p className="text-2xl font-bold text-foreground">
+              {recommendations.length}
+            </p>
           </div>
 
           <div className="p-3 bg-black/20 rounded-lg border border-emerald-500/30">
@@ -161,7 +186,7 @@ export function RestaurantActivityRecommendations() {
 
       {/* Filter Tabs */}
       <div className="flex gap-2 overflow-x-auto">
-        {(["all", "restaurant", "activity", "attraction"] as const).map((f) => (
+        {(["all", "restaurant", "activity", "attraction"] as const).map(f => (
           <button
             key={f}
             onClick={() => setFilter(f)}
@@ -192,7 +217,15 @@ export function RestaurantActivityRecommendations() {
           <div className="space-y-4">
             <select
               value={formData.type}
-              onChange={(e) => setFormData({ ...formData, type: e.target.value as "restaurant" | "activity" | "attraction" })}
+              onChange={e =>
+                setFormData({
+                  ...formData,
+                  type: e.target.value as
+                    | "restaurant"
+                    | "activity"
+                    | "attraction",
+                })
+              }
               className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/50"
             >
               <option value="restaurant">Restaurant</option>
@@ -205,7 +238,7 @@ export function RestaurantActivityRecommendations() {
                 type="text"
                 placeholder="Name"
                 value={formData.name}
-                onChange={(e) => {
+                onChange={e => {
                   setFormData({ ...formData, name: e.target.value });
                   setErrors({ ...errors, name: "" });
                 }}
@@ -218,7 +251,7 @@ export function RestaurantActivityRecommendations() {
                 type="text"
                 placeholder="Category (e.g., Italian, Hiking, Museum)"
                 value={formData.category}
-                onChange={(e) => {
+                onChange={e => {
                   setFormData({ ...formData, category: e.target.value });
                   setErrors({ ...errors, category: "" });
                 }}
@@ -231,7 +264,7 @@ export function RestaurantActivityRecommendations() {
                 type="text"
                 placeholder="Address"
                 value={formData.address}
-                onChange={(e) => {
+                onChange={e => {
                   setFormData({ ...formData, address: e.target.value });
                   setErrors({ ...errors, address: "" });
                 }}
@@ -247,13 +280,17 @@ export function RestaurantActivityRecommendations() {
                 max="5"
                 step="0.1"
                 value={formData.rating}
-                onChange={(e) => setFormData({ ...formData, rating: e.target.value })}
+                onChange={e =>
+                  setFormData({ ...formData, rating: e.target.value })
+                }
                 className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/50"
               />
 
               <select
                 value={formData.price}
-                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                onChange={e =>
+                  setFormData({ ...formData, price: e.target.value })
+                }
                 className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/50"
               >
                 <option>$</option>
@@ -266,7 +303,9 @@ export function RestaurantActivityRecommendations() {
             <textarea
               placeholder="Notes"
               value={formData.notes}
-              onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+              onChange={e =>
+                setFormData({ ...formData, notes: e.target.value })
+              }
               className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 resize-none"
               rows={2}
             />
@@ -293,25 +332,43 @@ export function RestaurantActivityRecommendations() {
       {/* Recommendations List */}
       {filteredRecs.length > 0 ? (
         <div className="space-y-3">
-          {filteredRecs.map((rec) => (
-            <Card key={rec.id} className="p-4 border-border/50 hover:border-primary/50 transition-colors">
+          {filteredRecs.map(rec => (
+            <Card
+              key={rec.id}
+              className="p-4 border-border/50 hover:border-primary/50 transition-colors"
+            >
               <div className="flex items-start gap-4 mb-3">
                 <div className="text-3xl flex-shrink-0">
-                  {rec.type === "restaurant" ? "🍽️" : rec.type === "activity" ? "🎯" : "🏛️"}
+                  {rec.type === "restaurant"
+                    ? "🍽️"
+                    : rec.type === "activity"
+                      ? "🎯"
+                      : "🏛️"}
                 </div>
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <h4 className="font-semibold text-foreground">{rec.name}</h4>
+                    <h4 className="font-semibold text-foreground">
+                      {rec.name}
+                    </h4>
                     <div className="flex items-center gap-1">
-                      <Star className="w-4 h-4 text-yellow-500" fill="currentColor" />
-                      <span className="text-xs font-medium text-yellow-400">{rec.rating}</span>
+                      <Star
+                        className="w-4 h-4 text-yellow-500"
+                        fill="currentColor"
+                      />
+                      <span className="text-xs font-medium text-yellow-400">
+                        {rec.rating}
+                      </span>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2 mb-2">
-                    <Badge variant="outline" className="text-xs">{rec.category}</Badge>
-                    <Badge variant="outline" className="text-xs">{rec.price}</Badge>
+                    <Badge variant="outline" className="text-xs">
+                      {rec.category}
+                    </Badge>
+                    <Badge variant="outline" className="text-xs">
+                      {rec.price}
+                    </Badge>
                   </div>
 
                   <div className="space-y-1 text-xs text-muted-foreground">
@@ -366,7 +423,10 @@ export function RestaurantActivityRecommendations() {
                       : "bg-black/20 hover:bg-black/30 text-muted-foreground"
                   }`}
                 >
-                  <Star className="w-3 h-3" fill={rec.saved ? "currentColor" : "none"} />
+                  <Star
+                    className="w-3 h-3"
+                    fill={rec.saved ? "currentColor" : "none"}
+                  />
                   {rec.saved ? "Saved" : "Save"}
                 </button>
               </div>
@@ -379,7 +439,10 @@ export function RestaurantActivityRecommendations() {
             icon={MapPin}
             title="No Recommendations"
             description="Add restaurants, activities, and attractions you want to experience"
-            action={{ label: "Add Recommendation", onClick: () => setShowForm(true) }}
+            action={{
+              label: "Add Recommendation",
+              onClick: () => setShowForm(true),
+            }}
           />
         )
       )}

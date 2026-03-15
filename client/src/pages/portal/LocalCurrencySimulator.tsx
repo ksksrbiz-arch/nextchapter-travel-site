@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { DollarSign, Trash2, TrendingUp, Calculator, ArrowRightLeft } from "lucide-react";
+import {
+  DollarSign,
+  Trash2,
+  TrendingUp,
+  Calculator,
+  ArrowRightLeft,
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -48,12 +54,120 @@ const CURRENCIES: CurrencyPair[] = [
 
 // Simplified exchange rates (in real app, this would be fetched from API)
 const EXCHANGE_RATES: Record<string, Record<string, number>> = {
-  USD: { EUR: 0.92, GBP: 0.79, JPY: 149.5, AUD: 1.53, CAD: 1.36, CHF: 0.88, CNY: 7.24, INR: 83.1, MXN: 17.05, SGD: 1.34, HKD: 7.81, NZD: 1.62, SEK: 10.32, THB: 35.2, BRL: 4.97, ZAR: 18.75, AED: 3.67 },
-  EUR: { USD: 1.09, GBP: 0.86, JPY: 163.2, AUD: 1.66, CAD: 1.48, CHF: 0.96, CNY: 7.87, INR: 90.3, MXN: 18.54, SGD: 1.46, HKD: 8.49, NZD: 1.76, SEK: 11.22, THB: 38.3, BRL: 5.4, ZAR: 20.38, AED: 3.99 },
-  GBP: { USD: 1.27, EUR: 1.16, JPY: 189.9, AUD: 1.93, CAD: 1.72, CHF: 1.12, CNY: 9.15, INR: 105.0, MXN: 21.56, SGD: 1.7, HKD: 9.88, NZD: 2.05, SEK: 13.05, THB: 44.57, BRL: 6.28, ZAR: 23.71, AED: 4.64 },
-  JPY: { USD: 0.0067, EUR: 0.0061, GBP: 0.0053, AUD: 0.0102, CAD: 0.0091, CHF: 0.0059, CNY: 0.0484, INR: 0.556, MXN: 0.114, SGD: 0.009, HKD: 0.0522, NZD: 0.0108, SEK: 0.069, THB: 0.235, BRL: 0.033, ZAR: 0.125, AED: 0.0246 },
-  INR: { USD: 0.012, EUR: 0.011, GBP: 0.0095, JPY: 1.798, AUD: 0.0184, CAD: 0.0164, CHF: 0.0106, CNY: 0.087, MXN: 0.205, SGD: 0.0162, HKD: 0.094, NZD: 0.0195, SEK: 0.124, THB: 0.423, BRL: 0.0596, ZAR: 0.225, AED: 0.0442 },
-  AUD: { USD: 0.65, EUR: 0.60, GBP: 0.52, JPY: 97.7, CAD: 0.89, CHF: 0.58, CNY: 4.73, INR: 54.3, MXN: 11.14, SGD: 0.88, HKD: 5.1, NZD: 1.06, SEK: 6.74, THB: 23.02, BRL: 3.25, ZAR: 12.25, AED: 2.4 },
+  USD: {
+    EUR: 0.92,
+    GBP: 0.79,
+    JPY: 149.5,
+    AUD: 1.53,
+    CAD: 1.36,
+    CHF: 0.88,
+    CNY: 7.24,
+    INR: 83.1,
+    MXN: 17.05,
+    SGD: 1.34,
+    HKD: 7.81,
+    NZD: 1.62,
+    SEK: 10.32,
+    THB: 35.2,
+    BRL: 4.97,
+    ZAR: 18.75,
+    AED: 3.67,
+  },
+  EUR: {
+    USD: 1.09,
+    GBP: 0.86,
+    JPY: 163.2,
+    AUD: 1.66,
+    CAD: 1.48,
+    CHF: 0.96,
+    CNY: 7.87,
+    INR: 90.3,
+    MXN: 18.54,
+    SGD: 1.46,
+    HKD: 8.49,
+    NZD: 1.76,
+    SEK: 11.22,
+    THB: 38.3,
+    BRL: 5.4,
+    ZAR: 20.38,
+    AED: 3.99,
+  },
+  GBP: {
+    USD: 1.27,
+    EUR: 1.16,
+    JPY: 189.9,
+    AUD: 1.93,
+    CAD: 1.72,
+    CHF: 1.12,
+    CNY: 9.15,
+    INR: 105.0,
+    MXN: 21.56,
+    SGD: 1.7,
+    HKD: 9.88,
+    NZD: 2.05,
+    SEK: 13.05,
+    THB: 44.57,
+    BRL: 6.28,
+    ZAR: 23.71,
+    AED: 4.64,
+  },
+  JPY: {
+    USD: 0.0067,
+    EUR: 0.0061,
+    GBP: 0.0053,
+    AUD: 0.0102,
+    CAD: 0.0091,
+    CHF: 0.0059,
+    CNY: 0.0484,
+    INR: 0.556,
+    MXN: 0.114,
+    SGD: 0.009,
+    HKD: 0.0522,
+    NZD: 0.0108,
+    SEK: 0.069,
+    THB: 0.235,
+    BRL: 0.033,
+    ZAR: 0.125,
+    AED: 0.0246,
+  },
+  INR: {
+    USD: 0.012,
+    EUR: 0.011,
+    GBP: 0.0095,
+    JPY: 1.798,
+    AUD: 0.0184,
+    CAD: 0.0164,
+    CHF: 0.0106,
+    CNY: 0.087,
+    MXN: 0.205,
+    SGD: 0.0162,
+    HKD: 0.094,
+    NZD: 0.0195,
+    SEK: 0.124,
+    THB: 0.423,
+    BRL: 0.0596,
+    ZAR: 0.225,
+    AED: 0.0442,
+  },
+  AUD: {
+    USD: 0.65,
+    EUR: 0.6,
+    GBP: 0.52,
+    JPY: 97.7,
+    CAD: 0.89,
+    CHF: 0.58,
+    CNY: 4.73,
+    INR: 54.3,
+    MXN: 11.14,
+    SGD: 0.88,
+    HKD: 5.1,
+    NZD: 1.06,
+    SEK: 6.74,
+    THB: 23.02,
+    BRL: 3.25,
+    ZAR: 12.25,
+    AED: 2.4,
+  },
 };
 
 export function LocalCurrencySimulator() {
@@ -111,7 +225,10 @@ export function LocalCurrencySimulator() {
   const handleAddSimulation = () => {
     if (!validateForm()) return;
 
-    const rate = getExchangeRate(formData.baseCurrency, formData.targetCurrency);
+    const rate = getExchangeRate(
+      formData.baseCurrency,
+      formData.targetCurrency
+    );
     const converted = parseFloat(formData.baseAmount) * rate;
 
     const newSimulation: CurrencySimulation = {
@@ -138,12 +255,14 @@ export function LocalCurrencySimulator() {
   };
 
   const handleDeleteSimulation = (id: string) => {
-    setSimulations(simulations.filter((s) => s.id !== id));
+    setSimulations(simulations.filter(s => s.id !== id));
   };
 
   const handleToggleFavorite = (id: string) => {
     setSimulations(
-      simulations.map((sim) => (sim.id === id ? { ...sim, isFavorite: !sim.isFavorite } : sim))
+      simulations.map(sim =>
+        sim.id === id ? { ...sim, isFavorite: !sim.isFavorite } : sim
+      )
     );
   };
 
@@ -155,29 +274,44 @@ export function LocalCurrencySimulator() {
     });
   };
 
-  const baseCurrencyInfo = CURRENCIES.find((c) => c.code === formData.baseCurrency);
-  const targetCurrencyInfo = CURRENCIES.find((c) => c.code === formData.targetCurrency);
-  const currentRate = getExchangeRate(formData.baseCurrency, formData.targetCurrency);
-  const previewAmount = formData.baseAmount ? parseFloat(formData.baseAmount) * currentRate : 0;
+  const baseCurrencyInfo = CURRENCIES.find(
+    c => c.code === formData.baseCurrency
+  );
+  const targetCurrencyInfo = CURRENCIES.find(
+    c => c.code === formData.targetCurrency
+  );
+  const currentRate = getExchangeRate(
+    formData.baseCurrency,
+    formData.targetCurrency
+  );
+  const previewAmount = formData.baseAmount
+    ? parseFloat(formData.baseAmount) * currentRate
+    : 0;
 
-  const favoriteSimulations = simulations.filter((s) => s.isFavorite);
-  const otherSimulations = simulations.filter((s) => !s.isFavorite);
+  const favoriteSimulations = simulations.filter(s => s.isFavorite);
+  const otherSimulations = simulations.filter(s => !s.isFavorite);
 
   return (
     <div className="space-y-6">
       {/* Summary */}
       <Card className="bg-gradient-to-br from-cyan-950/30 to-blue-950/30 border-cyan-500/20 p-6">
-        <h3 className="text-sm font-medium text-muted-foreground mb-4">Currency Converter</h3>
+        <h3 className="text-sm font-medium text-muted-foreground mb-4">
+          Currency Converter
+        </h3>
 
         <div className="grid grid-cols-3 gap-3">
           <div className="p-3 bg-black/20 rounded-lg">
             <p className="text-xs text-muted-foreground">Conversions</p>
-            <p className="text-2xl font-bold text-foreground">{simulations.length}</p>
+            <p className="text-2xl font-bold text-foreground">
+              {simulations.length}
+            </p>
           </div>
 
           <div className="p-3 bg-black/20 rounded-lg border border-cyan-500/30">
             <p className="text-xs text-cyan-300">Favorites</p>
-            <p className="text-2xl font-bold text-cyan-400">{favoriteSimulations.length}</p>
+            <p className="text-2xl font-bold text-cyan-400">
+              {favoriteSimulations.length}
+            </p>
           </div>
 
           <div className="p-3 bg-black/20 rounded-lg">
@@ -196,10 +330,12 @@ export function LocalCurrencySimulator() {
           <div className="grid grid-cols-2 gap-2">
             <select
               value={formData.baseCurrency}
-              onChange={(e) => setFormData({ ...formData, baseCurrency: e.target.value })}
+              onChange={e =>
+                setFormData({ ...formData, baseCurrency: e.target.value })
+              }
               className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/50"
             >
-              {CURRENCIES.map((curr) => (
+              {CURRENCIES.map(curr => (
                 <option key={curr.code} value={curr.code}>
                   {curr.code} - {curr.name}
                 </option>
@@ -217,10 +353,12 @@ export function LocalCurrencySimulator() {
 
           <select
             value={formData.targetCurrency}
-            onChange={(e) => setFormData({ ...formData, targetCurrency: e.target.value })}
+            onChange={e =>
+              setFormData({ ...formData, targetCurrency: e.target.value })
+            }
             className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/50"
           >
-            {CURRENCIES.map((curr) => (
+            {CURRENCIES.map(curr => (
               <option key={curr.code} value={curr.code}>
                 {curr.code} - {curr.name}
               </option>
@@ -237,7 +375,7 @@ export function LocalCurrencySimulator() {
                 type="number"
                 placeholder="Amount"
                 value={formData.baseAmount}
-                onChange={(e) => {
+                onChange={e => {
                   setFormData({ ...formData, baseAmount: e.target.value });
                   setErrors({ ...errors, baseAmount: "" });
                 }}
@@ -259,7 +397,8 @@ export function LocalCurrencySimulator() {
                 <div className="text-right">
                   <p className="text-xs text-muted-foreground">Rate</p>
                   <p className="text-lg font-semibold text-foreground">
-                    1 {formData.baseCurrency} = {currentRate.toFixed(4)} {formData.targetCurrency}
+                    1 {formData.baseCurrency} = {currentRate.toFixed(4)}{" "}
+                    {formData.targetCurrency}
                   </p>
                 </div>
               </div>
@@ -269,7 +408,7 @@ export function LocalCurrencySimulator() {
           <textarea
             placeholder="Notes (optional)"
             value={formData.notes}
-            onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+            onChange={e => setFormData({ ...formData, notes: e.target.value })}
             className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 resize-none"
             rows={2}
           />
@@ -284,9 +423,11 @@ export function LocalCurrencySimulator() {
       {/* Favorite Conversions */}
       {favoriteSimulations.length > 0 && (
         <div>
-          <h3 className="text-sm font-semibold text-muted-foreground mb-3">Favorite Conversions</h3>
+          <h3 className="text-sm font-semibold text-muted-foreground mb-3">
+            Favorite Conversions
+          </h3>
           <div className="space-y-3">
-            {favoriteSimulations.map((sim) => (
+            {favoriteSimulations.map(sim => (
               <Card key={sim.id} className="p-4 border-primary/30 bg-primary/5">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
@@ -300,7 +441,8 @@ export function LocalCurrencySimulator() {
                       </span>
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      Rate: {sim.exchangeRate.toFixed(4)} • {sim.notes && `${sim.notes} •`}{" "}
+                      Rate: {sim.exchangeRate.toFixed(4)} •{" "}
+                      {sim.notes && `${sim.notes} •`}{" "}
                       {new Date(sim.timestamp).toLocaleDateString()}
                     </p>
                   </div>
@@ -321,9 +463,11 @@ export function LocalCurrencySimulator() {
       {/* Recent Conversions */}
       {otherSimulations.length > 0 && (
         <div>
-          <h3 className="text-sm font-semibold text-muted-foreground mb-3">Recent Conversions</h3>
+          <h3 className="text-sm font-semibold text-muted-foreground mb-3">
+            Recent Conversions
+          </h3>
           <div className="space-y-3">
-            {otherSimulations.map((sim) => (
+            {otherSimulations.map(sim => (
               <Card key={sim.id} className="p-4 border-border/50">
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex-1">
@@ -336,9 +480,14 @@ export function LocalCurrencySimulator() {
                         {sim.convertedAmount.toFixed(2)} {sim.targetCurrency}
                       </span>
                     </div>
-                    {sim.notes && <p className="text-xs text-muted-foreground italic">{sim.notes}</p>}
+                    {sim.notes && (
+                      <p className="text-xs text-muted-foreground italic">
+                        {sim.notes}
+                      </p>
+                    )}
                     <p className="text-xs text-muted-foreground">
-                      Rate: {sim.exchangeRate.toFixed(4)} • {new Date(sim.timestamp).toLocaleDateString()}
+                      Rate: {sim.exchangeRate.toFixed(4)} •{" "}
+                      {new Date(sim.timestamp).toLocaleDateString()}
                     </p>
                   </div>
 

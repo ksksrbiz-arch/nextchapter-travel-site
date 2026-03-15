@@ -39,11 +39,12 @@ export function PortalPageWrapper({
           Something went wrong
         </h2>
         <p className="text-gray-600 dark:text-gray-400 text-sm mb-6">
-          We encountered an error loading the {pageName.toLowerCase()}. Please try refreshing the page.
+          We encountered an error loading the {pageName.toLowerCase()}. Please
+          try refreshing the page.
         </p>
         <div className="flex gap-2 justify-center">
           <button
-            onClick={() => window.location.href = "/portal"}
+            onClick={() => (window.location.href = "/portal")}
             className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
           >
             Go to Portal

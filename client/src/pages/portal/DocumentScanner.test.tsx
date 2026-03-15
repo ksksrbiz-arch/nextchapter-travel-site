@@ -12,14 +12,18 @@ describe("DocumentScanner Component", () => {
 
     // Check initial sample documents exist
     expect(screen.getByText("Passport_USA_12345.pdf")).toBeInTheDocument();
-    expect(screen.getByText("TravelInsurance_WanderlustPlus_2026.pdf")).toBeInTheDocument();
+    expect(
+      screen.getByText("TravelInsurance_WanderlustPlus_2026.pdf")
+    ).toBeInTheDocument();
   });
 
   it("displays correct summary stats", () => {
     render(<DocumentScanner />);
 
     // Should show 3 initial documents
-    const totalDocsElement = screen.getAllByText((_, element) => element?.textContent?.includes("3"));
+    const totalDocsElement = screen.getAllByText((_, element) =>
+      element?.textContent?.includes("3")
+    );
     expect(totalDocsElement.length).toBeGreaterThan(0);
 
     // Should show 3 verified documents
@@ -42,7 +46,9 @@ describe("DocumentScanner Component", () => {
     await user.type(tagsInput, "test,travel");
 
     // Submit form
-    const submitBtn = screen.getAllByRole("button", { name: /Add Document/i })[1];
+    const submitBtn = screen.getAllByRole("button", {
+      name: /Add Document/i,
+    })[1];
     await user.click(submitBtn);
 
     // Verify new document appears
@@ -61,7 +67,9 @@ describe("DocumentScanner Component", () => {
     // Should show passport but hide visa
     await waitFor(() => {
       expect(screen.getByText("Passport_USA_12345.pdf")).toBeInTheDocument();
-      expect(screen.queryByText("Visa_Spain_A1234567.pdf")).not.toBeInTheDocument();
+      expect(
+        screen.queryByText("Visa_Spain_A1234567.pdf")
+      ).not.toBeInTheDocument();
     });
   });
 
@@ -83,16 +91,18 @@ describe("DocumentScanner Component", () => {
     render(<DocumentScanner />);
 
     // Find and click delete button for first document
-    const deleteButtons = screen.getAllByRole("button", { name: "" }).find((btn) =>
-      btn.querySelector("svg[class*='w-4 h-4 text-red-500']")
-    );
+    const deleteButtons = screen
+      .getAllByRole("button", { name: "" })
+      .find(btn => btn.querySelector("svg[class*='w-4 h-4 text-red-500']"));
 
     if (deleteButtons) {
       await user.click(deleteButtons);
 
       // Verify document is removed
       await waitFor(() => {
-        expect(screen.queryByText("Passport_USA_12345.pdf")).not.toBeInTheDocument();
+        expect(
+          screen.queryByText("Passport_USA_12345.pdf")
+        ).not.toBeInTheDocument();
       });
     }
   });
@@ -120,7 +130,9 @@ describe("DocumentScanner Component", () => {
     await user.click(addBtn);
 
     // Try to submit without filling name
-    const submitBtn = screen.getAllByRole("button", { name: /Add Document/i })[1];
+    const submitBtn = screen.getAllByRole("button", {
+      name: /Add Document/i,
+    })[1];
     await user.click(submitBtn);
 
     // Should not add empty document

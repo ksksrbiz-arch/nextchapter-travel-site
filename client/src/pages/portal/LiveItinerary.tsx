@@ -1,6 +1,6 @@
 /**
  * Live Itinerary Component
- * 
+ *
  * Real-time synchronized trip itinerary with:
  * - Activity timeline with live status updates
  * - Push notifications for changes
@@ -47,15 +47,19 @@ interface ItineraryItem {
 export function LiveItinerary() {
   const [items, setItems] = useState<ItineraryItem[]>([]);
   const [showForm, setShowForm] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
   const [isLoading, setIsLoading] = useState(false);
-  const [syncStatus, setSyncStatus] = useState<"idle" | "syncing" | "synced" | "error">("idle");
+  const [syncStatus, setSyncStatus] = useState<
+    "idle" | "syncing" | "synced" | "error"
+  >("idle");
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [connectedToWebSocket, setConnectedToWebSocket] = useState(false);
   const syncService = getOfflineSyncService();
   const realtimeSync = useRef(getRealtimeSyncService());
   const pushNotifications = useRef(getPushNotificationService());
-  const unsubscribers = useRef<Array<() => void>>([])
+  const unsubscribers = useRef<Array<() => void>>([]);
 
   const [formData, setFormData] = useState({
     time: "",
@@ -80,7 +84,7 @@ export function LiveItinerary() {
     return () => {
       clearInterval(interval);
       // Cleanup WebSocket listeners
-      unsubscribers.current.forEach((unsub) => unsub());
+      unsubscribers.current.forEach(unsub => unsub());
       realtimeSync.current.disconnect();
     };
   }, []);
@@ -89,13 +93,19 @@ export function LiveItinerary() {
   const setupOnlineOfflineListeners = () => {
     const handleOnline = () => {
       setIsOnline(true);
-      pushNotifications.current.notifySystem("Back Online", "Syncing changes...");
+      pushNotifications.current.notifySystem(
+        "Back Online",
+        "Syncing changes..."
+      );
       syncPendingItems();
     };
 
     const handleOffline = () => {
       setIsOnline(false);
-      pushNotifications.current.notifySystem("No Connection", "Changes will sync when online");
+      pushNotifications.current.notifySystem(
+        "No Connection",
+        "Changes will sync when online"
+      );
     };
 
     window.addEventListener("online", handleOnline);
@@ -118,24 +128,30 @@ export function LiveItinerary() {
       setConnectedToWebSocket(true);
 
       // Subscribe to itinerary updates
-      const unsubUpdate = realtimeSync.current.subscribe("itinerary-update", (msg) => {
-        console.log("[LiveItinerary] Received update:", msg);
-        const item = msg.data as ItineraryItem;
+      const unsubUpdate = realtimeSync.current.subscribe(
+        "itinerary-update",
+        msg => {
+          console.log("[LiveItinerary] Received update:", msg);
+          const item = msg.data as ItineraryItem;
 
-        // Update local state
-        setItems((prev) => {
-          const idx = prev.findIndex((i) => i.id === item.id);
-          if (idx >= 0) {
-            prev[idx] = item;
-          } else {
-            prev.push(item);
-          }
-          return [...prev];
-        });
+          // Update local state
+          setItems(prev => {
+            const idx = prev.findIndex(i => i.id === item.id);
+            if (idx >= 0) {
+              prev[idx] = item;
+            } else {
+              prev.push(item);
+            }
+            return [...prev];
+          });
 
-        // Show notification
-        pushNotifications.current.notifyItineraryUpdate(item.activity, "Updated by " + (item.updatedBy || "you"));
-      });
+          // Show notification
+          pushNotifications.current.notifyItineraryUpdate(
+            item.activity,
+            "Updated by " + (item.updatedBy || "you")
+          );
+        }
+      );
 
       unsubscribers.current.push(unsubUpdate);
     } catch (err) {
@@ -214,7 +230,10 @@ export function LiveItinerary() {
     }
 
     // Show notification
-    pushNotifications.current.notifyItineraryUpdate(newItem.activity, "Added to itinerary");
+    pushNotifications.current.notifyItineraryUpdate(
+      newItem.activity,
+      "Added to itinerary"
+    );
 
     // Reset form
     setFormData({
@@ -229,7 +248,7 @@ export function LiveItinerary() {
   };
 
   const handleDeleteItem = async (id: string) => {
-    setItems(items.filter((item) => item.id !== id));
+    setItems(items.filter(item => item.id !== id));
 
     await syncService.queueAction({
       type: "DELETE",
@@ -238,9 +257,12 @@ export function LiveItinerary() {
     });
   };
 
-  const handleUpdateStatus = async (id: string, newStatus: ItineraryItem["status"]) => {
+  const handleUpdateStatus = async (
+    id: string,
+    newStatus: ItineraryItem["status"]
+  ) => {
     setItems(
-      items.map((item) =>
+      items.map(item =>
         item.id === id
           ? {
               ...item,
@@ -252,7 +274,7 @@ export function LiveItinerary() {
       )
     );
 
-    const item = items.find((i) => i.id === id);
+    const item = items.find(i => i.id === id);
     if (item) {
       const updatedItem = {
         ...item,
@@ -273,7 +295,10 @@ export function LiveItinerary() {
       }
 
       // Show notification
-      pushNotifications.current.notifyItineraryUpdate(item.activity, `Marked as ${newStatus}`);
+      pushNotifications.current.notifyItineraryUpdate(
+        item.activity,
+        `Marked as ${newStatus}`
+      );
     }
   };
 
@@ -325,11 +350,13 @@ export function LiveItinerary() {
       {/* Connection Status */}
       <div className="flex gap-2">
         {/* Online/Offline Indicator */}
-        <Card className={`flex-1 p-3 border ${
-          isOnline
-            ? "bg-emerald-500/10 border-emerald-500/20"
-            : "bg-red-500/10 border-red-500/20"
-        }`}>
+        <Card
+          className={`flex-1 p-3 border ${
+            isOnline
+              ? "bg-emerald-500/10 border-emerald-500/20"
+              : "bg-red-500/10 border-red-500/20"
+          }`}
+        >
           <div className="flex items-center gap-2 text-sm">
             {isOnline ? (
               <>
@@ -346,11 +373,13 @@ export function LiveItinerary() {
         </Card>
 
         {/* WebSocket Status */}
-        <Card className={`flex-1 p-3 border ${
-          connectedToWebSocket
-            ? "bg-blue-500/10 border-blue-500/20"
-            : "bg-gray-500/10 border-gray-500/20"
-        }`}>
+        <Card
+          className={`flex-1 p-3 border ${
+            connectedToWebSocket
+              ? "bg-blue-500/10 border-blue-500/20"
+              : "bg-gray-500/10 border-gray-500/20"
+          }`}
+        >
           <div className="flex items-center gap-2 text-sm">
             {connectedToWebSocket ? (
               <>
@@ -368,17 +397,25 @@ export function LiveItinerary() {
       </div>
       {/* Sync Status */}
       {syncStatus !== "idle" && (
-        <Card className={`p-3 border ${
-          syncStatus === "syncing"
-            ? "bg-blue-500/10 border-blue-500/20"
-            : syncStatus === "synced"
-              ? "bg-emerald-500/10 border-emerald-500/20"
-              : "bg-red-500/10 border-red-500/20"
-        }`}>
+        <Card
+          className={`p-3 border ${
+            syncStatus === "syncing"
+              ? "bg-blue-500/10 border-blue-500/20"
+              : syncStatus === "synced"
+                ? "bg-emerald-500/10 border-emerald-500/20"
+                : "bg-red-500/10 border-red-500/20"
+          }`}
+        >
           <div className="flex items-center gap-2 text-sm">
-            {syncStatus === "syncing" && <Loader className="w-4 h-4 animate-spin" />}
-            {syncStatus === "synced" && <CheckCircle2 className="w-4 h-4 text-emerald-500" />}
-            {syncStatus === "error" && <AlertCircle className="w-4 h-4 text-red-500" />}
+            {syncStatus === "syncing" && (
+              <Loader className="w-4 h-4 animate-spin" />
+            )}
+            {syncStatus === "synced" && (
+              <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+            )}
+            {syncStatus === "error" && (
+              <AlertCircle className="w-4 h-4 text-red-500" />
+            )}
             <span>
               {syncStatus === "syncing" && "Syncing changes..."}
               {syncStatus === "synced" && "All changes synced ✓"}
@@ -406,7 +443,9 @@ export function LiveItinerary() {
                   : "border-border/50 hover:border-primary/50"
               }`}
             >
-              <div className="text-xs opacity-75">{date.toLocaleDateString("en-US", { weekday: "short" })}</div>
+              <div className="text-xs opacity-75">
+                {date.toLocaleDateString("en-US", { weekday: "short" })}
+              </div>
               <div className="font-semibold">{date.getDate()}</div>
             </button>
           );
@@ -428,7 +467,7 @@ export function LiveItinerary() {
             <input
               type="time"
               value={formData.time}
-              onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+              onChange={e => setFormData({ ...formData, time: e.target.value })}
               className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/50"
             />
 
@@ -436,7 +475,9 @@ export function LiveItinerary() {
               type="text"
               placeholder="Activity (e.g., Arrive at airport)"
               value={formData.activity}
-              onChange={(e) => setFormData({ ...formData, activity: e.target.value })}
+              onChange={e =>
+                setFormData({ ...formData, activity: e.target.value })
+              }
               className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
             />
 
@@ -444,13 +485,15 @@ export function LiveItinerary() {
               type="text"
               placeholder="Location"
               value={formData.location}
-              onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+              onChange={e =>
+                setFormData({ ...formData, location: e.target.value })
+              }
               className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
             />
 
             <select
               value={formData.category}
-              onChange={(e) =>
+              onChange={e =>
                 setFormData({
                   ...formData,
                   category: e.target.value as ItineraryItem["category"],
@@ -468,7 +511,9 @@ export function LiveItinerary() {
             <textarea
               placeholder="Notes (optional)"
               value={formData.notes}
-              onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+              onChange={e =>
+                setFormData({ ...formData, notes: e.target.value })
+              }
               className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 resize-none"
               rows={2}
             />
@@ -491,22 +536,28 @@ export function LiveItinerary() {
 
       {/* Itinerary Timeline */}
       {isLoading ? (
-        <div className="text-center py-8 text-muted-foreground">Loading itinerary...</div>
+        <div className="text-center py-8 text-muted-foreground">
+          Loading itinerary...
+        </div>
       ) : itemsByDate[selectedDate]?.length > 0 ? (
         <div className="space-y-3">
           {itemsByDate[selectedDate]
             .sort((a, b) => a.time.localeCompare(b.time))
-            .map((item) => (
+            .map(item => (
               <Card key={item.id} className="p-4 border-border/50">
                 <div className="flex items-start gap-3">
                   {/* Time Marker */}
-                  <div className="flex-shrink-0 text-2xl">{getCategoryIcon(item.category)}</div>
+                  <div className="flex-shrink-0 text-2xl">
+                    {getCategoryIcon(item.category)}
+                  </div>
 
                   {/* Content */}
                   <div className="flex-1">
                     <div className="flex items-start justify-between mb-2">
                       <div>
-                        <h4 className="font-semibold text-foreground">{item.activity}</h4>
+                        <h4 className="font-semibold text-foreground">
+                          {item.activity}
+                        </h4>
                         <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
                           <Clock className="w-4 h-4" />
                           <span>{item.time}</span>
@@ -531,15 +582,21 @@ export function LiveItinerary() {
 
                     {/* Category Badge */}
                     <div className="flex items-center gap-2 mb-2">
-                      <Badge className={`text-xs border ${getCategoryColor(item.category)}`}>
-                        {item.category.charAt(0).toUpperCase() + item.category.slice(1)}
+                      <Badge
+                        className={`text-xs border ${getCategoryColor(item.category)}`}
+                      >
+                        {item.category.charAt(0).toUpperCase() +
+                          item.category.slice(1)}
                       </Badge>
 
                       {/* Status Badge */}
                       <select
                         value={item.status}
-                        onChange={(e) =>
-                          handleUpdateStatus(item.id, e.target.value as ItineraryItem["status"])
+                        onChange={e =>
+                          handleUpdateStatus(
+                            item.id,
+                            e.target.value as ItineraryItem["status"]
+                          )
                         }
                         className={`text-xs px-2 py-1 rounded border bg-black/10 focus:outline-none ${
                           item.status === "completed"
@@ -557,7 +614,11 @@ export function LiveItinerary() {
                     </div>
 
                     {/* Notes */}
-                    {item.notes && <p className="text-xs text-muted-foreground italic mb-2">{item.notes}</p>}
+                    {item.notes && (
+                      <p className="text-xs text-muted-foreground italic mb-2">
+                        {item.notes}
+                      </p>
+                    )}
 
                     {/* Attendees */}
                     {item.attendees.length > 0 && (
@@ -572,7 +633,9 @@ export function LiveItinerary() {
             ))}
         </div>
       ) : (
-        <div className="text-center py-8 text-muted-foreground">No activities scheduled for this day</div>
+        <div className="text-center py-8 text-muted-foreground">
+          No activities scheduled for this day
+        </div>
       )}
     </div>
   );

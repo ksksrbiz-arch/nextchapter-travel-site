@@ -37,7 +37,7 @@ function tryPlay(el: HTMLVideoElement | null): Promise<void> {
   if (p !== undefined) {
     return p.catch(() => {
       // Autoplay blocked — retry on first touch/click
-      return new Promise<void>((resolve) => {
+      return new Promise<void>(resolve => {
         const retry = () => {
           el.play().catch(() => {});
           document.removeEventListener("touchstart", retry);
@@ -79,31 +79,41 @@ export default function GlobalVideoBackground() {
   const stallTimerBRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // ── Stall detection: restart if video freezes ──────────────────────────────
-  const watchForStall = useCallback((el: HTMLVideoElement | null, timerRef: React.MutableRefObject<ReturnType<typeof setTimeout> | null>) => {
-    if (!el) return;
-    if (timerRef.current) clearTimeout(timerRef.current);
-
-    const check = () => {
-      if (el.paused || el.ended) return;
-      timerRef.current = setTimeout(() => {
-        // If currentTime hasn't advanced, the video has stalled
-        const t1 = el.currentTime;
-        setTimeout(() => {
-          if (el.currentTime === t1 && !el.paused) {
-            // Stalled — reload and retry
-            el.load();
-            tryPlay(el);
-          }
-        }, 500);
-      }, STALL_TIMEOUT);
-    };
-
-    el.addEventListener("playing", check, { passive: true });
-    el.addEventListener("timeupdate", () => {
+  const watchForStall = useCallback(
+    (
+      el: HTMLVideoElement | null,
+      timerRef: React.MutableRefObject<ReturnType<typeof setTimeout> | null>
+    ) => {
+      if (!el) return;
       if (timerRef.current) clearTimeout(timerRef.current);
-      timerRef.current = null;
-    }, { passive: true });
-  }, []);
+
+      const check = () => {
+        if (el.paused || el.ended) return;
+        timerRef.current = setTimeout(() => {
+          // If currentTime hasn't advanced, the video has stalled
+          const t1 = el.currentTime;
+          setTimeout(() => {
+            if (el.currentTime === t1 && !el.paused) {
+              // Stalled — reload and retry
+              el.load();
+              tryPlay(el);
+            }
+          }, 500);
+        }, STALL_TIMEOUT);
+      };
+
+      el.addEventListener("playing", check, { passive: true });
+      el.addEventListener(
+        "timeupdate",
+        () => {
+          if (timerRef.current) clearTimeout(timerRef.current);
+          timerRef.current = null;
+        },
+        { passive: true }
+      );
+    },
+    []
+  );
 
   // ── Visibility API: pause video when tab is hidden ─────────────────────────
   useEffect(() => {
@@ -118,8 +128,11 @@ export default function GlobalVideoBackground() {
         tryPlay(videoB);
       }
     };
-    document.addEventListener("visibilitychange", handleVisibilityChange, { passive: true });
-    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+    document.addEventListener("visibilitychange", handleVisibilityChange, {
+      passive: true,
+    });
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
   }, []);
 
   // ── Kick off initial autoplay on mount ─────────────────────────────────────
@@ -245,9 +258,16 @@ export default function GlobalVideoBackground() {
         crossfadeTimersRef.current.push(t1);
       });
     }
-  }, [currentKey, currentVideo, activeSlot, prefersReducedMotion, watchForStall]);
+  }, [
+    currentKey,
+    currentVideo,
+    activeSlot,
+    prefersReducedMotion,
+    watchForStall,
+  ]);
 
-  const videoBaseClass = "absolute inset-0 w-full h-full object-cover pointer-events-none";
+  const videoBaseClass =
+    "absolute inset-0 w-full h-full object-cover pointer-events-none";
   const transitionStyle = `opacity ${FADE_DURATION}ms cubic-bezier(0.4, 0, 0.2, 1)`;
 
   // Container style: explicit fixed positioning with GPU acceleration.
@@ -361,9 +381,11 @@ export default function GlobalVideoBackground() {
       <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/80" />
 
       {/* Subtle vignette */}
-      <div className="absolute inset-0"
+      <div
+        className="absolute inset-0"
         style={{
-          background: "radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.6) 100%)"
+          background:
+            "radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.6) 100%)",
         }}
       />
 
@@ -376,20 +398,30 @@ export default function GlobalVideoBackground() {
               <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-amber-400/80 border-r-amber-400/60 animate-spin" />
               <Loader2 className="absolute inset-0 m-auto w-6 h-6 text-amber-400/60 animate-pulse" />
             </div>
-            <p className="text-white/40 text-xs font-sans tracking-widest uppercase">Loading your journey...</p>
+            <p className="text-white/40 text-xs font-sans tracking-widest uppercase">
+              Loading your journey...
+            </p>
           </div>
         </div>
       )}
 
       {/* Context label — subtle cinematic caption (only show when not loading) */}
-      {!isLoading && <ContextLabel label={currentVideo.label} videoKey={currentKey} />}
+      {!isLoading && (
+        <ContextLabel label={currentVideo.label} videoKey={currentKey} />
+      )}
     </div>
   );
 }
 
 // ─── Context Label ─────────────────────────────────────────────────────────────
 
-function ContextLabel({ label, videoKey }: { label: string; videoKey: string }) {
+function ContextLabel({
+  label,
+  videoKey,
+}: {
+  label: string;
+  videoKey: string;
+}) {
   const [visible, setVisible] = useState(false);
   const [displayLabel, setDisplayLabel] = useState(label);
   const prevKeyRef = useRef(videoKey);
@@ -408,7 +440,10 @@ function ContextLabel({ label, videoKey }: { label: string; videoKey: string }) 
       setVisible(false);
     }, 3500);
 
-    return () => { clearTimeout(t1); clearTimeout(t2); };
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
   }, [videoKey, label]);
 
   return (

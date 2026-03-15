@@ -1,6 +1,6 @@
 /**
  * Family Check-In System
- * 
+ *
  * Allows family members to:
  * - Mark themselves as "safe" with timestamp
  * - Optional location sharing (with privacy controls)
@@ -125,7 +125,7 @@ export function FamilyCheckIn() {
     initializeServices();
 
     return () => {
-      unsubscribers.current.forEach((unsub) => unsub());
+      unsubscribers.current.forEach(unsub => unsub());
       realtimeSync.current.disconnect();
       geofencing.current.stopMonitoring();
     };
@@ -139,34 +139,40 @@ export function FamilyCheckIn() {
       await realtimeSync.current.connect(tripId, userId);
 
       // Subscribe to check-in status updates
-      const unsubStatus = realtimeSync.current.subscribe("checkin-status", (msg) => {
-        const { userId: memberId, status } = msg.data;
-        setMembers((prev) =>
-          prev.map((m) =>
-            m.id === memberId ? { ...m, status, lastCheckIn: Date.now() } : m
-          )
-        );
-      });
+      const unsubStatus = realtimeSync.current.subscribe(
+        "checkin-status",
+        msg => {
+          const { userId: memberId, status } = msg.data;
+          setMembers(prev =>
+            prev.map(m =>
+              m.id === memberId ? { ...m, status, lastCheckIn: Date.now() } : m
+            )
+          );
+        }
+      );
 
       // Subscribe to location updates
-      const unsubLocation = realtimeSync.current.subscribe("location-update", (msg) => {
-        const { userId: memberId, latitude, longitude } = msg.data;
-        setMembers((prev) =>
-          prev.map((m) =>
-            m.id === memberId
-              ? {
-                  ...m,
-                  location: { lat: latitude, lng: longitude }
-                }
-              : m
-          )
-        );
-      });
+      const unsubLocation = realtimeSync.current.subscribe(
+        "location-update",
+        msg => {
+          const { userId: memberId, latitude, longitude } = msg.data;
+          setMembers(prev =>
+            prev.map(m =>
+              m.id === memberId
+                ? {
+                    ...m,
+                    location: { lat: latitude, lng: longitude },
+                  }
+                : m
+            )
+          );
+        }
+      );
 
       unsubscribers.current.push(unsubStatus, unsubLocation);
 
       // Start location tracking
-      realtimeSync.current.startLocationTracking((location) => {
+      realtimeSync.current.startLocationTracking(location => {
         console.log("[FamilyCheckIn] Location updated:", location);
       });
 
@@ -177,10 +183,10 @@ export function FamilyCheckIn() {
         latitude: 28.5421,
         longitude: -81.379,
         radiusKm: 0.5,
-        type: "hotel"
+        type: "hotel",
       });
 
-      const unsubEnter = geofencing.current.on("hotel-1", "enter", (data) => {
+      const unsubEnter = geofencing.current.on("hotel-1", "enter", data => {
         pushNotifications.current.notifyLocationAlert(
           data.geofence.name,
           "You've arrived at your destination"
@@ -198,7 +204,7 @@ export function FamilyCheckIn() {
 
   const handleCheckIn = (memberId: string) => {
     setMembers(
-      members.map((member) =>
+      members.map(member =>
         member.id === memberId
           ? {
               ...member,
@@ -209,7 +215,7 @@ export function FamilyCheckIn() {
       )
     );
 
-    const member = members.find((m) => m.id === memberId);
+    const member = members.find(m => m.id === memberId);
     if (member) {
       // Send via WebSocket
       realtimeSync.current.sendCheckInStatus("safe");
@@ -228,20 +234,21 @@ export function FamilyCheckIn() {
   };
 
   const handleSOS = (memberId: string) => {
-    const member = members.find((m) => m.id === memberId);
+    const member = members.find(m => m.id === memberId);
     if (!member) return;
 
     setMembers(
-      members.map((m) =>
-        m.id === memberId ? { ...m, status: "emergency" } : m
-      )
+      members.map(m => (m.id === memberId ? { ...m, status: "emergency" } : m))
     );
 
     // Send emergency via WebSocket
     realtimeSync.current.sendCheckInStatus("emergency");
 
     // Show emergency notification to all members
-    pushNotifications.current.notifyEmergency(member.name, "Emergency SOS activated");
+    pushNotifications.current.notifyEmergency(
+      member.name,
+      "Emergency SOS activated"
+    );
 
     addMessage({
       id: `emergency-${Date.now()}`,
@@ -309,20 +316,24 @@ export function FamilyCheckIn() {
     return `${Math.floor(seconds / 86400)}d ago`;
   };
 
-  const safeCount = members.filter((m) => m.status === "safe").length;
-  const emergencyCount = members.filter((m) => m.status === "emergency").length;
+  const safeCount = members.filter(m => m.status === "safe").length;
+  const emergencyCount = members.filter(m => m.status === "emergency").length;
 
   return (
     <div className="space-y-6">
       {/* Summary Card */}
-      <Card className={`p-4 border ${
-        emergencyCount > 0
-          ? "bg-red-500/10 border-red-500/20"
-          : "bg-emerald-950/30 border-emerald-500/20"
-      }`}>
+      <Card
+        className={`p-4 border ${
+          emergencyCount > 0
+            ? "bg-red-500/10 border-red-500/20"
+            : "bg-emerald-950/30 border-emerald-500/20"
+        }`}
+      >
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-semibold text-foreground mb-1">Family Status</h3>
+            <h3 className="text-sm font-semibold text-foreground mb-1">
+              Family Status
+            </h3>
             <p className="text-sm text-muted-foreground">
               {safeCount}/{members.length} members safe
               {emergencyCount > 0 && ` • ${emergencyCount} emergency alert(s)`}
@@ -337,9 +348,11 @@ export function FamilyCheckIn() {
 
       {/* Family Members Grid */}
       <div>
-        <h3 className="text-sm font-semibold text-foreground mb-3">Family Members</h3>
+        <h3 className="text-sm font-semibold text-foreground mb-3">
+          Family Members
+        </h3>
         <div className="grid grid-cols-2 gap-2">
-          {members.map((member) => (
+          {members.map(member => (
             <Card
               key={member.id}
               className={`p-3 border-2 transition-all cursor-pointer ${
@@ -354,16 +367,25 @@ export function FamilyCheckIn() {
                 <div className="flex items-center gap-2">
                   <span className="text-2xl">{member.avatar}</span>
                   <div className="flex-1">
-                    <p className="text-xs font-semibold text-foreground">{member.name}</p>
-                    <p className="text-xs text-muted-foreground capitalize">{member.role}</p>
+                    <p className="text-xs font-semibold text-foreground">
+                      {member.name}
+                    </p>
+                    <p className="text-xs text-muted-foreground capitalize">
+                      {member.role}
+                    </p>
                   </div>
                 </div>
 
                 {/* Status Badge */}
-                <Badge className={`text-xs font-medium border w-full justify-center ${getStatusColor(member.status)}`}>
+                <Badge
+                  className={`text-xs font-medium border w-full justify-center ${getStatusColor(member.status)}`}
+                >
                   <span className="flex items-center gap-1 w-full justify-center">
                     {getStatusIcon(member.status)}
-                    {member.status === "pending" ? "Check In" : member.status.charAt(0).toUpperCase() + member.status.slice(1)}
+                    {member.status === "pending"
+                      ? "Check In"
+                      : member.status.charAt(0).toUpperCase() +
+                        member.status.slice(1)}
                   </span>
                 </Badge>
 
@@ -402,13 +424,15 @@ export function FamilyCheckIn() {
       {selectedMember && (
         <Card className="p-4 border-red-500/30 bg-red-500/5">
           <div className="space-y-2">
-            <p className="text-sm font-semibold text-red-500">Emergency Alert</p>
+            <p className="text-sm font-semibold text-red-500">
+              Emergency Alert
+            </p>
             <Button
               onClick={() => handleSOS(selectedMember)}
               className="w-full bg-red-600 hover:bg-red-700"
             >
               <AlertCircle className="w-4 h-4 mr-2" />
-              Send SOS for {members.find((m) => m.id === selectedMember)?.name}
+              Send SOS for {members.find(m => m.id === selectedMember)?.name}
             </Button>
           </div>
         </Card>
@@ -423,7 +447,7 @@ export function FamilyCheckIn() {
 
         {/* Message Thread */}
         <div className="space-y-2 mb-3 h-48 overflow-y-auto">
-          {messages.map((message) => (
+          {messages.map(message => (
             <div key={message.id} className="text-xs">
               {message.type === "system" ? (
                 <div className="text-center py-2 text-muted-foreground italic">
@@ -435,7 +459,9 @@ export function FamilyCheckIn() {
                 </div>
               ) : (
                 <div className="flex gap-2">
-                  <span className="font-medium text-primary min-w-fit">{message.from}:</span>
+                  <span className="font-medium text-primary min-w-fit">
+                    {message.from}:
+                  </span>
                   <span className="text-foreground flex-1">{message.text}</span>
                   <span className="text-muted-foreground text-xs ml-auto">
                     {getTimeAgo(message.timestamp)}
@@ -452,8 +478,8 @@ export function FamilyCheckIn() {
             type="text"
             placeholder="Message family..."
             value={messageInput}
-            onChange={(e) => setMessageInput(e.target.value)}
-            onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+            onChange={e => setMessageInput(e.target.value)}
+            onKeyPress={e => e.key === "Enter" && handleSendMessage()}
             className="flex-1 bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
           />
           <Button onClick={handleSendMessage} size="sm">
@@ -472,19 +498,27 @@ export function FamilyCheckIn() {
         <div className="space-y-2 text-sm">
           <div className="flex justify-between">
             <span className="text-muted-foreground">Local Emergency</span>
-            <button className="text-primary hover:underline font-medium">911</button>
+            <button className="text-primary hover:underline font-medium">
+              911
+            </button>
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">US Embassy</span>
-            <button className="text-primary hover:underline font-medium">+1-202-647-1512</button>
+            <button className="text-primary hover:underline font-medium">
+              +1-202-647-1512
+            </button>
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Travel Insurance</span>
-            <button className="text-primary hover:underline font-medium">1-800-123-4567</button>
+            <button className="text-primary hover:underline font-medium">
+              1-800-123-4567
+            </button>
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Jessica (Concierge)</span>
-            <button className="text-primary hover:underline font-medium">1-888-TRAVEL-1</button>
+            <button className="text-primary hover:underline font-medium">
+              1-888-TRAVEL-1
+            </button>
           </div>
         </div>
       </Card>

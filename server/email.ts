@@ -12,7 +12,9 @@ const RESEND_API = "https://api.resend.com/emails";
 // Once jessica@nextchaptertravel.com is verified in Resend, update FROM_ADDRESS.
 const FROM_ADDRESS = "Next Chapter Travel <onboarding@resend.dev>";
 
-type SendResult = { success: true; id: string } | { success: false; error: string };
+type SendResult =
+  | { success: true; id: string }
+  | { success: false; error: string };
 
 async function sendEmail(payload: {
   to: string;
@@ -41,7 +43,11 @@ async function sendEmail(payload: {
       }),
     });
 
-    const data = await res.json() as { id?: string; name?: string; message?: string };
+    const data = (await res.json()) as {
+      id?: string;
+      name?: string;
+      message?: string;
+    };
 
     if (res.ok && data.id) {
       return { success: true, id: data.id };
@@ -161,7 +167,12 @@ This link expires in ${expiresInDays} days.
 Next Chapter Travel LLC
   `.trim();
 
-  return sendEmail({ to, subject: "Your Travel Portal is Ready ✈️", html, text });
+  return sendEmail({
+    to,
+    subject: "Your Travel Portal is Ready ✈️",
+    html,
+    text,
+  });
 }
 
 // ─── TravelJoy Inquiry Notification ───────────────────────────────────────────
@@ -244,7 +255,9 @@ export async function notifyOwnerOfInquiry(opts: {
                 </tr>
               </table>
 
-              ${inquiryUrl ? `
+              ${
+                inquiryUrl
+                  ? `
               <!-- CTA Button -->
               <table cellpadding="0" cellspacing="0" style="margin:0 auto 32px;">
                 <tr>
@@ -255,7 +268,9 @@ export async function notifyOwnerOfInquiry(opts: {
                   </td>
                 </tr>
               </table>
-              ` : ''}
+              `
+                  : ""
+              }
 
               <p style="margin:0;color:#888;font-size:13px;font-family:Arial,sans-serif;text-align:center;">
                 Reply to ${clientEmail} to follow up on this inquiry.
@@ -304,5 +319,10 @@ ${message}
 Reply to ${clientEmail} to follow up.
   `.trim();
 
-  return sendEmail({ to: ownerEmail, subject: `New Trip Inquiry: ${destination} from ${clientName}`, html, text });
+  return sendEmail({
+    to: ownerEmail,
+    subject: `New Trip Inquiry: ${destination} from ${clientName}`,
+    html,
+    text,
+  });
 }

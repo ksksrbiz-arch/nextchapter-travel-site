@@ -49,9 +49,9 @@ describe("LocalCurrencySimulator Component", () => {
     const user = userEvent.setup();
     render(<LocalCurrencySimulator />);
 
-    const swapButton = screen.getByRole("button", { name: "" }).filter(
-      (btn) => btn.querySelector("svg[class*='ArrowRightLeft']")
-    )[0];
+    const swapButton = screen
+      .getByRole("button", { name: "" })
+      .filter(btn => btn.querySelector("svg[class*='ArrowRightLeft']"))[0];
 
     if (swapButton) {
       await user.click(swapButton);
@@ -86,7 +86,9 @@ describe("LocalCurrencySimulator Component", () => {
       const amountInput = screen.getByPlaceholderText("Amount");
       await user.type(amountInput, "100");
 
-      const convertBtn = screen.getByRole("button", { name: /Convert & Save/i });
+      const convertBtn = screen.getByRole("button", {
+        name: /Convert & Save/i,
+      });
       await user.click(convertBtn);
 
       // Should not create conversion (validation error)
@@ -139,9 +141,9 @@ describe("LocalCurrencySimulator Component", () => {
     render(<LocalCurrencySimulator />);
 
     // Find favorite button for existing conversion
-    const favoriteButtons = screen.getAllByRole("button").filter(
-      (btn) => btn.querySelector("svg[class*='DollarSign']")
-    );
+    const favoriteButtons = screen
+      .getAllByRole("button")
+      .filter(btn => btn.querySelector("svg[class*='DollarSign']"));
 
     if (favoriteButtons.length > 0) {
       await user.click(favoriteButtons[0]);
@@ -158,9 +160,9 @@ describe("LocalCurrencySimulator Component", () => {
     render(<LocalCurrencySimulator />);
 
     // First USD to EUR conversion is marked favorite
-    const favoriteButtons = screen.getAllByRole("button").filter(
-      (btn) => btn.querySelector("svg[class*='DollarSign']")
-    );
+    const favoriteButtons = screen
+      .getAllByRole("button")
+      .filter(btn => btn.querySelector("svg[class*='DollarSign']"));
 
     if (favoriteButtons.length > 0) {
       // Click to toggle off favorite
@@ -179,18 +181,20 @@ describe("LocalCurrencySimulator Component", () => {
     render(<LocalCurrencySimulator />);
 
     // Find delete button
-    const deleteButtons = screen.getAllByRole("button").filter(
-      (btn) => btn.querySelector("svg[class*='Trash2']")
-    );
+    const deleteButtons = screen
+      .getAllByRole("button")
+      .filter(btn => btn.querySelector("svg[class*='Trash2']"));
 
     if (deleteButtons.length > 0) {
-      const initialCount = screen.getByText(/Conversions/).nextElementSibling?.textContent;
+      const initialCount =
+        screen.getByText(/Conversions/).nextElementSibling?.textContent;
 
       await user.click(deleteButtons[0]);
 
       // Should remove conversion from list
       await waitFor(() => {
-        const newCount = screen.getByText(/Conversions/).nextElementSibling?.textContent;
+        const newCount =
+          screen.getByText(/Conversions/).nextElementSibling?.textContent;
         // Count should decrease if successful
       });
     }
@@ -278,7 +282,9 @@ describe("LocalCurrencySimulator Component", () => {
       const amountInput = screen.getByPlaceholderText("Amount");
       await user.type(amountInput, "100");
 
-      const convertBtn = screen.getByRole("button", { name: /Convert & Save/i });
+      const convertBtn = screen.getByRole("button", {
+        name: /Convert & Save/i,
+      });
       await user.click(convertBtn);
 
       // Base currency should remain EUR for next conversion

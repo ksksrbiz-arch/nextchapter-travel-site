@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { Calendar, Clock, MapPin, CheckCircle2, Plus, Trash2 } from "lucide-react";
+import {
+  Calendar,
+  Clock,
+  MapPin,
+  CheckCircle2,
+  Plus,
+  Trash2,
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -76,39 +83,65 @@ export function TravelTimeline() {
       completed: false,
     };
 
-    setEvents([...events].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()));
-    setEvents((prev) => [...prev, newEvent].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()));
-    setFormData({ title: "", description: "", date: "", time: "", type: "other", location: "" });
+    setEvents(
+      [...events].sort(
+        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+      )
+    );
+    setEvents(prev =>
+      [...prev, newEvent].sort(
+        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+      )
+    );
+    setFormData({
+      title: "",
+      description: "",
+      date: "",
+      time: "",
+      type: "other",
+      location: "",
+    });
     setErrors({});
     setShowForm(false);
   };
 
   const handleToggleComplete = (id: string) => {
-    setEvents(events.map((e) => (e.id === id ? { ...e, completed: !e.completed } : e)));
+    setEvents(
+      events.map(e => (e.id === id ? { ...e, completed: !e.completed } : e))
+    );
   };
 
   const handleDeleteEvent = (id: string) => {
-    setEvents(events.filter((e) => e.id !== id));
+    setEvents(events.filter(e => e.id !== id));
   };
 
-  const sortedEvents = [...events].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  const completedCount = events.filter((e) => e.completed).length;
+  const sortedEvents = [...events].sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+  );
+  const completedCount = events.filter(e => e.completed).length;
 
   const calculateCountdown = () => {
     const today = new Date();
     const tripStart = new Date(TRIP_START);
-    const daysUntilTrip = Math.ceil((tripStart.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-    
+    const daysUntilTrip = Math.ceil(
+      (tripStart.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+    );
+
     if (daysUntilTrip < 0) {
       const tripEnd = new Date(TRIP_END);
-      const daysLeft = Math.ceil((tripEnd.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+      const daysLeft = Math.ceil(
+        (tripEnd.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+      );
       return { label: "Days Left", count: Math.max(0, daysLeft) };
     }
     return { label: "Days Until Trip", count: Math.max(0, daysUntilTrip) };
   };
 
   const countdown = calculateCountdown();
-  const tripDuration = Math.ceil((new Date(TRIP_END).getTime() - new Date(TRIP_START).getTime()) / (1000 * 60 * 60 * 24));
+  const tripDuration = Math.ceil(
+    (new Date(TRIP_END).getTime() - new Date(TRIP_START).getTime()) /
+      (1000 * 60 * 60 * 24)
+  );
 
   const typeIcons: Record<TimelineEvent["type"], string> = {
     flight: "✈️",
@@ -138,14 +171,18 @@ export function TravelTimeline() {
           </div>
 
           <div className="text-center">
-            <p className="text-xs text-muted-foreground mb-1">{countdown.label}</p>
+            <p className="text-xs text-muted-foreground mb-1">
+              {countdown.label}
+            </p>
             <p className="text-3xl font-bold text-primary">{countdown.count}</p>
             <p className="text-xs text-muted-foreground">days</p>
           </div>
 
           <div>
             <p className="text-xs text-muted-foreground mb-1">Progress</p>
-            <p className="text-2xl font-bold text-foreground">{completedCount}</p>
+            <p className="text-2xl font-bold text-foreground">
+              {completedCount}
+            </p>
             <p className="text-xs text-muted-foreground">of {events.length}</p>
           </div>
         </div>
@@ -154,7 +191,9 @@ export function TravelTimeline() {
         <div className="space-y-2">
           <div className="flex justify-between text-xs text-muted-foreground">
             <span>Timeline Progress</span>
-            <span>{Math.round((completedCount / Math.max(events.length, 1)) * 100)}%</span>
+            <span>
+              {Math.round((completedCount / Math.max(events.length, 1)) * 100)}%
+            </span>
           </div>
           <div className="w-full bg-black/30 rounded-full h-2">
             <div
@@ -175,7 +214,8 @@ export function TravelTimeline() {
             <div>
               <p className="text-xs text-muted-foreground">Trip Dates</p>
               <p className="text-sm font-semibold text-foreground">
-                {new Date(TRIP_START).toLocaleDateString()} — {new Date(TRIP_END).toLocaleDateString()}
+                {new Date(TRIP_START).toLocaleDateString()} —{" "}
+                {new Date(TRIP_END).toLocaleDateString()}
               </p>
             </div>
           </div>
@@ -201,7 +241,7 @@ export function TravelTimeline() {
                 type="text"
                 placeholder="Event Title"
                 value={formData.title}
-                onChange={(e) => {
+                onChange={e => {
                   setFormData({ ...formData, title: e.target.value });
                   setErrors({ ...errors, title: "" });
                 }}
@@ -212,7 +252,9 @@ export function TravelTimeline() {
             <textarea
               placeholder="Description (optional)"
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={e =>
+                setFormData({ ...formData, description: e.target.value })
+              }
               className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 resize-none"
               rows={2}
             />
@@ -221,7 +263,7 @@ export function TravelTimeline() {
               <input
                 type="date"
                 value={formData.date}
-                onChange={(e) => {
+                onChange={e => {
                   setFormData({ ...formData, date: e.target.value });
                   setErrors({ ...errors, date: "" });
                 }}
@@ -232,7 +274,7 @@ export function TravelTimeline() {
             <input
               type="time"
               value={formData.time}
-              onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+              onChange={e => setFormData({ ...formData, time: e.target.value })}
               className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/50"
               placeholder="Time (optional)"
             />
@@ -241,13 +283,20 @@ export function TravelTimeline() {
               type="text"
               placeholder="Location (optional)"
               value={formData.location}
-              onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+              onChange={e =>
+                setFormData({ ...formData, location: e.target.value })
+              }
               className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
             />
 
             <select
               value={formData.type}
-              onChange={(e) => setFormData({ ...formData, type: e.target.value as TimelineEvent["type"] })}
+              onChange={e =>
+                setFormData({
+                  ...formData,
+                  type: e.target.value as TimelineEvent["type"],
+                })
+              }
               className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/50"
             >
               <option value="flight">Flight</option>
@@ -280,7 +329,10 @@ export function TravelTimeline() {
       {sortedEvents.length > 0 ? (
         <div className="space-y-3">
           {sortedEvents.map((event, index) => (
-            <Card key={event.id} className={`p-4 border-l-4 ${typeColors[event.type]} border-border`}>
+            <Card
+              key={event.id}
+              className={`p-4 border-l-4 ${typeColors[event.type]} border-border`}
+            >
               <div className="flex items-start gap-4">
                 <button
                   onClick={() => handleToggleComplete(event.id)}
@@ -296,13 +348,17 @@ export function TravelTimeline() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-xl">{typeIcons[event.type]}</span>
-                    <h4 className={`font-semibold ${event.completed ? "text-muted-foreground line-through" : "text-foreground"}`}>
+                    <h4
+                      className={`font-semibold ${event.completed ? "text-muted-foreground line-through" : "text-foreground"}`}
+                    >
                       {event.title}
                     </h4>
                   </div>
 
                   {event.description && (
-                    <p className="text-sm text-muted-foreground mb-2">{event.description}</p>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      {event.description}
+                    </p>
                   )}
 
                   <div className="space-y-1 text-xs text-muted-foreground">
@@ -352,7 +408,9 @@ export function TravelTimeline() {
 
       {/* Preparation Tips */}
       <Card className="border-emerald-500/20 bg-emerald-950/20 p-4">
-        <h4 className="font-medium text-sm text-emerald-400 mb-3">📋 Pre-Trip Checklist</h4>
+        <h4 className="font-medium text-sm text-emerald-400 mb-3">
+          📋 Pre-Trip Checklist
+        </h4>
         <ul className="text-xs text-muted-foreground space-y-2">
           <li>• ✓ Passport valid for travel dates</li>
           <li>• ✓ Visas obtained if required</li>

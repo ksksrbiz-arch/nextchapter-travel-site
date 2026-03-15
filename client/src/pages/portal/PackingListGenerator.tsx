@@ -1,5 +1,14 @@
 import { useState } from "react";
-import { Backpack, Plus, Trash2, CheckCircle2, Circle, Package, AlertCircle, Lightbulb } from "lucide-react";
+import {
+  Backpack,
+  Plus,
+  Trash2,
+  CheckCircle2,
+  Circle,
+  Package,
+  AlertCircle,
+  Lightbulb,
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -29,12 +38,29 @@ interface PackingList {
   createdAt: string;
 }
 
-const CATEGORIES = ["Clothing", "Toiletries", "Electronics", "Documents", "Shoes", "Accessories", "Activities", "Health"];
+const CATEGORIES = [
+  "Clothing",
+  "Toiletries",
+  "Electronics",
+  "Documents",
+  "Shoes",
+  "Accessories",
+  "Activities",
+  "Health",
+];
 
-const SUGGESTED_ITEMS: Record<string, { name: string; category: string; essential: boolean; quantity: number }[]> = {
+const SUGGESTED_ITEMS: Record<
+  string,
+  { name: string; category: string; essential: boolean; quantity: number }[]
+> = {
   warm: [
     { name: "Warm coat", category: "Clothing", essential: true, quantity: 1 },
-    { name: "Thermal layers", category: "Clothing", essential: true, quantity: 2 },
+    {
+      name: "Thermal layers",
+      category: "Clothing",
+      essential: true,
+      quantity: 2,
+    },
     { name: "Warm hat", category: "Accessories", essential: true, quantity: 1 },
     { name: "Gloves", category: "Accessories", essential: true, quantity: 1 },
     { name: "Scarf", category: "Accessories", essential: true, quantity: 1 },
@@ -42,12 +68,27 @@ const SUGGESTED_ITEMS: Record<string, { name: string; category: string; essentia
     { name: "Boots", category: "Shoes", essential: true, quantity: 1 },
   ],
   tropical: [
-    { name: "Lightweight clothing", category: "Clothing", essential: true, quantity: 7 },
+    {
+      name: "Lightweight clothing",
+      category: "Clothing",
+      essential: true,
+      quantity: 7,
+    },
     { name: "Shorts", category: "Clothing", essential: true, quantity: 3 },
     { name: "Sandals", category: "Shoes", essential: true, quantity: 1 },
-    { name: "Swimming suit", category: "Clothing", essential: true, quantity: 2 },
+    {
+      name: "Swimming suit",
+      category: "Clothing",
+      essential: true,
+      quantity: 2,
+    },
     { name: "Sunscreen", category: "Toiletries", essential: true, quantity: 1 },
-    { name: "Sunglasses", category: "Accessories", essential: true, quantity: 1 },
+    {
+      name: "Sunglasses",
+      category: "Accessories",
+      essential: true,
+      quantity: 1,
+    },
     { name: "Hat/Cap", category: "Accessories", essential: true, quantity: 1 },
   ],
   base: [
@@ -55,12 +96,42 @@ const SUGGESTED_ITEMS: Record<string, { name: string; category: string; essentia
     { name: "Socks", category: "Clothing", essential: true, quantity: 5 },
     { name: "T-shirts", category: "Clothing", essential: true, quantity: 4 },
     { name: "Jeans/pants", category: "Clothing", essential: true, quantity: 2 },
-    { name: "Comfortable shoes", category: "Shoes", essential: true, quantity: 1 },
-    { name: "Toiletries kit", category: "Toiletries", essential: true, quantity: 1 },
-    { name: "Phone charger", category: "Electronics", essential: true, quantity: 1 },
-    { name: "Passport/ID", category: "Documents", essential: true, quantity: 1 },
-    { name: "Travel insurance", category: "Documents", essential: true, quantity: 1 },
-    { name: "Credit card", category: "Documents", essential: true, quantity: 1 },
+    {
+      name: "Comfortable shoes",
+      category: "Shoes",
+      essential: true,
+      quantity: 1,
+    },
+    {
+      name: "Toiletries kit",
+      category: "Toiletries",
+      essential: true,
+      quantity: 1,
+    },
+    {
+      name: "Phone charger",
+      category: "Electronics",
+      essential: true,
+      quantity: 1,
+    },
+    {
+      name: "Passport/ID",
+      category: "Documents",
+      essential: true,
+      quantity: 1,
+    },
+    {
+      name: "Travel insurance",
+      category: "Documents",
+      essential: true,
+      quantity: 1,
+    },
+    {
+      name: "Credit card",
+      category: "Documents",
+      essential: true,
+      quantity: 1,
+    },
   ],
 };
 
@@ -76,10 +147,38 @@ export function PackingListGenerator() {
       duration: 7,
       createdAt: new Date().toISOString(),
       items: [
-        { id: "1", name: "Lightweight shirts", category: "Clothing", quantity: 5, packed: true, essential: true },
-        { id: "2", name: "Shorts", category: "Clothing", quantity: 3, packed: true, essential: true },
-        { id: "3", name: "Swimming suit", category: "Clothing", quantity: 2, packed: false, essential: true },
-        { id: "4", name: "Sunscreen SPF 50", category: "Toiletries", quantity: 1, packed: false, essential: true },
+        {
+          id: "1",
+          name: "Lightweight shirts",
+          category: "Clothing",
+          quantity: 5,
+          packed: true,
+          essential: true,
+        },
+        {
+          id: "2",
+          name: "Shorts",
+          category: "Clothing",
+          quantity: 3,
+          packed: true,
+          essential: true,
+        },
+        {
+          id: "3",
+          name: "Swimming suit",
+          category: "Clothing",
+          quantity: 2,
+          packed: false,
+          essential: true,
+        },
+        {
+          id: "4",
+          name: "Sunscreen SPF 50",
+          category: "Toiletries",
+          quantity: 1,
+          packed: false,
+          essential: true,
+        },
       ],
     },
   ]);
@@ -111,7 +210,10 @@ export function PackingListGenerator() {
   };
 
   const calculateDuration = (start: string, end: string) => {
-    return Math.ceil((new Date(end).getTime() - new Date(start).getTime()) / (1000 * 60 * 60 * 24));
+    return Math.ceil(
+      (new Date(end).getTime() - new Date(start).getTime()) /
+        (1000 * 60 * 60 * 24)
+    );
   };
 
   const handleCreateList = () => {
@@ -161,7 +263,7 @@ export function PackingListGenerator() {
     if (!newItemData.name.trim()) return;
 
     setLists(
-      lists.map((list) => {
+      lists.map(list => {
         if (list.id === listId) {
           return {
             ...list,
@@ -187,11 +289,13 @@ export function PackingListGenerator() {
 
   const handleTogglePacked = (listId: string, itemId: string) => {
     setLists(
-      lists.map((list) => {
+      lists.map(list => {
         if (list.id === listId) {
           return {
             ...list,
-            items: list.items.map((item) => (item.id === itemId ? { ...item, packed: !item.packed } : item)),
+            items: list.items.map(item =>
+              item.id === itemId ? { ...item, packed: !item.packed } : item
+            ),
           };
         }
         return list;
@@ -201,11 +305,11 @@ export function PackingListGenerator() {
 
   const handleDeleteItem = (listId: string, itemId: string) => {
     setLists(
-      lists.map((list) => {
+      lists.map(list => {
         if (list.id === listId) {
           return {
             ...list,
-            items: list.items.filter((item) => item.id !== itemId),
+            items: list.items.filter(item => item.id !== itemId),
           };
         }
         return list;
@@ -214,14 +318,20 @@ export function PackingListGenerator() {
   };
 
   const handleDeleteList = (listId: string) => {
-    setLists(lists.filter((l) => l.id !== listId));
+    setLists(lists.filter(l => l.id !== listId));
     setSelectedList(null);
   };
 
-  const currentList = lists.find((l) => l.id === selectedList);
-  const packedCount = currentList ? currentList.items.filter((item) => item.packed).length : 0;
+  const currentList = lists.find(l => l.id === selectedList);
+  const packedCount = currentList
+    ? currentList.items.filter(item => item.packed).length
+    : 0;
   const totalCount = currentList ? currentList.items.length : 0;
-  const packedWeight = currentList ? currentList.items.filter((item) => item.packed && item.weight).reduce((sum, item) => sum + (item.weight || 0), 0) : 0;
+  const packedWeight = currentList
+    ? currentList.items
+        .filter(item => item.packed && item.weight)
+        .reduce((sum, item) => sum + (item.weight || 0), 0)
+    : 0;
 
   return (
     <div className="space-y-6">
@@ -248,7 +358,7 @@ export function PackingListGenerator() {
                       type="text"
                       placeholder="Trip Name"
                       value={formData.tripName}
-                      onChange={(e) => {
+                      onChange={e => {
                         setFormData({ ...formData, tripName: e.target.value });
                         setErrors({ ...errors, tripName: "" });
                       }}
@@ -261,8 +371,11 @@ export function PackingListGenerator() {
                       type="text"
                       placeholder="Destination"
                       value={formData.destination}
-                      onChange={(e) => {
-                        setFormData({ ...formData, destination: e.target.value });
+                      onChange={e => {
+                        setFormData({
+                          ...formData,
+                          destination: e.target.value,
+                        });
                         setErrors({ ...errors, destination: "" });
                       }}
                       className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
@@ -275,7 +388,7 @@ export function PackingListGenerator() {
                     <input
                       type="date"
                       value={formData.startDate}
-                      onChange={(e) => {
+                      onChange={e => {
                         setFormData({ ...formData, startDate: e.target.value });
                         setErrors({ ...errors, startDate: "" });
                       }}
@@ -287,7 +400,7 @@ export function PackingListGenerator() {
                     <input
                       type="date"
                       value={formData.endDate}
-                      onChange={(e) => {
+                      onChange={e => {
                         setFormData({ ...formData, endDate: e.target.value });
                         setErrors({ ...errors, endDate: "" });
                       }}
@@ -298,7 +411,9 @@ export function PackingListGenerator() {
 
                 <select
                   value={formData.weather}
-                  onChange={(e) => setFormData({ ...formData, weather: e.target.value })}
+                  onChange={e =>
+                    setFormData({ ...formData, weather: e.target.value })
+                  }
                   className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/50"
                 >
                   <option value="warm">Warm Weather</option>
@@ -308,7 +423,10 @@ export function PackingListGenerator() {
 
                 <div className="p-3 bg-blue-950/20 border border-blue-500/20 rounded-lg flex gap-2">
                   <Lightbulb className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" />
-                  <p className="text-sm text-blue-300">We'll suggest items based on weather and trip length. You can add or remove them.</p>
+                  <p className="text-sm text-blue-300">
+                    We'll suggest items based on weather and trip length. You
+                    can add or remove them.
+                  </p>
                 </div>
 
                 <div className="flex gap-3">
@@ -333,27 +451,38 @@ export function PackingListGenerator() {
           {/* Lists Overview */}
           {lists.length > 0 ? (
             <div className="space-y-3">
-              {lists.map((list) => {
-                const packed = list.items.filter((item) => item.packed).length;
+              {lists.map(list => {
+                const packed = list.items.filter(item => item.packed).length;
                 const total = list.items.length;
                 const progress = total > 0 ? (packed / total) * 100 : 0;
 
                 return (
-                  <Card key={list.id} className="p-4 border-border/50 cursor-pointer hover:border-primary/50 transition-colors">
+                  <Card
+                    key={list.id}
+                    className="p-4 border-border/50 cursor-pointer hover:border-primary/50 transition-colors"
+                  >
                     <div className="flex items-start justify-between mb-3">
-                      <div onClick={() => setSelectedList(list.id)} className="flex-1">
+                      <div
+                        onClick={() => setSelectedList(list.id)}
+                        className="flex-1"
+                      >
                         <div className="flex items-center gap-2 mb-2">
                           <Backpack className="w-5 h-5 text-primary" />
-                          <h4 className="font-semibold text-foreground">{list.tripName}</h4>
+                          <h4 className="font-semibold text-foreground">
+                            {list.tripName}
+                          </h4>
                         </div>
-                        <p className="text-sm text-muted-foreground">{list.destination}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {list.destination}
+                        </p>
                         <p className="text-xs text-muted-foreground mt-1">
-                          {list.startDate} to {list.endDate} • {list.duration} days
+                          {list.startDate} to {list.endDate} • {list.duration}{" "}
+                          days
                         </p>
                       </div>
 
                       <button
-                        onClick={(e) => {
+                        onClick={e => {
                           e.stopPropagation();
                           handleDeleteList(list.id);
                         }}
@@ -366,13 +495,18 @@ export function PackingListGenerator() {
                     {/* Progress Bar */}
                     <div className="space-y-1">
                       <div className="flex items-center justify-between text-xs">
-                        <span className="text-muted-foreground">Packing Progress</span>
+                        <span className="text-muted-foreground">
+                          Packing Progress
+                        </span>
                         <span className="font-semibold text-foreground">
                           {packed}/{total}
                         </span>
                       </div>
                       <div className="w-full h-2 bg-black/40 rounded-full overflow-hidden">
-                        <div className="h-full bg-gradient-to-r from-primary to-primary/60 transition-all" style={{ width: `${progress}%` }} />
+                        <div
+                          className="h-full bg-gradient-to-r from-primary to-primary/60 transition-all"
+                          style={{ width: `${progress}%` }}
+                        />
                       </div>
                     </div>
                   </Card>
@@ -385,7 +519,10 @@ export function PackingListGenerator() {
                 icon={Backpack}
                 title="No Packing Lists"
                 description="Create a packing list for your upcoming trip"
-                action={{ label: "Create List", onClick: () => setShowForm(true) }}
+                action={{
+                  label: "Create List",
+                  onClick: () => setShowForm(true),
+                }}
               />
             )
           )}
@@ -398,11 +535,18 @@ export function PackingListGenerator() {
               {/* Header with Back Button */}
               <div className="flex items-center justify-between">
                 <div>
-                  <button onClick={() => setSelectedList(null)} className="text-primary hover:text-primary/80 text-sm mb-2">
+                  <button
+                    onClick={() => setSelectedList(null)}
+                    className="text-primary hover:text-primary/80 text-sm mb-2"
+                  >
                     ← Back to Lists
                   </button>
-                  <h2 className="text-2xl font-bold text-foreground">{currentList.tripName}</h2>
-                  <p className="text-muted-foreground">{currentList.destination}</p>
+                  <h2 className="text-2xl font-bold text-foreground">
+                    {currentList.tripName}
+                  </h2>
+                  <p className="text-muted-foreground">
+                    {currentList.destination}
+                  </p>
                 </div>
               </div>
 
@@ -411,22 +555,33 @@ export function PackingListGenerator() {
                 <div className="grid grid-cols-4 gap-3">
                   <div className="p-3 bg-black/20 rounded-lg">
                     <p className="text-xs text-muted-foreground">Total Items</p>
-                    <p className="text-2xl font-bold text-foreground">{totalCount}</p>
+                    <p className="text-2xl font-bold text-foreground">
+                      {totalCount}
+                    </p>
                   </div>
 
                   <div className="p-3 bg-black/20 rounded-lg border border-emerald-500/30">
                     <p className="text-xs text-emerald-300">Packed</p>
-                    <p className="text-2xl font-bold text-emerald-400">{packedCount}</p>
+                    <p className="text-2xl font-bold text-emerald-400">
+                      {packedCount}
+                    </p>
                   </div>
 
                   <div className="p-3 bg-black/20 rounded-lg">
                     <p className="text-xs text-muted-foreground">Remaining</p>
-                    <p className="text-2xl font-bold text-foreground">{totalCount - packedCount}</p>
+                    <p className="text-2xl font-bold text-foreground">
+                      {totalCount - packedCount}
+                    </p>
                   </div>
 
                   <div className="p-3 bg-black/20 rounded-lg">
                     <p className="text-xs text-muted-foreground">Progress</p>
-                    <p className="text-2xl font-bold text-primary">{totalCount > 0 ? Math.round((packedCount / totalCount) * 100) : 0}%</p>
+                    <p className="text-2xl font-bold text-primary">
+                      {totalCount > 0
+                        ? Math.round((packedCount / totalCount) * 100)
+                        : 0}
+                      %
+                    </p>
                   </div>
                 </div>
               </Card>
@@ -439,16 +594,23 @@ export function PackingListGenerator() {
                     type="text"
                     placeholder="Item name..."
                     value={newItemData.name}
-                    onChange={(e) => setNewItemData({ ...newItemData, name: e.target.value })}
+                    onChange={e =>
+                      setNewItemData({ ...newItemData, name: e.target.value })
+                    }
                     className="flex-1 bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
                   />
 
                   <select
                     value={newItemData.category}
-                    onChange={(e) => setNewItemData({ ...newItemData, category: e.target.value })}
+                    onChange={e =>
+                      setNewItemData({
+                        ...newItemData,
+                        category: e.target.value,
+                      })
+                    }
                     className="w-32 bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/50"
                   >
-                    {CATEGORIES.map((cat) => (
+                    {CATEGORIES.map(cat => (
                       <option key={cat} value={cat}>
                         {cat}
                       </option>
@@ -460,11 +622,19 @@ export function PackingListGenerator() {
                     min="1"
                     placeholder="Qty"
                     value={newItemData.quantity}
-                    onChange={(e) => setNewItemData({ ...newItemData, quantity: e.target.value })}
+                    onChange={e =>
+                      setNewItemData({
+                        ...newItemData,
+                        quantity: e.target.value,
+                      })
+                    }
                     className="w-16 bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/50"
                   />
 
-                  <Button onClick={() => handleAddItem(currentList.id)} size="sm">
+                  <Button
+                    onClick={() => handleAddItem(currentList.id)}
+                    size="sm"
+                  >
                     <Plus className="w-4 h-4" />
                   </Button>
                 </div>
@@ -472,11 +642,15 @@ export function PackingListGenerator() {
 
               {/* Items by Category */}
               <div className="space-y-3">
-                {CATEGORIES.map((category) => {
-                  const items = currentList.items.filter((item) => item.category === category);
+                {CATEGORIES.map(category => {
+                  const items = currentList.items.filter(
+                    item => item.category === category
+                  );
                   if (items.length === 0) return null;
 
-                  const categoryPacked = items.filter((item) => item.packed).length;
+                  const categoryPacked = items.filter(
+                    item => item.packed
+                  ).length;
 
                   return (
                     <Card key={category} className="p-4 border-border/50">
@@ -488,10 +662,15 @@ export function PackingListGenerator() {
                       </h4>
 
                       <div className="space-y-2">
-                        {items.map((item) => (
-                          <div key={item.id} className="flex items-center gap-3 p-2 hover:bg-black/20 rounded-lg transition-colors">
+                        {items.map(item => (
+                          <div
+                            key={item.id}
+                            className="flex items-center gap-3 p-2 hover:bg-black/20 rounded-lg transition-colors"
+                          >
                             <button
-                              onClick={() => handleTogglePacked(currentList.id, item.id)}
+                              onClick={() =>
+                                handleTogglePacked(currentList.id, item.id)
+                              }
                               className="text-muted-foreground hover:text-primary transition-colors flex-shrink-0"
                             >
                               {item.packed ? (
@@ -504,7 +683,9 @@ export function PackingListGenerator() {
                             <div className="flex-1">
                               <p
                                 className={`text-sm ${
-                                  item.packed ? "line-through text-muted-foreground" : "text-foreground"
+                                  item.packed
+                                    ? "line-through text-muted-foreground"
+                                    : "text-foreground"
                                 }`}
                               >
                                 {item.name}
@@ -515,10 +696,14 @@ export function PackingListGenerator() {
                               </p>
                             </div>
 
-                            {item.essential && <Badge className="text-xs">Essential</Badge>}
+                            {item.essential && (
+                              <Badge className="text-xs">Essential</Badge>
+                            )}
 
                             <button
-                              onClick={() => handleDeleteItem(currentList.id, item.id)}
+                              onClick={() =>
+                                handleDeleteItem(currentList.id, item.id)
+                              }
                               className="p-1 hover:bg-red-500/10 rounded transition-colors flex-shrink-0"
                             >
                               <Trash2 className="w-4 h-4 text-red-500" />
@@ -538,7 +723,9 @@ export function PackingListGenerator() {
                   Packing Tips
                 </h4>
                 <ul className="text-sm text-amber-200/80 space-y-1">
-                  <li>• Lay out items before packing to avoid forgetting anything</li>
+                  <li>
+                    • Lay out items before packing to avoid forgetting anything
+                  </li>
                   <li>• Roll clothes to save space</li>
                   <li>• Put heavier items at the bottom</li>
                   <li>• Use packing cubes to organize by category</li>

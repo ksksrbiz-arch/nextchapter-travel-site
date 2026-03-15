@@ -9,7 +9,13 @@
  *   const { selectedTripId, setSelectedTripId, trips, selectedTrip } = useTrip();
  */
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 import { trpc } from "@/lib/trpc";
 
 type Trip = {
@@ -42,7 +48,9 @@ export function TripProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!trips || trips.length === 0) return;
     if (selectedTripId !== null) return; // already selected
-    const active = trips.find(t => t.status === "active" || t.status === "confirmed");
+    const active = trips.find(
+      t => t.status === "active" || t.status === "confirmed"
+    );
     setSelectedTripId((active ?? trips[0]).id);
   }, [trips, selectedTripId]);
 
@@ -50,13 +58,15 @@ export function TripProvider({ children }: { children: ReactNode }) {
   const selectedTrip = trips?.find(t => t.id === resolvedId);
 
   return (
-    <TripContext.Provider value={{
-      trips,
-      tripsLoading,
-      selectedTripId: resolvedId,
-      setSelectedTripId,
-      selectedTrip,
-    }}>
+    <TripContext.Provider
+      value={{
+        trips,
+        tripsLoading,
+        selectedTripId: resolvedId,
+        setSelectedTripId,
+        selectedTrip,
+      }}
+    >
       {children}
     </TripContext.Provider>
   );

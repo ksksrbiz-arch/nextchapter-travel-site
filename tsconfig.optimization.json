@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "strictNullChecks": true,
+    "exactOptionalPropertyTypes": true,
+    "moduleResolution": "bundler"
+  }
+}

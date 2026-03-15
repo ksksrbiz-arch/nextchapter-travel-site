@@ -9,11 +9,11 @@ export interface Geofence {
   latitude: number;
   longitude: number;
   radiusKm: number;
-  type: 'hotel' | 'attraction' | 'event' | 'restaurant' | 'meeting-point';
+  type: "hotel" | "attraction" | "event" | "restaurant" | "meeting-point";
   metadata?: Record<string, any>;
 }
 
-export type GeofenceEvent = 'enter' | 'exit';
+export type GeofenceEvent = "enter" | "exit";
 
 export interface GeofenceEventData {
   geofence: Geofence;
@@ -29,7 +29,8 @@ export interface GeofenceEventData {
 class GeofencingService {
   private geofences: Map<string, Geofence> = new Map();
   private activeGeofences: Set<string> = new Set(); // Currently inside
-  private eventHandlers: Map<string, Set<(data: GeofenceEventData) => void>> = new Map();
+  private eventHandlers: Map<string, Set<(data: GeofenceEventData) => void>> =
+    new Map();
   private watchId: number | null = null;
   private checkInterval = 5000; // Check every 5 seconds
   private updateInterval: number | null = null;
@@ -39,7 +40,9 @@ class GeofencingService {
    */
   addGeofence(geofence: Geofence): void {
     this.geofences.set(geofence.id, geofence);
-    console.log(`[Geofencing] Added geofence: ${geofence.name} (${geofence.radiusKm}km radius)`);
+    console.log(
+      `[Geofencing] Added geofence: ${geofence.name} (${geofence.radiusKm}km radius)`
+    );
   }
 
   /**
@@ -56,42 +59,40 @@ class GeofencingService {
   startMonitoring(): Promise<void> {
     return new Promise((resolve, reject) => {
       if (!navigator.geolocation) {
-        reject(new Error('Geolocation not supported'));
+        reject(new Error("Geolocation not supported"));
         return;
       }
 
-      console.log('[Geofencing] Starting geofence monitoring...');
+      console.log("[Geofencing] Starting geofence monitoring...");
 
       // Start continuous location watching
       this.watchId = navigator.geolocation.watchPosition(
-        (position) => {
+        position => {
           this.checkGeofences(
             position.coords.latitude,
             position.coords.longitude,
             position.coords.accuracy
           );
         },
-        (error) => {
-          console.error('[Geofencing] Position tracking error:', error);
+        error => {
+          console.error("[Geofencing] Position tracking error:", error);
         },
         {
           enableHighAccuracy: false,
           timeout: 10000,
-          maximumAge: 5000 // Check every 5 seconds
+          maximumAge: 5000, // Check every 5 seconds
         }
       );
 
       // Fallback polling in case watch doesn't provide frequent updates
       this.updateInterval = window.setInterval(() => {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            this.checkGeofences(
-              position.coords.latitude,
-              position.coords.longitude,
-              position.coords.accuracy
-            );
-          }
-        );
+        navigator.geolocation.getCurrentPosition(position => {
+          this.checkGeofences(
+            position.coords.latitude,
+            position.coords.longitude,
+            position.coords.accuracy
+          );
+        });
       }, this.checkInterval);
 
       resolve();
@@ -110,13 +111,17 @@ class GeofencingService {
       clearInterval(this.updateInterval);
       this.updateInterval = null;
     }
-    console.log('[Geofencing] Stopped geofence monitoring');
+    console.log("[Geofencing] Stopped geofence monitoring");
   }
 
   /**
    * Subscribe to geofence event
    */
-  on(geofenceId: string | 'all', event: GeofenceEvent, handler: (data: GeofenceEventData) => void): () => void {
+  on(
+    geofenceId: string | "all",
+    event: GeofenceEvent,
+    handler: (data: GeofenceEventData) => void
+  ): () => void {
     const key = `${geofenceId}:${event}`;
     if (!this.eventHandlers.has(key)) {
       this.eventHandlers.set(key, new Set());
@@ -134,8 +139,8 @@ class GeofencingService {
    */
   getActiveGeofences(): Geofence[] {
     return Array.from(this.activeGeofences)
-      .map((id) => this.geofences.get(id))
-      .filter((g) => g !== undefined) as Geofence[];
+      .map(id => this.geofences.get(id))
+      .filter(g => g !== undefined) as Geofence[];
   }
 
   /**
@@ -154,7 +159,11 @@ class GeofencingService {
 
   // Private methods
 
-  private checkGeofences(latitude: number, longitude: number, accuracy: number): void {
+  private checkGeofences(
+    latitude: number,
+    longitude: number,
+    accuracy: number
+  ): void {
     const userLocation = { latitude, longitude, accuracy };
 
     for (const [id, geofence] of this.geofences.entries()) {
@@ -173,9 +182,9 @@ class GeofencingService {
         this.activeGeofences.add(id);
         this.triggerEvent({
           geofence,
-          event: 'enter',
+          event: "enter",
           timestamp: Date.now(),
-          userLocation
+          userLocation,
         });
         console.log(`[Geofencing] Entered: ${geofence.name}`);
       }
@@ -185,9 +194,9 @@ class GeofencingService {
         this.activeGeofences.delete(id);
         this.triggerEvent({
           geofence,
-          event: 'exit',
+          event: "exit",
           timestamp: Date.now(),
-          userLocation
+          userLocation,
         });
         console.log(`[Geofencing] Exited: ${geofence.name}`);
       }
@@ -197,14 +206,19 @@ class GeofencingService {
   private triggerEvent(data: GeofenceEventData): void {
     // Specific geofence + event handlers
     const specificKey = `${data.geofence.id}:${data.event}`;
-    this.eventHandlers.get(specificKey)?.forEach((handler) => handler(data));
+    this.eventHandlers.get(specificKey)?.forEach(handler => handler(data));
 
     // All geofences + event handlers
     const allKey = `all:${data.event}`;
-    this.eventHandlers.get(allKey)?.forEach((handler) => handler(data));
+    this.eventHandlers.get(allKey)?.forEach(handler => handler(data));
   }
 
-  private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  private calculateDistance(
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number
+  ): number {
     const R = 6371; // Earth's radius in km
     const dLat = ((lat2 - lat1) * Math.PI) / 180;
     const dLon = ((lon2 - lon1) * Math.PI) / 180;

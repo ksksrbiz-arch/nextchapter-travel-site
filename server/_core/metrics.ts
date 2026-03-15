@@ -23,7 +23,7 @@ const statusBuckets: Record<StatusClass, number> = {
   "3xx": 0,
   "4xx": 0,
   "5xx": 0,
-  "other": 0,
+  other: 0,
 };
 const latencyBuckets: HistogramBucket[] = [
   { le: 50, count: 0 },
@@ -90,18 +90,24 @@ export function renderPrometheus(): string {
   lines.push("# TYPE app_requests_total counter");
   lines.push(`app_requests_total ${snapshot.requests.total}`);
 
-  lines.push("# HELP app_requests_status_class_total HTTP requests by status class");
+  lines.push(
+    "# HELP app_requests_status_class_total HTTP requests by status class"
+  );
   lines.push("# TYPE app_requests_status_class_total counter");
   for (const [cls, count] of Object.entries(snapshot.requests.byStatus)) {
     lines.push(`app_requests_status_class_total{class="${cls}"} ${count}`);
   }
 
-  lines.push("# HELP app_request_latency_ms Histogram of request durations in ms");
+  lines.push(
+    "# HELP app_request_latency_ms Histogram of request durations in ms"
+  );
   lines.push("# TYPE app_request_latency_ms histogram");
   let cumulative = 0;
   for (const bucket of snapshot.latencyMs.buckets) {
     cumulative += bucket.count;
-    lines.push(`app_request_latency_ms_bucket{le="${bucket.le}"} ${cumulative}`);
+    lines.push(
+      `app_request_latency_ms_bucket{le="${bucket.le}"} ${cumulative}`
+    );
   }
   lines.push(`app_request_latency_ms_sum ${snapshot.latencyMs.sum}`);
   lines.push(`app_request_latency_ms_count ${snapshot.requests.total}`);

@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { Shield, FileText, Plus, Trash2, AlertCircle, CheckCircle2 } from "lucide-react";
+import {
+  Shield,
+  FileText,
+  Plus,
+  Trash2,
+  AlertCircle,
+  CheckCircle2,
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -52,9 +59,11 @@ export function TravelInsurance() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     if (!formData.provider) newErrors.provider = "Provider required";
-    if (!formData.policyNumber) newErrors.policyNumber = "Policy number required";
+    if (!formData.policyNumber)
+      newErrors.policyNumber = "Policy number required";
     if (!formData.coverage) newErrors.coverage = "Coverage type required";
-    if (!formData.premium || isNaN(parseFloat(formData.premium))) newErrors.premium = "Valid amount required";
+    if (!formData.premium || isNaN(parseFloat(formData.premium)))
+      newErrors.premium = "Valid amount required";
     if (!formData.startDate) newErrors.startDate = "Start date required";
     if (!formData.endDate) newErrors.endDate = "End date required";
     setErrors(newErrors);
@@ -89,7 +98,7 @@ export function TravelInsurance() {
   };
 
   const handleDeletePolicy = (id: string) => {
-    setPolicies(policies.filter((p) => p.id !== id));
+    setPolicies(policies.filter(p => p.id !== id));
   };
 
   const totalCoverage = policies.reduce((sum, p) => sum + p.premium, 0);
@@ -100,10 +109,16 @@ export function TravelInsurance() {
       <Card className="bg-gradient-to-br from-purple-950/30 to-pink-950/30 border-purple-500/20 p-6">
         <div className="flex items-start justify-between mb-4">
           <div>
-            <h3 className="text-sm font-medium text-muted-foreground mb-2">Active Coverage</h3>
+            <h3 className="text-sm font-medium text-muted-foreground mb-2">
+              Active Coverage
+            </h3>
             <div className="flex items-baseline gap-2">
-              <span className="text-4xl font-bold text-foreground">${totalCoverage.toFixed(2)}</span>
-              <span className="text-sm text-muted-foreground">Total Premium</span>
+              <span className="text-4xl font-bold text-foreground">
+                ${totalCoverage.toFixed(2)}
+              </span>
+              <span className="text-sm text-muted-foreground">
+                Total Premium
+              </span>
             </div>
           </div>
           <Shield className="w-8 h-8 text-purple-500/60" />
@@ -112,15 +127,21 @@ export function TravelInsurance() {
         <div className="grid grid-cols-3 gap-3">
           <div className="p-2 bg-black/20 rounded-lg">
             <p className="text-xs text-muted-foreground">Policies</p>
-            <p className="text-lg font-semibold text-foreground">{policies.length}</p>
+            <p className="text-lg font-semibold text-foreground">
+              {policies.length}
+            </p>
           </div>
           <div className="p-2 bg-black/20 rounded-lg">
             <p className="text-xs text-muted-foreground">Active</p>
-            <p className="text-lg font-semibold text-emerald-400">{policies.filter((p) => p.status === "active").length}</p>
+            <p className="text-lg font-semibold text-emerald-400">
+              {policies.filter(p => p.status === "active").length}
+            </p>
           </div>
           <div className="p-2 bg-black/20 rounded-lg">
             <p className="text-xs text-muted-foreground">Pending</p>
-            <p className="text-lg font-semibold text-yellow-400">{policies.filter((p) => p.status === "pending").length}</p>
+            <p className="text-lg font-semibold text-yellow-400">
+              {policies.filter(p => p.status === "pending").length}
+            </p>
           </div>
         </div>
       </Card>
@@ -132,8 +153,11 @@ export function TravelInsurance() {
           Essential Coverage for Your Trip
         </h4>
         <div className="space-y-2">
-          {COVERAGE_TYPES.map((type) => (
-            <div key={type} className="flex items-center gap-2 text-xs text-muted-foreground">
+          {COVERAGE_TYPES.map(type => (
+            <div
+              key={type}
+              className="flex items-center gap-2 text-xs text-muted-foreground"
+            >
               <CheckCircle2 className="w-3 h-3 text-blue-400" />
               {type}
             </div>
@@ -158,14 +182,14 @@ export function TravelInsurance() {
             <FormFieldWrapper error={errors.provider}>
               <select
                 value={formData.provider}
-                onChange={(e) => {
+                onChange={e => {
                   setFormData({ ...formData, provider: e.target.value });
                   setErrors({ ...errors, provider: "" });
                 }}
                 className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/50"
               >
                 <option value="">Select Provider</option>
-                {INSURANCE_PROVIDERS.map((p) => (
+                {INSURANCE_PROVIDERS.map(p => (
                   <option key={p} value={p}>
                     {p}
                   </option>
@@ -178,7 +202,7 @@ export function TravelInsurance() {
                 type="text"
                 placeholder="Policy Number"
                 value={formData.policyNumber}
-                onChange={(e) => {
+                onChange={e => {
                   setFormData({ ...formData, policyNumber: e.target.value });
                   setErrors({ ...errors, policyNumber: "" });
                 }}
@@ -189,14 +213,14 @@ export function TravelInsurance() {
             <FormFieldWrapper error={errors.coverage}>
               <select
                 value={formData.coverage}
-                onChange={(e) => {
+                onChange={e => {
                   setFormData({ ...formData, coverage: e.target.value });
                   setErrors({ ...errors, coverage: "" });
                 }}
                 className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/50"
               >
                 <option value="">Select Coverage Type</option>
-                {COVERAGE_TYPES.map((c) => (
+                {COVERAGE_TYPES.map(c => (
                   <option key={c} value={c}>
                     {c}
                   </option>
@@ -211,7 +235,7 @@ export function TravelInsurance() {
                 min="0"
                 step="0.01"
                 value={formData.premium}
-                onChange={(e) => {
+                onChange={e => {
                   setFormData({ ...formData, premium: e.target.value });
                   setErrors({ ...errors, premium: "" });
                 }}
@@ -224,7 +248,7 @@ export function TravelInsurance() {
                 <input
                   type="date"
                   value={formData.startDate}
-                  onChange={(e) => {
+                  onChange={e => {
                     setFormData({ ...formData, startDate: e.target.value });
                     setErrors({ ...errors, startDate: "" });
                   }}
@@ -236,7 +260,7 @@ export function TravelInsurance() {
                 <input
                   type="date"
                   value={formData.endDate}
-                  onChange={(e) => {
+                  onChange={e => {
                     setFormData({ ...formData, endDate: e.target.value });
                     setErrors({ ...errors, endDate: "" });
                   }}
@@ -267,20 +291,26 @@ export function TravelInsurance() {
       {/* Policies List */}
       {policies.length > 0 ? (
         <div className="space-y-3">
-          {policies.map((policy) => (
+          {policies.map(policy => (
             <Card key={policy.id} className="p-4 border-border/50">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
-                    <h4 className="font-semibold text-foreground">{policy.provider}</h4>
+                    <h4 className="font-semibold text-foreground">
+                      {policy.provider}
+                    </h4>
                     <Badge
-                      variant={policy.status === "active" ? "default" : "secondary"}
+                      variant={
+                        policy.status === "active" ? "default" : "secondary"
+                      }
                       className="text-xs"
                     >
                       {policy.status}
                     </Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground">{policy.coverage}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {policy.coverage}
+                  </p>
                 </div>
                 <button
                   onClick={() => handleDeletePolicy(policy.id)}
@@ -293,11 +323,15 @@ export function TravelInsurance() {
               <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
                 <div>
                   <p className="text-muted-foreground">Policy #</p>
-                  <p className="font-mono text-foreground">{policy.policyNumber}</p>
+                  <p className="font-mono text-foreground">
+                    {policy.policyNumber}
+                  </p>
                 </div>
                 <div className="text-right">
                   <p className="text-muted-foreground">Premium</p>
-                  <p className="font-semibold text-foreground">${policy.premium.toFixed(2)}</p>
+                  <p className="font-semibold text-foreground">
+                    ${policy.premium.toFixed(2)}
+                  </p>
                 </div>
               </div>
 

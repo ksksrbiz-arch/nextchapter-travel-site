@@ -14,12 +14,19 @@ export interface ExtractedExpense {
   id: string;
   receiptId: string;
   vendor: string;
-  category: 'food' | 'transport' | 'accommodation' | 'activity' | 'shopping' | 'entertainment' | 'other';
+  category:
+    | "food"
+    | "transport"
+    | "accommodation"
+    | "activity"
+    | "shopping"
+    | "entertainment"
+    | "other";
   amount: number;
   currency: string;
   date: number;
   items?: string[];
-  paymentMethod?: 'cash' | 'credit' | 'debit' | 'other';
+  paymentMethod?: "cash" | "credit" | "debit" | "other";
   confidence: number; // 0-1 confidence score
   rawText?: string;
   processedAt: number;
@@ -53,25 +60,27 @@ class ReceiptOCRService {
   async processReceipt(image: ReceiptImage): Promise<ExtractedExpense | null> {
     try {
       console.log(`[ReceiptOCR] Processing receipt: ${image.id}`);
-      
+
       // Simulate OCR processing (in production: Google Vision, Microsoft Computer Vision, etc.)
       const ocrResult = await this.simulateOCR(image);
-      
+
       if (!ocrResult || ocrResult.confidence < 0.3) {
-        console.warn(`[ReceiptOCR] Low confidence reading: ${ocrResult?.confidence || 0}`);
+        console.warn(
+          `[ReceiptOCR] Low confidence reading: ${ocrResult?.confidence || 0}`
+        );
         return null;
       }
 
       const expense: ExtractedExpense = {
         id: `expense-${Date.now()}`,
         receiptId: image.id,
-        vendor: ocrResult.vendor || 'Unknown',
-        category: this.categorizeVendor(ocrResult.vendor || ''),
+        vendor: ocrResult.vendor || "Unknown",
+        category: this.categorizeVendor(ocrResult.vendor || ""),
         amount: ocrResult.amount || 0,
-        currency: ocrResult.currency || 'USD',
+        currency: ocrResult.currency || "USD",
         date: ocrResult.date || image.timestamp,
         items: ocrResult.items,
-        paymentMethod: 'credit',
+        paymentMethod: "credit",
         confidence: ocrResult.confidence,
         processedAt: Date.now(),
       };
@@ -79,10 +88,12 @@ class ReceiptOCRService {
       this.expenses.set(expense.id, expense);
       this.receipts.set(image.id, image);
 
-      console.log(`[ReceiptOCR] Extracted: ${expense.vendor} $${expense.amount} (${Math.round(expense.confidence * 100)}% confidence)`);
+      console.log(
+        `[ReceiptOCR] Extracted: ${expense.vendor} $${expense.amount} (${Math.round(expense.confidence * 100)}% confidence)`
+      );
       return expense;
     } catch (err) {
-      console.error('[ReceiptOCR] Processing error:', err);
+      console.error("[ReceiptOCR] Processing error:", err);
       return null;
     }
   }
@@ -91,7 +102,7 @@ class ReceiptOCRService {
    * Get all expenses for a trip
    */
   getExpensesByTrip(tripId: string): ExtractedExpense[] {
-    return Array.from(this.expenses.values()).filter((e) => {
+    return Array.from(this.expenses.values()).filter(e => {
       const receipt = this.receipts.get(e.receiptId);
       return receipt?.tripId === tripId;
     });
@@ -101,7 +112,7 @@ class ReceiptOCRService {
    * Get expenses by category
    */
   getExpensesByCategory(tripId: string, category: string): ExtractedExpense[] {
-    return this.getExpensesByTrip(tripId).filter((e) => e.category === category);
+    return this.getExpensesByTrip(tripId).filter(e => e.category === category);
   }
 
   /**
@@ -109,7 +120,7 @@ class ReceiptOCRService {
    */
   getTotalByCategory(tripId: string): Record<string, number> {
     const totals: Record<string, number> = {};
-    this.getExpensesByTrip(tripId).forEach((expense) => {
+    this.getExpensesByTrip(tripId).forEach(expense => {
       if (!totals[expense.category]) {
         totals[expense.category] = 0;
       }
@@ -130,8 +141,8 @@ class ReceiptOCRService {
    */
   getSpendingByDate(tripId: string): Record<string, number> {
     const byDate: Record<string, number> = {};
-    this.getExpensesByTrip(tripId).forEach((expense) => {
-      const date = new Date(expense.date).toISOString().split('T')[0];
+    this.getExpensesByTrip(tripId).forEach(expense => {
+      const date = new Date(expense.date).toISOString().split("T")[0];
       if (!byDate[date]) {
         byDate[date] = 0;
       }
@@ -183,11 +194,19 @@ class ReceiptOCRService {
   /**
    * Update expense
    */
-  updateExpense(expenseId: string, updates: Partial<ExtractedExpense>): ExtractedExpense | null {
+  updateExpense(
+    expenseId: string,
+    updates: Partial<ExtractedExpense>
+  ): ExtractedExpense | null {
     const expense = this.expenses.get(expenseId);
     if (!expense) return null;
 
-    const updated = { ...expense, ...updates, id: expense.id, receiptId: expense.receiptId };
+    const updated = {
+      ...expense,
+      ...updates,
+      id: expense.id,
+      receiptId: expense.receiptId,
+    };
     this.expenses.set(expenseId, updated);
     return updated;
   }
@@ -202,47 +221,50 @@ class ReceiptOCRService {
     // Mock receipt data for demonstration
     const mockReceipts = [
       {
-        vendor: 'Orlando International Airport',
+        vendor: "Orlando International Airport",
         amount: 45.5,
-        currency: 'USD',
-        items: ['Parking', '2 hours'],
+        currency: "USD",
+        items: ["Parking", "2 hours"],
         confidence: 0.92,
       },
       {
-        vendor: 'The Cheesecake Factory',
+        vendor: "The Cheesecake Factory",
         amount: 67.89,
-        currency: 'USD',
-        items: ['Dinner for 2', 'Cheesecake'],
+        currency: "USD",
+        items: ["Dinner for 2", "Cheesecake"],
         confidence: 0.88,
       },
       {
-        vendor: 'Uber',
+        vendor: "Uber",
         amount: 22.5,
-        currency: 'USD',
-        items: ['Ride STL-Hotel'],
+        currency: "USD",
+        items: ["Ride STL-Hotel"],
         confidence: 0.95,
       },
       {
-        vendor: 'Magic Kingdom',
+        vendor: "Magic Kingdom",
         amount: 159.0,
-        currency: 'USD',
-        items: ['Park ticket', '1 day'],
+        currency: "USD",
+        items: ["Park ticket", "1 day"],
         confidence: 0.91,
       },
       {
-        vendor: 'CVS Pharmacy',
+        vendor: "CVS Pharmacy",
         amount: 18.75,
-        currency: 'USD',
-        items: ['Sunscreen', 'Snacks'],
+        currency: "USD",
+        items: ["Sunscreen", "Snacks"],
         confidence: 0.87,
       },
     ];
 
     // Simulate processing delay
-    await new Promise((resolve) => setTimeout(resolve, 500 + Math.random() * 1000));
+    await new Promise(resolve =>
+      setTimeout(resolve, 500 + Math.random() * 1000)
+    );
 
     // Return random mock receipt
-    const receipt = mockReceipts[Math.floor(Math.random() * mockReceipts.length)];
+    const receipt =
+      mockReceipts[Math.floor(Math.random() * mockReceipts.length)];
     return {
       ...receipt,
       date: image.timestamp,
@@ -252,29 +274,62 @@ class ReceiptOCRService {
   /**
    * Categorize vendor based on name
    */
-  private categorizeVendor(vendor: string): ExtractedExpense['category'] {
+  private categorizeVendor(vendor: string): ExtractedExpense["category"] {
     const lower = vendor.toLowerCase();
 
-    if (lower.includes('restaurant') || lower.includes('cafe') || lower.includes('pizza') || lower.includes('burger') || lower.includes('cheesecake')) {
-      return 'food';
+    if (
+      lower.includes("restaurant") ||
+      lower.includes("cafe") ||
+      lower.includes("pizza") ||
+      lower.includes("burger") ||
+      lower.includes("cheesecake")
+    ) {
+      return "food";
     }
-    if (lower.includes('uber') || lower.includes('taxi') || lower.includes('lyft') || lower.includes('parking') || lower.includes('transit')) {
-      return 'transport';
+    if (
+      lower.includes("uber") ||
+      lower.includes("taxi") ||
+      lower.includes("lyft") ||
+      lower.includes("parking") ||
+      lower.includes("transit")
+    ) {
+      return "transport";
     }
-    if (lower.includes('hotel') || lower.includes('airbnb') || lower.includes('resort') || lower.includes('hilton')) {
-      return 'accommodation';
+    if (
+      lower.includes("hotel") ||
+      lower.includes("airbnb") ||
+      lower.includes("resort") ||
+      lower.includes("hilton")
+    ) {
+      return "accommodation";
     }
-    if (lower.includes('disney') || lower.includes('park') || lower.includes('museum') || lower.includes('theater') || lower.includes('concert')) {
-      return 'activity';
+    if (
+      lower.includes("disney") ||
+      lower.includes("park") ||
+      lower.includes("museum") ||
+      lower.includes("theater") ||
+      lower.includes("concert")
+    ) {
+      return "activity";
     }
-    if (lower.includes('mall') || lower.includes('store') || lower.includes('shop') || lower.includes('target') || lower.includes('cvs')) {
-      return 'shopping';
+    if (
+      lower.includes("mall") ||
+      lower.includes("store") ||
+      lower.includes("shop") ||
+      lower.includes("target") ||
+      lower.includes("cvs")
+    ) {
+      return "shopping";
     }
-    if (lower.includes('bar') || lower.includes('club') || lower.includes('nightclub')) {
-      return 'entertainment';
+    if (
+      lower.includes("bar") ||
+      lower.includes("club") ||
+      lower.includes("nightclub")
+    ) {
+      return "entertainment";
     }
 
-    return 'other';
+    return "other";
   }
 }
 

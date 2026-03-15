@@ -59,7 +59,9 @@ export function useSSEMessages({
       esRef.current.close();
     }
 
-    const es = new EventSource("/api/messages/stream", { withCredentials: true });
+    const es = new EventSource("/api/messages/stream", {
+      withCredentials: true,
+    });
     esRef.current = es;
 
     es.onopen = () => {
@@ -67,7 +69,7 @@ export function useSSEMessages({
       retryDelay.current = 1000; // reset back-off on success
     };
 
-    es.onmessage = (e) => {
+    es.onmessage = e => {
       try {
         const event: SSEEvent = JSON.parse(e.data);
         if (event.type === "message" && onMessage) {

@@ -15,16 +15,36 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { useLocation, useSearch } from "wouter";
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
 import {
-  MapPin, Calendar, CheckSquare, Plane, Users,
-  Plus, Trash2, ChevronRight, ChevronLeft, Check,
-  Loader2, Luggage, Hotel, Utensils, Car, Clock, Mountain
+  MapPin,
+  Calendar,
+  CheckSquare,
+  Plane,
+  Users,
+  Plus,
+  Trash2,
+  ChevronRight,
+  ChevronLeft,
+  Check,
+  Loader2,
+  Luggage,
+  Hotel,
+  Utensils,
+  Car,
+  Clock,
+  Mountain,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -37,7 +57,14 @@ type ItineraryDraft = {
   title: string;
   description: string;
   location: string;
-  category: "flight" | "hotel" | "activity" | "dining" | "transport" | "free_time" | "other";
+  category:
+    | "flight"
+    | "hotel"
+    | "activity"
+    | "dining"
+    | "transport"
+    | "free_time"
+    | "other";
 };
 
 type PackingDraft = {
@@ -50,7 +77,14 @@ type PackingDraft = {
 
 type BookingDraft = {
   id: string;
-  type: "flight" | "hotel" | "car_rental" | "tour" | "cruise" | "transfer" | "other";
+  type:
+    | "flight"
+    | "hotel"
+    | "car_rental"
+    | "tour"
+    | "cruise"
+    | "transfer"
+    | "other";
   title: string;
   provider: string;
   confirmationNumber: string;
@@ -80,8 +114,16 @@ const ITINERARY_CATEGORIES = [
 ] as const;
 
 const PACKING_CATEGORIES = [
-  "Clothing", "Toiletries", "Electronics", "Documents", "Health & Safety",
-  "Entertainment", "Snacks & Food", "Baby & Kids", "Sports & Outdoor", "Other"
+  "Clothing",
+  "Toiletries",
+  "Electronics",
+  "Documents",
+  "Health & Safety",
+  "Entertainment",
+  "Snacks & Food",
+  "Baby & Kids",
+  "Sports & Outdoor",
+  "Other",
 ];
 
 const BOOKING_TYPES = [
@@ -110,26 +152,38 @@ function StepProgress({ currentStep }: { currentStep: number }) {
           return (
             <div key={step.id} className="flex items-center flex-1">
               <div className="flex flex-col items-center">
-                <div className={cn(
-                  "w-9 h-9 rounded-full flex items-center justify-center text-sm font-sans font-semibold transition-all",
-                  done ? "bg-green-500 text-white" :
-                  active ? "bg-primary text-primary-foreground ring-4 ring-primary/20" :
-                  "bg-muted text-muted-foreground"
-                )}>
+                <div
+                  className={cn(
+                    "w-9 h-9 rounded-full flex items-center justify-center text-sm font-sans font-semibold transition-all",
+                    done
+                      ? "bg-green-500 text-white"
+                      : active
+                        ? "bg-primary text-primary-foreground ring-4 ring-primary/20"
+                        : "bg-muted text-muted-foreground"
+                  )}
+                >
                   {done ? <Check className="w-4 h-4" /> : step.id}
                 </div>
-                <span className={cn(
-                  "mt-1.5 text-xs font-sans text-center leading-tight hidden sm:block",
-                  active ? "text-primary font-semibold" : done ? "text-green-600" : "text-muted-foreground"
-                )}>
+                <span
+                  className={cn(
+                    "mt-1.5 text-xs font-sans text-center leading-tight hidden sm:block",
+                    active
+                      ? "text-primary font-semibold"
+                      : done
+                        ? "text-green-600"
+                        : "text-muted-foreground"
+                  )}
+                >
                   {step.label}
                 </span>
               </div>
               {i < STEPS.length - 1 && (
-                <div className={cn(
-                  "flex-1 h-0.5 mx-2 mt-[-18px]",
-                  done ? "bg-green-400" : "bg-border"
-                )} />
+                <div
+                  className={cn(
+                    "flex-1 h-0.5 mx-2 mt-[-18px]",
+                    done ? "bg-green-400" : "bg-border"
+                  )}
+                />
               )}
             </div>
           );
@@ -142,7 +196,9 @@ function StepProgress({ currentStep }: { currentStep: number }) {
 // ─── Step 1: Client + Destination ─────────────────────────────────────────────
 
 function Step1({
-  form, setForm, defaultClientId
+  form,
+  setForm,
+  defaultClientId,
 }: {
   form: { userId: string; title: string; destination: string };
   setForm: (f: typeof form) => void;
@@ -200,9 +256,17 @@ function Step1({
 // ─── Step 2: Dates + Notes ────────────────────────────────────────────────────
 
 function Step2({
-  form, setForm
+  form,
+  setForm,
 }: {
-  form: { startDate: string; endDate: string; status: string; notes: string; confirmationCode: string; coverImageUrl: string };
+  form: {
+    startDate: string;
+    endDate: string;
+    status: string;
+    notes: string;
+    confirmationCode: string;
+    coverImageUrl: string;
+  };
   setForm: (f: typeof form) => void;
 }) {
   return (
@@ -230,20 +294,29 @@ function Step2({
 
       <div>
         <Label className="font-sans text-sm font-medium">Status</Label>
-        <Select value={form.status} onValueChange={v => setForm({ ...form, status: v })}>
+        <Select
+          value={form.status}
+          onValueChange={v => setForm({ ...form, status: v })}
+        >
           <SelectTrigger className="mt-1.5 font-sans">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {["planning", "confirmed", "active", "completed", "cancelled"].map(s => (
-              <SelectItem key={s} value={s} className="font-sans capitalize">{s}</SelectItem>
-            ))}
+            {["planning", "confirmed", "active", "completed", "cancelled"].map(
+              s => (
+                <SelectItem key={s} value={s} className="font-sans capitalize">
+                  {s}
+                </SelectItem>
+              )
+            )}
           </SelectContent>
         </Select>
       </div>
 
       <div>
-        <Label className="font-sans text-sm font-medium">Confirmation Code</Label>
+        <Label className="font-sans text-sm font-medium">
+          Confirmation Code
+        </Label>
         <Input
           value={form.confirmationCode}
           onChange={e => setForm({ ...form, confirmationCode: e.target.value })}
@@ -253,7 +326,9 @@ function Step2({
       </div>
 
       <div>
-        <Label className="font-sans text-sm font-medium">Cover Image URL (optional)</Label>
+        <Label className="font-sans text-sm font-medium">
+          Cover Image URL (optional)
+        </Label>
         <Input
           value={form.coverImageUrl}
           onChange={e => setForm({ ...form, coverImageUrl: e.target.value })}
@@ -263,7 +338,9 @@ function Step2({
       </div>
 
       <div>
-        <Label className="font-sans text-sm font-medium">Notes for Client</Label>
+        <Label className="font-sans text-sm font-medium">
+          Notes for Client
+        </Label>
         <Textarea
           value={form.notes}
           onChange={e => setForm({ ...form, notes: e.target.value })}
@@ -279,7 +356,8 @@ function Step2({
 // ─── Step 3: Itinerary ────────────────────────────────────────────────────────
 
 function Step3({
-  items, setItems
+  items,
+  setItems,
 }: {
   items: ItineraryDraft[];
   setItems: (items: ItineraryDraft[]) => void;
@@ -294,9 +372,19 @@ function Step3({
   });
 
   const addItem = () => {
-    if (!newItem.title) { toast.error("Title is required"); return; }
+    if (!newItem.title) {
+      toast.error("Title is required");
+      return;
+    }
     setItems([...items, { ...newItem, id: uid() }]);
-    setNewItem({ dayNumber: newItem.dayNumber, time: "", title: "", description: "", location: "", category: "activity" });
+    setNewItem({
+      dayNumber: newItem.dayNumber,
+      time: "",
+      title: "",
+      description: "",
+      location: "",
+      category: "activity",
+    });
   };
 
   const removeItem = (id: string) => setItems(items.filter(i => i.id !== id));
@@ -312,7 +400,9 @@ function Step3({
       {/* Add form */}
       <Card className="border-dashed border-2 border-primary/30">
         <CardContent className="p-4 space-y-3">
-          <p className="text-sm font-sans font-semibold text-foreground">Add Itinerary Item</p>
+          <p className="text-sm font-sans font-semibold text-foreground">
+            Add Itinerary Item
+          </p>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label className="font-sans text-xs">Day #</Label>
@@ -320,7 +410,9 @@ function Step3({
                 type="number"
                 min={1}
                 value={newItem.dayNumber}
-                onChange={e => setNewItem(n => ({ ...n, dayNumber: Number(e.target.value) }))}
+                onChange={e =>
+                  setNewItem(n => ({ ...n, dayNumber: Number(e.target.value) }))
+                }
                 className="mt-1 font-sans h-8 text-sm"
               />
             </div>
@@ -329,7 +421,9 @@ function Step3({
               <Input
                 type="time"
                 value={newItem.time}
-                onChange={e => setNewItem(n => ({ ...n, time: e.target.value }))}
+                onChange={e =>
+                  setNewItem(n => ({ ...n, time: e.target.value }))
+                }
                 className="mt-1 font-sans h-8 text-sm"
               />
             </div>
@@ -341,7 +435,12 @@ function Step3({
                 <button
                   key={cat.value}
                   type="button"
-                  onClick={() => setNewItem(n => ({ ...n, category: cat.value as ItineraryDraft["category"] }))}
+                  onClick={() =>
+                    setNewItem(n => ({
+                      ...n,
+                      category: cat.value as ItineraryDraft["category"],
+                    }))
+                  }
                   className={cn(
                     "px-2.5 py-1 rounded-full text-xs font-sans border transition-all",
                     newItem.category === cat.value
@@ -368,7 +467,9 @@ function Step3({
               <Label className="font-sans text-xs">Location</Label>
               <Input
                 value={newItem.location}
-                onChange={e => setNewItem(n => ({ ...n, location: e.target.value }))}
+                onChange={e =>
+                  setNewItem(n => ({ ...n, location: e.target.value }))
+                }
                 placeholder="e.g. Magic Kingdom"
                 className="mt-1 font-sans h-8 text-sm"
               />
@@ -377,13 +478,20 @@ function Step3({
               <Label className="font-sans text-xs">Description</Label>
               <Input
                 value={newItem.description}
-                onChange={e => setNewItem(n => ({ ...n, description: e.target.value }))}
+                onChange={e =>
+                  setNewItem(n => ({ ...n, description: e.target.value }))
+                }
                 placeholder="Optional details"
                 className="mt-1 font-sans h-8 text-sm"
               />
             </div>
           </div>
-          <Button type="button" onClick={addItem} size="sm" className="w-full font-sans bg-primary text-primary-foreground">
+          <Button
+            type="button"
+            onClick={addItem}
+            size="sm"
+            className="w-full font-sans bg-primary text-primary-foreground"
+          >
             <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Item
           </Button>
         </CardContent>
@@ -392,37 +500,58 @@ function Step3({
       {/* Items by day */}
       {Object.keys(byDay).length === 0 && (
         <p className="text-center text-muted-foreground font-sans text-sm py-6">
-          No itinerary items yet. Add your first item above — or skip this step and add items later.
+          No itinerary items yet. Add your first item above — or skip this step
+          and add items later.
         </p>
       )}
-      {Object.entries(byDay).sort(([a], [b]) => Number(a) - Number(b)).map(([day, dayItems]) => (
-        <div key={day}>
-          <h4 className="font-sans text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-            Day {day}
-          </h4>
-          <div className="space-y-2">
-            {dayItems.map(item => (
-              <div key={item.id} className="flex items-center gap-3 p-3 bg-muted/40 rounded-lg">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="text-xs font-sans capitalize">{item.category}</Badge>
-                    {item.time && <span className="text-xs text-muted-foreground font-sans">{item.time}</span>}
-                  </div>
-                  <p className="font-sans text-sm font-medium text-foreground mt-0.5 truncate">{item.title}</p>
-                  {item.location && <p className="text-xs text-muted-foreground font-sans truncate">{item.location}</p>}
-                </div>
-                <button
-                  type="button"
-                  onClick={() => removeItem(item.id)}
-                  className="text-muted-foreground hover:text-destructive transition-colors flex-shrink-0"
+      {Object.entries(byDay)
+        .sort(([a], [b]) => Number(a) - Number(b))
+        .map(([day, dayItems]) => (
+          <div key={day}>
+            <h4 className="font-sans text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+              Day {day}
+            </h4>
+            <div className="space-y-2">
+              {dayItems.map(item => (
+                <div
+                  key={item.id}
+                  className="flex items-center gap-3 p-3 bg-muted/40 rounded-lg"
                 >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            ))}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <Badge
+                        variant="outline"
+                        className="text-xs font-sans capitalize"
+                      >
+                        {item.category}
+                      </Badge>
+                      {item.time && (
+                        <span className="text-xs text-muted-foreground font-sans">
+                          {item.time}
+                        </span>
+                      )}
+                    </div>
+                    <p className="font-sans text-sm font-medium text-foreground mt-0.5 truncate">
+                      {item.title}
+                    </p>
+                    {item.location && (
+                      <p className="text-xs text-muted-foreground font-sans truncate">
+                        {item.location}
+                      </p>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeItem(item.id)}
+                    className="text-muted-foreground hover:text-destructive transition-colors flex-shrink-0"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
     </div>
   );
 }
@@ -430,7 +559,8 @@ function Step3({
 // ─── Step 4: Packing List ─────────────────────────────────────────────────────
 
 function Step4({
-  items, setItems
+  items,
+  setItems,
 }: {
   items: PackingDraft[];
   setItems: (items: PackingDraft[]) => void;
@@ -443,30 +573,45 @@ function Step4({
   });
 
   const addItem = () => {
-    if (!newItem.name) { toast.error("Item name is required"); return; }
+    if (!newItem.name) {
+      toast.error("Item name is required");
+      return;
+    }
     setItems([...items, { ...newItem, id: uid() }]);
-    setNewItem({ name: "", category: newItem.category, quantity: 1, notes: "" });
+    setNewItem({
+      name: "",
+      category: newItem.category,
+      quantity: 1,
+      notes: "",
+    });
   };
 
   const removeItem = (id: string) => setItems(items.filter(i => i.id !== id));
 
-  const byCategory = items.reduce<Record<string, PackingDraft[]>>((acc, item) => {
-    if (!acc[item.category]) acc[item.category] = [];
-    acc[item.category].push(item);
-    return acc;
-  }, {});
+  const byCategory = items.reduce<Record<string, PackingDraft[]>>(
+    (acc, item) => {
+      if (!acc[item.category]) acc[item.category] = [];
+      acc[item.category].push(item);
+      return acc;
+    },
+    {}
+  );
 
   return (
     <div className="space-y-5">
       <Card className="border-dashed border-2 border-primary/30">
         <CardContent className="p-4 space-y-3">
-          <p className="text-sm font-sans font-semibold text-foreground">Add Packing Item</p>
+          <p className="text-sm font-sans font-semibold text-foreground">
+            Add Packing Item
+          </p>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label className="font-sans text-xs">Item Name *</Label>
               <Input
                 value={newItem.name}
-                onChange={e => setNewItem(n => ({ ...n, name: e.target.value }))}
+                onChange={e =>
+                  setNewItem(n => ({ ...n, name: e.target.value }))
+                }
                 placeholder="e.g. Sunscreen SPF 50"
                 className="mt-1 font-sans h-8 text-sm"
                 onKeyDown={e => e.key === "Enter" && addItem()}
@@ -478,25 +623,37 @@ function Step4({
                 type="number"
                 min={1}
                 value={newItem.quantity}
-                onChange={e => setNewItem(n => ({ ...n, quantity: Number(e.target.value) }))}
+                onChange={e =>
+                  setNewItem(n => ({ ...n, quantity: Number(e.target.value) }))
+                }
                 className="mt-1 font-sans h-8 text-sm"
               />
             </div>
           </div>
           <div>
             <Label className="font-sans text-xs">Category</Label>
-            <Select value={newItem.category} onValueChange={v => setNewItem(n => ({ ...n, category: v }))}>
+            <Select
+              value={newItem.category}
+              onValueChange={v => setNewItem(n => ({ ...n, category: v }))}
+            >
               <SelectTrigger className="mt-1 font-sans h-8 text-sm">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 {PACKING_CATEGORIES.map(c => (
-                  <SelectItem key={c} value={c} className="font-sans text-sm">{c}</SelectItem>
+                  <SelectItem key={c} value={c} className="font-sans text-sm">
+                    {c}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
-          <Button type="button" onClick={addItem} size="sm" className="w-full font-sans bg-primary text-primary-foreground">
+          <Button
+            type="button"
+            onClick={addItem}
+            size="sm"
+            className="w-full font-sans bg-primary text-primary-foreground"
+          >
             <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Item
           </Button>
         </CardContent>
@@ -509,17 +666,30 @@ function Step4({
       )}
       {Object.entries(byCategory).map(([cat, catItems]) => (
         <div key={cat}>
-          <h4 className="font-sans text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">{cat}</h4>
+          <h4 className="font-sans text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+            {cat}
+          </h4>
           <div className="space-y-1.5">
             {catItems.map(item => (
-              <div key={item.id} className="flex items-center gap-3 p-2.5 bg-muted/40 rounded-lg">
+              <div
+                key={item.id}
+                className="flex items-center gap-3 p-2.5 bg-muted/40 rounded-lg"
+              >
                 <div className="flex-1 min-w-0">
-                  <span className="font-sans text-sm text-foreground">{item.name}</span>
+                  <span className="font-sans text-sm text-foreground">
+                    {item.name}
+                  </span>
                   {item.quantity > 1 && (
-                    <span className="ml-2 text-xs text-muted-foreground font-sans">×{item.quantity}</span>
+                    <span className="ml-2 text-xs text-muted-foreground font-sans">
+                      ×{item.quantity}
+                    </span>
                   )}
                 </div>
-                <button type="button" onClick={() => removeItem(item.id)} className="text-muted-foreground hover:text-destructive">
+                <button
+                  type="button"
+                  onClick={() => removeItem(item.id)}
+                  className="text-muted-foreground hover:text-destructive"
+                >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -534,7 +704,8 @@ function Step4({
 // ─── Step 5: Bookings ─────────────────────────────────────────────────────────
 
 function Step5({
-  items, setItems
+  items,
+  setItems,
 }: {
   items: BookingDraft[];
   setItems: (items: BookingDraft[]) => void;
@@ -552,9 +723,22 @@ function Step5({
   });
 
   const addItem = () => {
-    if (!newItem.title) { toast.error("Booking title is required"); return; }
+    if (!newItem.title) {
+      toast.error("Booking title is required");
+      return;
+    }
     setItems([...items, { ...newItem, id: uid() }]);
-    setNewItem({ type: newItem.type, title: "", provider: "", confirmationNumber: "", checkIn: "", checkOut: "", amount: "", currency: "USD", notes: "" });
+    setNewItem({
+      type: newItem.type,
+      title: "",
+      provider: "",
+      confirmationNumber: "",
+      checkIn: "",
+      checkOut: "",
+      amount: "",
+      currency: "USD",
+      notes: "",
+    });
   };
 
   const removeItem = (id: string) => setItems(items.filter(i => i.id !== id));
@@ -563,17 +747,30 @@ function Step5({
     <div className="space-y-5">
       <Card className="border-dashed border-2 border-primary/30">
         <CardContent className="p-4 space-y-3">
-          <p className="text-sm font-sans font-semibold text-foreground">Add Booking</p>
+          <p className="text-sm font-sans font-semibold text-foreground">
+            Add Booking
+          </p>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label className="font-sans text-xs">Type</Label>
-              <Select value={newItem.type} onValueChange={v => setNewItem(n => ({ ...n, type: v as BookingDraft["type"] }))}>
+              <Select
+                value={newItem.type}
+                onValueChange={v =>
+                  setNewItem(n => ({ ...n, type: v as BookingDraft["type"] }))
+                }
+              >
                 <SelectTrigger className="mt-1 font-sans h-8 text-sm">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   {BOOKING_TYPES.map(t => (
-                    <SelectItem key={t.value} value={t.value} className="font-sans text-sm">{t.label}</SelectItem>
+                    <SelectItem
+                      key={t.value}
+                      value={t.value}
+                      className="font-sans text-sm"
+                    >
+                      {t.label}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -582,7 +779,12 @@ function Step5({
               <Label className="font-sans text-xs">Confirmation #</Label>
               <Input
                 value={newItem.confirmationNumber}
-                onChange={e => setNewItem(n => ({ ...n, confirmationNumber: e.target.value }))}
+                onChange={e =>
+                  setNewItem(n => ({
+                    ...n,
+                    confirmationNumber: e.target.value,
+                  }))
+                }
                 placeholder="e.g. ABC123"
                 className="mt-1 font-sans h-8 text-sm"
               />
@@ -602,7 +804,9 @@ function Step5({
               <Label className="font-sans text-xs">Provider</Label>
               <Input
                 value={newItem.provider}
-                onChange={e => setNewItem(n => ({ ...n, provider: e.target.value }))}
+                onChange={e =>
+                  setNewItem(n => ({ ...n, provider: e.target.value }))
+                }
                 placeholder="e.g. Delta Airlines"
                 className="mt-1 font-sans h-8 text-sm"
               />
@@ -610,13 +814,22 @@ function Step5({
             <div>
               <Label className="font-sans text-xs">Amount</Label>
               <div className="flex gap-1 mt-1">
-                <Select value={newItem.currency} onValueChange={v => setNewItem(n => ({ ...n, currency: v }))}>
+                <Select
+                  value={newItem.currency}
+                  onValueChange={v => setNewItem(n => ({ ...n, currency: v }))}
+                >
                   <SelectTrigger className="w-20 font-sans h-8 text-sm">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     {["USD", "EUR", "GBP", "CAD", "AUD"].map(c => (
-                      <SelectItem key={c} value={c} className="font-sans text-sm">{c}</SelectItem>
+                      <SelectItem
+                        key={c}
+                        value={c}
+                        className="font-sans text-sm"
+                      >
+                        {c}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -625,7 +838,9 @@ function Step5({
                   min={0}
                   step="0.01"
                   value={newItem.amount}
-                  onChange={e => setNewItem(n => ({ ...n, amount: e.target.value }))}
+                  onChange={e =>
+                    setNewItem(n => ({ ...n, amount: e.target.value }))
+                  }
                   placeholder="0.00"
                   className="flex-1 font-sans h-8 text-sm"
                 />
@@ -638,7 +853,9 @@ function Step5({
               <Input
                 type="date"
                 value={newItem.checkIn}
-                onChange={e => setNewItem(n => ({ ...n, checkIn: e.target.value }))}
+                onChange={e =>
+                  setNewItem(n => ({ ...n, checkIn: e.target.value }))
+                }
                 className="mt-1 font-sans h-8 text-sm"
               />
             </div>
@@ -647,12 +864,19 @@ function Step5({
               <Input
                 type="date"
                 value={newItem.checkOut}
-                onChange={e => setNewItem(n => ({ ...n, checkOut: e.target.value }))}
+                onChange={e =>
+                  setNewItem(n => ({ ...n, checkOut: e.target.value }))
+                }
                 className="mt-1 font-sans h-8 text-sm"
               />
             </div>
           </div>
-          <Button type="button" onClick={addItem} size="sm" className="w-full font-sans bg-primary text-primary-foreground">
+          <Button
+            type="button"
+            onClick={addItem}
+            size="sm"
+            className="w-full font-sans bg-primary text-primary-foreground"
+          >
             <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Booking
           </Button>
         </CardContent>
@@ -665,23 +889,46 @@ function Step5({
       )}
       <div className="space-y-2">
         {items.map(item => (
-          <div key={item.id} className="flex items-center gap-3 p-3 bg-muted/40 rounded-lg">
+          <div
+            key={item.id}
+            className="flex items-center gap-3 p-3 bg-muted/40 rounded-lg"
+          >
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs font-sans capitalize">{item.type.replace("_", " ")}</Badge>
+                <Badge
+                  variant="outline"
+                  className="text-xs font-sans capitalize"
+                >
+                  {item.type.replace("_", " ")}
+                </Badge>
                 {item.confirmationNumber && (
-                  <span className="text-xs text-muted-foreground font-mono">{item.confirmationNumber}</span>
+                  <span className="text-xs text-muted-foreground font-mono">
+                    {item.confirmationNumber}
+                  </span>
                 )}
               </div>
-              <p className="font-sans text-sm font-medium text-foreground mt-0.5 truncate">{item.title}</p>
-              {item.provider && <p className="text-xs text-muted-foreground font-sans">{item.provider}</p>}
+              <p className="font-sans text-sm font-medium text-foreground mt-0.5 truncate">
+                {item.title}
+              </p>
+              {item.provider && (
+                <p className="text-xs text-muted-foreground font-sans">
+                  {item.provider}
+                </p>
+              )}
             </div>
             {item.amount && (
               <span className="text-sm font-sans font-semibold text-foreground flex-shrink-0">
-                {item.currency} {Number(item.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                {item.currency}{" "}
+                {Number(item.amount).toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                })}
               </span>
             )}
-            <button type="button" onClick={() => removeItem(item.id)} className="text-muted-foreground hover:text-destructive flex-shrink-0">
+            <button
+              type="button"
+              onClick={() => removeItem(item.id)}
+              className="text-muted-foreground hover:text-destructive flex-shrink-0"
+            >
               <Trash2 className="w-4 h-4" />
             </button>
           </div>
@@ -697,15 +944,28 @@ export default function TripBuilderWizard() {
   const [, navigate] = useLocation();
   const search = useSearch();
   const params = new URLSearchParams(search);
-  const defaultClientId = params.get("client") ? Number(params.get("client")) : undefined;
+  const defaultClientId = params.get("client")
+    ? Number(params.get("client"))
+    : undefined;
 
   const [step, setStep] = useState(1);
   const [saving, setSaving] = useState(false);
 
   // Step 1 state
-  const [step1, setStep1] = useState({ userId: defaultClientId?.toString() ?? "", title: "", destination: "" });
+  const [step1, setStep1] = useState({
+    userId: defaultClientId?.toString() ?? "",
+    title: "",
+    destination: "",
+  });
   // Step 2 state
-  const [step2, setStep2] = useState({ startDate: "", endDate: "", status: "planning", notes: "", confirmationCode: "", coverImageUrl: "" });
+  const [step2, setStep2] = useState({
+    startDate: "",
+    endDate: "",
+    status: "planning",
+    notes: "",
+    confirmationCode: "",
+    coverImageUrl: "",
+  });
   // Step 3 state
   const [itinerary, setItinerary] = useState<ItineraryDraft[]>([]);
   // Step 4 state
@@ -720,7 +980,8 @@ export default function TripBuilderWizard() {
   const createBooking = trpc.bookings.create.useMutation();
 
   const canAdvance = useMemo(() => {
-    if (step === 1) return !!step1.userId && !!step1.title && !!step1.destination;
+    if (step === 1)
+      return !!step1.userId && !!step1.title && !!step1.destination;
     return true;
   }, [step, step1]);
 
@@ -750,7 +1011,12 @@ export default function TripBuilderWizard() {
         destination: step1.destination,
         startDate: step2.startDate ? new Date(step2.startDate) : undefined,
         endDate: step2.endDate ? new Date(step2.endDate) : undefined,
-        status: step2.status as "planning" | "confirmed" | "active" | "completed" | "cancelled",
+        status: step2.status as
+          | "planning"
+          | "confirmed"
+          | "active"
+          | "completed"
+          | "cancelled",
         notes: step2.notes || undefined,
         confirmationCode: step2.confirmationCode || undefined,
         coverImageUrl: step2.coverImageUrl || undefined,
@@ -808,7 +1074,13 @@ export default function TripBuilderWizard() {
     }
   };
 
-  const stepTitles = ["Client & Destination", "Dates & Notes", "Itinerary", "Packing List", "Bookings"];
+  const stepTitles = [
+    "Client & Destination",
+    "Dates & Notes",
+    "Itinerary",
+    "Packing List",
+    "Bookings",
+  ];
   const stepSubtitles = [
     "Choose a client and set the trip destination",
     "Set travel dates, status, and client notes",
@@ -831,7 +1103,13 @@ export default function TripBuilderWizard() {
               {stepTitles[step - 1]}
             </h2>
 
-            {step === 1 && <Step1 form={step1} setForm={setStep1} defaultClientId={defaultClientId} />}
+            {step === 1 && (
+              <Step1
+                form={step1}
+                setForm={setStep1}
+                defaultClientId={defaultClientId}
+              />
+            )}
             {step === 2 && <Step2 form={step2} setForm={setStep2} />}
             {step === 3 && <Step3 items={itinerary} setItems={setItinerary} />}
             {step === 4 && <Step4 items={packing} setItems={setPacking} />}
@@ -868,9 +1146,14 @@ export default function TripBuilderWizard() {
                   className="font-sans bg-green-600 hover:bg-green-700 text-white"
                 >
                   {saving ? (
-                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Saving...</>
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />{" "}
+                      Saving...
+                    </>
                   ) : (
-                    <><Check className="w-4 h-4 mr-2" /> Create Trip</>
+                    <>
+                      <Check className="w-4 h-4 mr-2" /> Create Trip
+                    </>
                   )}
                 </Button>
               )}
@@ -882,22 +1165,42 @@ export default function TripBuilderWizard() {
         {step > 1 && (
           <Card className="mt-4 bg-muted/30">
             <CardContent className="p-4">
-              <p className="text-xs font-sans text-muted-foreground uppercase tracking-wider mb-2">Trip Summary</p>
+              <p className="text-xs font-sans text-muted-foreground uppercase tracking-wider mb-2">
+                Trip Summary
+              </p>
               <div className="flex flex-wrap gap-3 text-sm font-sans">
-                <span className="font-semibold text-foreground">{step1.title}</span>
+                <span className="font-semibold text-foreground">
+                  {step1.title}
+                </span>
                 <span className="text-muted-foreground flex items-center gap-1">
                   <MapPin className="w-3.5 h-3.5" /> {step1.destination}
                 </span>
                 {step2.startDate && (
                   <span className="text-muted-foreground flex items-center gap-1">
                     <Calendar className="w-3.5 h-3.5" />
-                    {new Date(step2.startDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                    {step2.endDate && ` – ${new Date(step2.endDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`}
+                    {new Date(step2.startDate).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                    })}
+                    {step2.endDate &&
+                      ` – ${new Date(step2.endDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`}
                   </span>
                 )}
-                {itinerary.length > 0 && <Badge variant="outline" className="text-xs">{itinerary.length} itinerary items</Badge>}
-                {packing.length > 0 && <Badge variant="outline" className="text-xs">{packing.length} packing items</Badge>}
-                {bookings.length > 0 && <Badge variant="outline" className="text-xs">{bookings.length} bookings</Badge>}
+                {itinerary.length > 0 && (
+                  <Badge variant="outline" className="text-xs">
+                    {itinerary.length} itinerary items
+                  </Badge>
+                )}
+                {packing.length > 0 && (
+                  <Badge variant="outline" className="text-xs">
+                    {packing.length} packing items
+                  </Badge>
+                )}
+                {bookings.length > 0 && (
+                  <Badge variant="outline" className="text-xs">
+                    {bookings.length} bookings
+                  </Badge>
+                )}
               </div>
             </CardContent>
           </Card>

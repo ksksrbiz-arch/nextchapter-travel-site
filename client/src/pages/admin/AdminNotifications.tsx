@@ -4,11 +4,28 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
 import {
-  Bell, Send, Users, User, MessageSquare, Calendar, FileText,
-  Plane, AlertTriangle, Settings, Radio, CheckCircle2, Sparkles
+  Bell,
+  Send,
+  Users,
+  User,
+  MessageSquare,
+  Calendar,
+  FileText,
+  Plane,
+  AlertTriangle,
+  Settings,
+  Radio,
+  CheckCircle2,
+  Sparkles,
 } from "lucide-react";
 
 const NOTIFICATION_TYPES = [
@@ -23,7 +40,11 @@ const NOTIFICATION_TYPES = [
 const CHANNELS = [
   { value: "in_app", label: "In-App Only", desc: "Shows in notification bell" },
   { value: "email", label: "Email", desc: "Sends email notification" },
-  { value: "push", label: "Browser Push", desc: "Push to browser if subscribed" },
+  {
+    value: "push",
+    label: "Browser Push",
+    desc: "Push to browser if subscribed",
+  },
   { value: "all", label: "All Channels", desc: "In-app + email + push" },
 ] as const;
 
@@ -72,19 +93,25 @@ export default function AdminNotifications() {
       toast.success("Notification sent successfully!");
       setSent(true);
       setTimeout(() => setSent(false), 3000);
-      setTitle(""); setBody(""); setActionUrl("");
+      setTitle("");
+      setBody("");
+      setActionUrl("");
     },
-    onError: (err) => toast.error(err.message),
+    onError: err => toast.error(err.message),
   });
 
   const broadcastNotification = trpc.notifications.broadcast.useMutation({
-    onSuccess: (data) => {
-      toast.success(`Broadcast sent to ${data.count} client${data.count !== 1 ? "s" : ""}!`);
+    onSuccess: data => {
+      toast.success(
+        `Broadcast sent to ${data.count} client${data.count !== 1 ? "s" : ""}!`
+      );
       setSent(true);
       setTimeout(() => setSent(false), 3000);
-      setTitle(""); setBody(""); setActionUrl("");
+      setTitle("");
+      setBody("");
+      setActionUrl("");
     },
-    onError: (err) => toast.error(err.message),
+    onError: err => toast.error(err.message),
   });
 
   const handleSend = () => {
@@ -110,13 +137,14 @@ export default function AdminNotifications() {
     }
   };
 
-  const applyTemplate = (t: typeof QUICK_TEMPLATES[number]) => {
+  const applyTemplate = (t: (typeof QUICK_TEMPLATES)[number]) => {
     setTitle(t.title);
     setBody(t.body);
     setType(t.type);
   };
 
-  const isLoading = sendNotification.isPending || broadcastNotification.isPending;
+  const isLoading =
+    sendNotification.isPending || broadcastNotification.isPending;
   const clientCount = clients.filter(c => c.role === "user").length;
 
   return (
@@ -127,8 +155,12 @@ export default function AdminNotifications() {
           <Bell className="w-5 h-5 text-secondary" />
         </div>
         <div>
-          <h2 className="text-xl font-serif font-semibold text-foreground">Send Notification</h2>
-          <p className="text-sm text-muted-foreground font-sans">Reach clients across all channels</p>
+          <h2 className="text-xl font-serif font-semibold text-foreground">
+            Send Notification
+          </h2>
+          <p className="text-sm text-muted-foreground font-sans">
+            Reach clients across all channels
+          </p>
         </div>
       </div>
 
@@ -142,12 +174,20 @@ export default function AdminNotifications() {
               : "border-border hover:border-secondary/40"
           }`}
         >
-          <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${mode === "targeted" ? "bg-secondary/20" : "bg-muted"}`}>
-            <User className={`w-4.5 h-4.5 ${mode === "targeted" ? "text-secondary" : "text-muted-foreground"}`} />
+          <div
+            className={`w-9 h-9 rounded-lg flex items-center justify-center ${mode === "targeted" ? "bg-secondary/20" : "bg-muted"}`}
+          >
+            <User
+              className={`w-4.5 h-4.5 ${mode === "targeted" ? "text-secondary" : "text-muted-foreground"}`}
+            />
           </div>
           <div>
-            <div className="font-sans font-semibold text-sm text-foreground">Targeted</div>
-            <div className="text-xs text-muted-foreground font-sans">Send to one client</div>
+            <div className="font-sans font-semibold text-sm text-foreground">
+              Targeted
+            </div>
+            <div className="text-xs text-muted-foreground font-sans">
+              Send to one client
+            </div>
           </div>
         </button>
         <button
@@ -158,12 +198,20 @@ export default function AdminNotifications() {
               : "border-border hover:border-secondary/40"
           }`}
         >
-          <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${mode === "broadcast" ? "bg-secondary/20" : "bg-muted"}`}>
-            <Radio className={`w-4.5 h-4.5 ${mode === "broadcast" ? "text-secondary" : "text-muted-foreground"}`} />
+          <div
+            className={`w-9 h-9 rounded-lg flex items-center justify-center ${mode === "broadcast" ? "bg-secondary/20" : "bg-muted"}`}
+          >
+            <Radio
+              className={`w-4.5 h-4.5 ${mode === "broadcast" ? "text-secondary" : "text-muted-foreground"}`}
+            />
           </div>
           <div>
-            <div className="font-sans font-semibold text-sm text-foreground">Broadcast</div>
-            <div className="text-xs text-muted-foreground font-sans">All {clientCount} clients</div>
+            <div className="font-sans font-semibold text-sm text-foreground">
+              Broadcast
+            </div>
+            <div className="text-xs text-muted-foreground font-sans">
+              All {clientCount} clients
+            </div>
           </div>
         </button>
       </div>
@@ -176,22 +224,31 @@ export default function AdminNotifications() {
             <label className="text-sm font-sans font-medium text-foreground mb-1.5 block">
               Recipient
             </label>
-            <Select value={selectedClientId} onValueChange={setSelectedClientId}>
+            <Select
+              value={selectedClientId}
+              onValueChange={setSelectedClientId}
+            >
               <SelectTrigger className="font-sans">
                 <SelectValue placeholder="Select a client..." />
               </SelectTrigger>
               <SelectContent>
-                {clients.filter(c => c.role === "user").map((client) => (
-                  <SelectItem key={client.id} value={String(client.id)}>
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-secondary/20 flex items-center justify-center text-secondary text-xs font-bold">
-                        {client.name?.charAt(0) ?? "?"}
+                {clients
+                  .filter(c => c.role === "user")
+                  .map(client => (
+                    <SelectItem key={client.id} value={String(client.id)}>
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 rounded-full bg-secondary/20 flex items-center justify-center text-secondary text-xs font-bold">
+                          {client.name?.charAt(0) ?? "?"}
+                        </div>
+                        <span>{client.name ?? "Unknown"}</span>
+                        {client.email && (
+                          <span className="text-muted-foreground text-xs">
+                            ({client.email})
+                          </span>
+                        )}
                       </div>
-                      <span>{client.name ?? "Unknown"}</span>
-                      {client.email && <span className="text-muted-foreground text-xs">({client.email})</span>}
-                    </div>
-                  </SelectItem>
-                ))}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
           </div>
@@ -202,7 +259,8 @@ export default function AdminNotifications() {
           <div className="flex items-center gap-3 p-3 bg-secondary/10 border border-secondary/20 rounded-xl">
             <Users className="w-4 h-4 text-secondary flex-shrink-0" />
             <p className="text-sm font-sans text-secondary">
-              This notification will be sent to all <strong>{clientCount}</strong> registered clients.
+              This notification will be sent to all{" "}
+              <strong>{clientCount}</strong> registered clients.
             </p>
           </div>
         )}
@@ -210,13 +268,15 @@ export default function AdminNotifications() {
         {/* Type + Channel row */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="text-sm font-sans font-medium text-foreground mb-1.5 block">Type</label>
+            <label className="text-sm font-sans font-medium text-foreground mb-1.5 block">
+              Type
+            </label>
             <Select value={type} onValueChange={setType}>
               <SelectTrigger className="font-sans">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {NOTIFICATION_TYPES.map((t) => (
+                {NOTIFICATION_TYPES.map(t => (
                   <SelectItem key={t.value} value={t.value}>
                     <div className="flex items-center gap-2">
                       <t.icon className="w-4 h-4" />
@@ -228,17 +288,21 @@ export default function AdminNotifications() {
             </Select>
           </div>
           <div>
-            <label className="text-sm font-sans font-medium text-foreground mb-1.5 block">Channel</label>
+            <label className="text-sm font-sans font-medium text-foreground mb-1.5 block">
+              Channel
+            </label>
             <Select value={channel} onValueChange={setChannel}>
               <SelectTrigger className="font-sans">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {CHANNELS.map((c) => (
+                {CHANNELS.map(c => (
                   <SelectItem key={c.value} value={c.value}>
                     <div>
                       <div className="font-medium">{c.label}</div>
-                      <div className="text-xs text-muted-foreground">{c.desc}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {c.desc}
+                      </div>
                     </div>
                   </SelectItem>
                 ))}
@@ -249,10 +313,12 @@ export default function AdminNotifications() {
 
         {/* Title */}
         <div>
-          <label className="text-sm font-sans font-medium text-foreground mb-1.5 block">Title</label>
+          <label className="text-sm font-sans font-medium text-foreground mb-1.5 block">
+            Title
+          </label>
           <Input
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={e => setTitle(e.target.value)}
             placeholder="e.g. Your trip is confirmed!"
             className="font-sans"
             maxLength={255}
@@ -261,10 +327,12 @@ export default function AdminNotifications() {
 
         {/* Body */}
         <div>
-          <label className="text-sm font-sans font-medium text-foreground mb-1.5 block">Message</label>
+          <label className="text-sm font-sans font-medium text-foreground mb-1.5 block">
+            Message
+          </label>
           <Textarea
             value={body}
-            onChange={(e) => setBody(e.target.value)}
+            onChange={e => setBody(e.target.value)}
             placeholder="Write your notification message here..."
             className="font-sans resize-none"
             rows={4}
@@ -274,11 +342,14 @@ export default function AdminNotifications() {
         {/* Action URL (optional) */}
         <div>
           <label className="text-sm font-sans font-medium text-foreground mb-1.5 block">
-            Action URL <span className="text-muted-foreground font-normal">(optional)</span>
+            Action URL{" "}
+            <span className="text-muted-foreground font-normal">
+              (optional)
+            </span>
           </label>
           <Input
             value={actionUrl}
-            onChange={(e) => setActionUrl(e.target.value)}
+            onChange={e => setActionUrl(e.target.value)}
             placeholder="/portal/itinerary"
             className="font-sans"
           />
@@ -306,8 +377,14 @@ export default function AdminNotifications() {
             </>
           ) : (
             <>
-              {mode === "broadcast" ? <Radio className="w-4 h-4 mr-2" /> : <Send className="w-4 h-4 mr-2" />}
-              {mode === "broadcast" ? `Broadcast to All Clients` : "Send Notification"}
+              {mode === "broadcast" ? (
+                <Radio className="w-4 h-4 mr-2" />
+              ) : (
+                <Send className="w-4 h-4 mr-2" />
+              )}
+              {mode === "broadcast"
+                ? `Broadcast to All Clients`
+                : "Send Notification"}
             </>
           )}
         </Button>
@@ -317,11 +394,15 @@ export default function AdminNotifications() {
       <div>
         <div className="flex items-center gap-2 mb-3">
           <Sparkles className="w-4 h-4 text-secondary" />
-          <h3 className="text-sm font-sans font-semibold text-foreground">Quick Templates</h3>
+          <h3 className="text-sm font-sans font-semibold text-foreground">
+            Quick Templates
+          </h3>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {QUICK_TEMPLATES.map((t) => {
-            const TypeIcon = NOTIFICATION_TYPES.find(n => n.value === t.type)?.icon ?? Settings;
+          {QUICK_TEMPLATES.map(t => {
+            const TypeIcon =
+              NOTIFICATION_TYPES.find(n => n.value === t.type)?.icon ??
+              Settings;
             return (
               <button
                 key={t.title}
@@ -332,8 +413,12 @@ export default function AdminNotifications() {
                   <TypeIcon className="w-4 h-4 text-secondary" />
                 </div>
                 <div>
-                  <div className="text-sm font-sans font-medium text-foreground">{t.title}</div>
-                  <div className="text-xs text-muted-foreground font-sans mt-0.5 line-clamp-2">{t.body}</div>
+                  <div className="text-sm font-sans font-medium text-foreground">
+                    {t.title}
+                  </div>
+                  <div className="text-xs text-muted-foreground font-sans mt-0.5 line-clamp-2">
+                    {t.body}
+                  </div>
                 </div>
               </button>
             );

@@ -2,7 +2,10 @@ import { forwardRef, useState, type InputHTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 import { Check, AlertCircle, Eye, EyeOff } from "lucide-react";
 
-interface EnhancedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "size"> {
+interface EnhancedInputProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "size"
+> {
   /** Floating label text */
   label: string;
   /** Error message to display */
@@ -23,10 +26,10 @@ interface EnhancedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>,
 
 /**
  * Enhanced input with floating label, validation states, and smooth animations.
- * 
+ *
  * @example
  * ```tsx
- * <EnhancedInput 
+ * <EnhancedInput
  *   label="Email Address"
  *   type="email"
  *   error={errors.email}
@@ -62,9 +65,8 @@ export const EnhancedInput = forwardRef<HTMLInputElement, EnhancedInputProps>(
       String(value || defaultValue || "").length
     );
 
-    const hasValue = value !== undefined 
-      ? String(value).length > 0 
-      : charCount > 0;
+    const hasValue =
+      value !== undefined ? String(value).length > 0 : charCount > 0;
 
     const isFloating = isFocused || hasValue;
     const isPassword = type === "password";
@@ -106,10 +108,10 @@ export const EnhancedInput = forwardRef<HTMLInputElement, EnhancedInputProps>(
             isFocused && !error
               ? "border-secondary ring-2 ring-secondary/20"
               : error
-              ? "border-red-500 ring-2 ring-red-500/20"
-              : success
-              ? "border-green-500"
-              : "border-border hover:border-foreground/30"
+                ? "border-red-500 ring-2 ring-red-500/20"
+                : success
+                  ? "border-green-500"
+                  : "border-border hover:border-foreground/30"
           )}
         >
           {/* Left icon */}
@@ -136,7 +138,13 @@ export const EnhancedInput = forwardRef<HTMLInputElement, EnhancedInputProps>(
             )}
             placeholder={label}
             aria-invalid={!!error}
-            aria-describedby={error ? `${props.id}-error` : helperText ? `${props.id}-helper` : undefined}
+            aria-describedby={
+              error
+                ? `${props.id}-error`
+                : helperText
+                  ? `${props.id}-helper`
+                  : undefined
+            }
             {...props}
           />
 
@@ -146,8 +154,15 @@ export const EnhancedInput = forwardRef<HTMLInputElement, EnhancedInputProps>(
               "absolute left-4 transition-all duration-200 pointer-events-none font-sans",
               leftIcon && "left-10",
               isFloating
-                ? cn("top-1.5 text-xs", isFocused ? "text-secondary" : "text-muted-foreground")
-                : cn("top-1/2 -translate-y-1/2", labelSizes[size], "text-muted-foreground"),
+                ? cn(
+                    "top-1.5 text-xs",
+                    isFocused ? "text-secondary" : "text-muted-foreground"
+                  )
+                : cn(
+                    "top-1/2 -translate-y-1/2",
+                    labelSizes[size],
+                    "text-muted-foreground"
+                  ),
               error && "text-red-500"
             )}
           >
@@ -165,7 +180,11 @@ export const EnhancedInput = forwardRef<HTMLInputElement, EnhancedInputProps>(
                 tabIndex={-1}
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {showPassword ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
               </button>
             )}
             {success && !error && (
@@ -181,20 +200,30 @@ export const EnhancedInput = forwardRef<HTMLInputElement, EnhancedInputProps>(
         <div className="flex justify-between mt-1.5 px-1">
           <div className="flex-1">
             {error ? (
-              <p id={`${props.id}-error`} className="text-xs text-red-500 font-sans animate-in slide-in-from-top-1 duration-200">
+              <p
+                id={`${props.id}-error`}
+                className="text-xs text-red-500 font-sans animate-in slide-in-from-top-1 duration-200"
+              >
                 {error}
               </p>
             ) : helperText ? (
-              <p id={`${props.id}-helper`} className="text-xs text-muted-foreground font-sans">
+              <p
+                id={`${props.id}-helper`}
+                className="text-xs text-muted-foreground font-sans"
+              >
                 {helperText}
               </p>
             ) : null}
           </div>
           {showCharCount && maxLength && (
-            <p className={cn(
-              "text-xs font-sans transition-colors",
-              charCount >= maxLength ? "text-red-500" : "text-muted-foreground"
-            )}>
+            <p
+              className={cn(
+                "text-xs font-sans transition-colors",
+                charCount >= maxLength
+                  ? "text-red-500"
+                  : "text-muted-foreground"
+              )}
+            >
               {charCount}/{maxLength}
             </p>
           )}
@@ -207,22 +236,26 @@ export const EnhancedInput = forwardRef<HTMLInputElement, EnhancedInputProps>(
 /**
  * Animated form success state
  */
-export function FormSuccess({ 
-  message = "Success!", 
-  className 
-}: { 
+export function FormSuccess({
+  message = "Success!",
+  className,
+}: {
   message?: string;
-  className?: string; 
+  className?: string;
 }) {
   return (
-    <div className={cn(
-      "flex items-center gap-3 p-4 rounded-xl bg-green-500/10 border border-green-500/20 animate-in fade-in slide-in-from-bottom-2 duration-300",
-      className
-    )}>
+    <div
+      className={cn(
+        "flex items-center gap-3 p-4 rounded-xl bg-green-500/10 border border-green-500/20 animate-in fade-in slide-in-from-bottom-2 duration-300",
+        className
+      )}
+    >
       <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
         <Check className="w-4 h-4 text-green-600" />
       </div>
-      <p className="text-sm font-sans text-green-700 dark:text-green-400">{message}</p>
+      <p className="text-sm font-sans text-green-700 dark:text-green-400">
+        {message}
+      </p>
     </div>
   );
 }
@@ -230,22 +263,26 @@ export function FormSuccess({
 /**
  * Animated form error state
  */
-export function FormError({ 
-  message, 
-  className 
-}: { 
+export function FormError({
+  message,
+  className,
+}: {
   message: string;
-  className?: string; 
+  className?: string;
 }) {
   return (
-    <div className={cn(
-      "flex items-center gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/20 animate-in fade-in slide-in-from-bottom-2 duration-300",
-      className
-    )}>
+    <div
+      className={cn(
+        "flex items-center gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/20 animate-in fade-in slide-in-from-bottom-2 duration-300",
+        className
+      )}
+    >
       <div className="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center">
         <AlertCircle className="w-4 h-4 text-red-600" />
       </div>
-      <p className="text-sm font-sans text-red-700 dark:text-red-400">{message}</p>
+      <p className="text-sm font-sans text-red-700 dark:text-red-400">
+        {message}
+      </p>
     </div>
   );
 }

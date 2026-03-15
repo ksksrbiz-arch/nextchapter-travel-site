@@ -35,7 +35,7 @@ const ACTION_COLORS = {
 /**
  * Swipeable card component for mobile touch interactions.
  * Swipe left or right to reveal action buttons.
- * 
+ *
  * @example
  * ```tsx
  * <SwipeableCard

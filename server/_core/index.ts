@@ -71,7 +71,7 @@ async function startServer() {
       // Keep-alive ping every 25s to prevent proxy timeouts
       const pingInterval = setInterval(() => {
         try {
-          res.write("data: {\"type\":\"ping\"}\n\n");
+          res.write('data: {"type":"ping"}\n\n');
           if (typeof (res as any).flush === "function") (res as any).flush();
         } catch {
           clearInterval(pingInterval);
@@ -109,7 +109,9 @@ async function startServer() {
 
   app.get("/api/metrics", (_req, res) => {
     if (ENV.metricsToken) {
-      const headerToken = _req.headers["x-metrics-key"] ?? _req.headers.authorization?.replace("Bearer ", "");
+      const headerToken =
+        _req.headers["x-metrics-key"] ??
+        _req.headers.authorization?.replace("Bearer ", "");
       if (headerToken !== ENV.metricsToken) {
         res.status(401).json({ error: "Unauthorized" });
         return;
@@ -122,7 +124,9 @@ async function startServer() {
 
   app.get("/api/metrics/prom", (_req, res) => {
     if (ENV.metricsToken) {
-      const headerToken = _req.headers["x-metrics-key"] ?? _req.headers.authorization?.replace("Bearer ", "");
+      const headerToken =
+        _req.headers["x-metrics-key"] ??
+        _req.headers.authorization?.replace("Bearer ", "");
       if (headerToken !== ENV.metricsToken) {
         res.status(401).json({ error: "Unauthorized" });
         return;

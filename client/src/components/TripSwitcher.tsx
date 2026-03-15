@@ -7,7 +7,13 @@
  */
 
 import { useTrip } from "@/contexts/TripContext";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { MapPin } from "lucide-react";
 
@@ -37,10 +43,16 @@ export default function TripSwitcher() {
         </SelectTrigger>
         <SelectContent align="end">
           {trips.map(t => (
-            <SelectItem key={t.id} value={t.id.toString()} className="font-sans text-sm">
+            <SelectItem
+              key={t.id}
+              value={t.id.toString()}
+              className="font-sans text-sm"
+            >
               <div className="flex items-center gap-2">
                 <span className="truncate max-w-[160px]">{t.title}</span>
-                <Badge className={`text-xs ${STATUS_COLORS[t.status] ?? "bg-gray-100 text-gray-700"} flex-shrink-0`}>
+                <Badge
+                  className={`text-xs ${STATUS_COLORS[t.status] ?? "bg-gray-100 text-gray-700"} flex-shrink-0`}
+                >
                   {t.status}
                 </Badge>
               </div>

@@ -21,19 +21,19 @@ export interface NotificationAction {
 }
 
 export type NotificationType =
-  | 'itinerary-update'
-  | 'checkin-reminder'
-  | 'location-alert'
-  | 'emergency'
-  | 'message'
-  | 'system';
+  | "itinerary-update"
+  | "checkin-reminder"
+  | "location-alert"
+  | "emergency"
+  | "message"
+  | "system";
 
 class PushNotificationService {
   /**
    * Check if notifications are supported
    */
   isSupported(): boolean {
-    return 'Notification' in window;
+    return "Notification" in window;
   }
 
   /**
@@ -41,7 +41,7 @@ class PushNotificationService {
    */
   getPermission(): NotificationPermission {
     if (!this.isSupported()) {
-      return 'denied';
+      return "denied";
     }
     return Notification.permission;
   }
@@ -51,28 +51,31 @@ class PushNotificationService {
    */
   async requestPermission(): Promise<NotificationPermission> {
     if (!this.isSupported()) {
-      console.warn('[Notifications] Notifications not supported');
-      return 'denied';
+      console.warn("[Notifications] Notifications not supported");
+      return "denied";
     }
 
-    if (Notification.permission === 'granted') {
-      return 'granted';
+    if (Notification.permission === "granted") {
+      return "granted";
     }
 
-    if (Notification.permission !== 'denied') {
+    if (Notification.permission !== "denied") {
       const permission = await Notification.requestPermission();
       return permission;
     }
 
-    return 'denied';
+    return "denied";
   }
 
   /**
    * Show a local notification
    */
-  async notify(type: NotificationType, payload: NotificationPayload): Promise<void> {
-    if (this.getPermission() !== 'granted') {
-      console.warn('[Notifications] Notification permission not granted');
+  async notify(
+    type: NotificationType,
+    payload: NotificationPayload
+  ): Promise<void> {
+    if (this.getPermission() !== "granted") {
+      console.warn("[Notifications] Notification permission not granted");
       return;
     }
 
@@ -82,17 +85,17 @@ class PushNotificationService {
 
       new Notification(payload.title, {
         body: payload.body,
-        icon: payload.icon || '/manifest.json',
+        icon: payload.icon || "/manifest.json",
         tag: payload.tag,
         requireInteraction: payload.requireInteraction,
         data,
         actions: payload.actions,
-        vibrate: payload.vibrate || [200, 100, 200]
+        vibrate: payload.vibrate || [200, 100, 200],
       });
 
       console.log(`[Notifications] Sent: ${type}`);
     } catch (err) {
-      console.error('[Notifications] Failed to send notification:', err);
+      console.error("[Notifications] Failed to send notification:", err);
     }
   }
 
@@ -100,11 +103,11 @@ class PushNotificationService {
    * Notify about itinerary changes
    */
   async notifyItineraryUpdate(itemName: string, change: string): Promise<void> {
-    await this.notify('itinerary-update', {
-      title: 'Itinerary Updated',
+    await this.notify("itinerary-update", {
+      title: "Itinerary Updated",
       body: `${itemName}: ${change}`,
-      tag: 'itinerary-update',
-      vibrate: [200, 100, 200]
+      tag: "itinerary-update",
+      vibrate: [200, 100, 200],
     });
   }
 
@@ -112,26 +115,29 @@ class PushNotificationService {
    * Notify about check-in reminders
    */
   async notifyCheckInReminder(familyMemberName: string): Promise<void> {
-    await this.notify('checkin-reminder', {
-      title: 'Check-in Reminder',
+    await this.notify("checkin-reminder", {
+      title: "Check-in Reminder",
       body: `Haven't heard from ${familyMemberName} in a while`,
-      tag: 'checkin-reminder',
+      tag: "checkin-reminder",
       requireInteraction: true,
       actions: [
-        { action: 'mark-safe', title: 'Mark Safe' },
-        { action: 'contact', title: 'Contact' }
-      ]
+        { action: "mark-safe", title: "Mark Safe" },
+        { action: "contact", title: "Contact" },
+      ],
     });
   }
 
   /**
    * Notify about location alerts
    */
-  async notifyLocationAlert(locationName: string, alert: string): Promise<void> {
-    await this.notify('location-alert', {
+  async notifyLocationAlert(
+    locationName: string,
+    alert: string
+  ): Promise<void> {
+    await this.notify("location-alert", {
       title: `Nearby: ${locationName}`,
       body: alert,
-      tag: `location-${locationName}`
+      tag: `location-${locationName}`,
     });
   }
 
@@ -139,23 +145,26 @@ class PushNotificationService {
    * Notify about emergency
    */
   async notifyEmergency(personName: string, type: string): Promise<void> {
-    await this.notify('emergency', {
-      title: '🚨 EMERGENCY ALERT',
+    await this.notify("emergency", {
+      title: "🚨 EMERGENCY ALERT",
       body: `${personName} has triggered SOS: ${type}`,
-      tag: 'emergency',
+      tag: "emergency",
       requireInteraction: true,
-      vibrate: [500, 100, 500, 100, 500] // Intense vibration pattern
+      vibrate: [500, 100, 500, 100, 500], // Intense vibration pattern
     });
   }
 
   /**
    * Notify about message
    */
-  async notifyMessage(senderName: string, messagePreview: string): Promise<void> {
-    await this.notify('message', {
+  async notifyMessage(
+    senderName: string,
+    messagePreview: string
+  ): Promise<void> {
+    await this.notify("message", {
       title: `Message from ${senderName}`,
       body: messagePreview,
-      tag: `message-${senderName}`
+      tag: `message-${senderName}`,
     });
   }
 
@@ -163,10 +172,10 @@ class PushNotificationService {
    * Notify system message
    */
   async notifySystem(title: string, body?: string): Promise<void> {
-    await this.notify('system', {
+    await this.notify("system", {
       title,
       body,
-      tag: 'system'
+      tag: "system",
     });
   }
 
@@ -175,10 +184,10 @@ class PushNotificationService {
    */
   closeNotification(tag: string): void {
     // Try to close via service worker if available
-    if ('serviceWorker' in navigator) {
+    if ("serviceWorker" in navigator) {
       navigator.serviceWorker.controller?.postMessage({
-        type: 'CLOSE_NOTIFICATION',
-        tag
+        type: "CLOSE_NOTIFICATION",
+        tag,
       });
     }
   }
@@ -186,27 +195,29 @@ class PushNotificationService {
   /**
    * Register service worker for background notifications
    */
-  async registerServiceWorker(swPath: string = '/sw.js'): Promise<ServiceWorkerRegistration | null> {
-    if (!('serviceWorker' in navigator)) {
-      console.warn('[Notifications] Service Workers not supported');
+  async registerServiceWorker(
+    swPath: string = "/sw.js"
+  ): Promise<ServiceWorkerRegistration | null> {
+    if (!("serviceWorker" in navigator)) {
+      console.warn("[Notifications] Service Workers not supported");
       return null;
     }
 
     try {
       const registration = await navigator.serviceWorker.register(swPath);
-      console.log('[Notifications] Service Worker registered');
+      console.log("[Notifications] Service Worker registered");
 
       // Listen for messages from service worker
-      navigator.serviceWorker.addEventListener('message', (event) => {
-        if (event.data.type === 'NOTIFICATION_CLICK') {
-          console.log('[Notifications] Notification clicked:', event.data);
+      navigator.serviceWorker.addEventListener("message", event => {
+        if (event.data.type === "NOTIFICATION_CLICK") {
+          console.log("[Notifications] Notification clicked:", event.data);
           // Handle notification click
         }
       });
 
       return registration;
     } catch (err) {
-      console.error('[Notifications] Failed to register service worker:', err);
+      console.error("[Notifications] Failed to register service worker:", err);
       return null;
     }
   }
@@ -214,14 +225,16 @@ class PushNotificationService {
   /**
    * Subscribe to push notifications (requires service worker)
    */
-  async subscribePushNotifications(vapidPublicKey: string): Promise<PushSubscription | null> {
-    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-      console.warn('[Notifications] Push notifications not supported');
+  async subscribePushNotifications(
+    vapidPublicKey: string
+  ): Promise<PushSubscription | null> {
+    if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+      console.warn("[Notifications] Push notifications not supported");
       return null;
     }
 
     const permission = await this.requestPermission();
-    if (permission !== 'granted') {
+    if (permission !== "granted") {
       return null;
     }
 
@@ -229,13 +242,13 @@ class PushNotificationService {
       const registration = await navigator.serviceWorker.ready;
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: this.urlBase64ToUint8Array(vapidPublicKey)
+        applicationServerKey: this.urlBase64ToUint8Array(vapidPublicKey),
       });
 
-      console.log('[Notifications] Push subscription created');
+      console.log("[Notifications] Push subscription created");
       return subscription;
     } catch (err) {
-      console.error('[Notifications] Failed to subscribe to push:', err);
+      console.error("[Notifications] Failed to subscribe to push:", err);
       return null;
     }
   }
@@ -244,7 +257,7 @@ class PushNotificationService {
    * Check if user is subscribed to push notifications
    */
   async isPushSubscribed(): Promise<boolean> {
-    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+    if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
       return false;
     }
 
@@ -261,7 +274,7 @@ class PushNotificationService {
    * Unsubscribe from push notifications
    */
   async unsubscribePushNotifications(): Promise<boolean> {
-    if (!('serviceWorker' in navigator)) {
+    if (!("serviceWorker" in navigator)) {
       return false;
     }
 
@@ -270,11 +283,11 @@ class PushNotificationService {
       const subscription = await registration.pushManager.getSubscription();
       if (subscription) {
         await subscription.unsubscribe();
-        console.log('[Notifications] Push unsubscribed');
+        console.log("[Notifications] Push unsubscribed");
         return true;
       }
     } catch (err) {
-      console.error('[Notifications] Failed to unsubscribe:', err);
+      console.error("[Notifications] Failed to unsubscribe:", err);
     }
     return false;
   }
@@ -282,8 +295,10 @@ class PushNotificationService {
   // Private utility methods
 
   private urlBase64ToUint8Array(base64String: string): Uint8Array {
-    const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-    const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+    const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+    const base64 = (base64String + padding)
+      .replace(/\-/g, "+")
+      .replace(/_/g, "/");
 
     const rawData = window.atob(base64);
     const outputArray = new Uint8Array(rawData.length);

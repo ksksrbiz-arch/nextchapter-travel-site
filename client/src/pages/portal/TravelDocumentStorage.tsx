@@ -1,5 +1,15 @@
 import { useState } from "react";
-import { FileText, Upload, Download, Share2, Lock, Trash2, Plus, Eye, AlertTriangle } from "lucide-react";
+import {
+  FileText,
+  Upload,
+  Download,
+  Share2,
+  Lock,
+  Trash2,
+  Plus,
+  Eye,
+  AlertTriangle,
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -64,7 +74,9 @@ export function TravelDocumentStorage() {
       type: formData.type as TravelDocument["type"],
       expiryDate: formData.expiryDate,
       uploadDate: new Date().toISOString().split("T")[0],
-      isExpired: formData.expiryDate ? new Date(formData.expiryDate) < new Date() : false,
+      isExpired: formData.expiryDate
+        ? new Date(formData.expiryDate) < new Date()
+        : false,
       notes: formData.notes,
       shared: false,
     };
@@ -76,22 +88,21 @@ export function TravelDocumentStorage() {
   };
 
   const handleDeleteDocument = (id: string) => {
-    setDocuments(documents.filter((d) => d.id !== id));
+    setDocuments(documents.filter(d => d.id !== id));
   };
 
   const handleToggleShare = (id: string) => {
     setDocuments(
-      documents.map((d) =>
-        d.id === id ? { ...d, shared: !d.shared } : d
-      )
+      documents.map(d => (d.id === id ? { ...d, shared: !d.shared } : d))
     );
   };
 
-  const expiredDocs = documents.filter((d) => d.isExpired);
-  const expiringDocs = documents.filter((d) => {
+  const expiredDocs = documents.filter(d => d.isExpired);
+  const expiringDocs = documents.filter(d => {
     if (!d.expiryDate) return false;
     const daysUntilExpiry = Math.floor(
-      (new Date(d.expiryDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
+      (new Date(d.expiryDate).getTime() - new Date().getTime()) /
+        (1000 * 60 * 60 * 24)
     );
     return daysUntilExpiry > 0 && daysUntilExpiry <= 30;
   });
@@ -100,26 +111,36 @@ export function TravelDocumentStorage() {
     <div className="space-y-6">
       {/* Document Status */}
       <Card className="bg-gradient-to-br from-cyan-950/30 to-blue-950/30 border-cyan-500/20 p-6">
-        <h3 className="text-sm font-medium text-muted-foreground mb-4">Document Status</h3>
+        <h3 className="text-sm font-medium text-muted-foreground mb-4">
+          Document Status
+        </h3>
 
         <div className="grid grid-cols-3 gap-3">
           <div className="p-3 bg-black/20 rounded-lg">
             <p className="text-xs text-muted-foreground">Total</p>
-            <p className="text-2xl font-bold text-foreground">{documents.length}</p>
+            <p className="text-2xl font-bold text-foreground">
+              {documents.length}
+            </p>
           </div>
 
           <div className="p-3 bg-black/20 rounded-lg border border-emerald-500/30">
             <p className="text-xs text-emerald-300">Valid</p>
             <p className="text-2xl font-bold text-emerald-400">
-              {documents.filter((d) => !d.isExpired).length}
+              {documents.filter(d => !d.isExpired).length}
             </p>
           </div>
 
-          <div className={`p-3 bg-black/20 rounded-lg border ${expiredDocs.length > 0 ? "border-red-500/30" : "border-border"}`}>
-            <p className={`text-xs ${expiredDocs.length > 0 ? "text-red-300" : "text-muted-foreground"}`}>
+          <div
+            className={`p-3 bg-black/20 rounded-lg border ${expiredDocs.length > 0 ? "border-red-500/30" : "border-border"}`}
+          >
+            <p
+              className={`text-xs ${expiredDocs.length > 0 ? "text-red-300" : "text-muted-foreground"}`}
+            >
               Expired
             </p>
-            <p className={`text-2xl font-bold ${expiredDocs.length > 0 ? "text-red-400" : "text-foreground"}`}>
+            <p
+              className={`text-2xl font-bold ${expiredDocs.length > 0 ? "text-red-400" : "text-foreground"}`}
+            >
               {expiredDocs.length}
             </p>
           </div>
@@ -132,9 +153,11 @@ export function TravelDocumentStorage() {
           <div className="flex gap-3">
             <AlertTriangle className="w-5 h-5 text-orange-500 flex-shrink-0 mt-0.5" />
             <div>
-              <h4 className="font-medium text-sm text-orange-400 mb-2">Documents Expiring Soon</h4>
+              <h4 className="font-medium text-sm text-orange-400 mb-2">
+                Documents Expiring Soon
+              </h4>
               <ul className="text-xs text-muted-foreground space-y-1">
-                {expiringDocs.map((doc) => (
+                {expiringDocs.map(doc => (
                   <li key={doc.id}>
                     • {doc.name} expires {doc.expiryDate}
                   </li>
@@ -151,9 +174,11 @@ export function TravelDocumentStorage() {
           <div className="flex gap-3">
             <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
             <div>
-              <h4 className="font-medium text-sm text-red-400 mb-2">Expired Documents</h4>
+              <h4 className="font-medium text-sm text-red-400 mb-2">
+                Expired Documents
+              </h4>
               <ul className="text-xs text-muted-foreground space-y-1">
-                {expiredDocs.map((doc) => (
+                {expiredDocs.map(doc => (
                   <li key={doc.id}>
                     • {doc.name} expired {doc.expiryDate}
                   </li>
@@ -183,7 +208,7 @@ export function TravelDocumentStorage() {
                 type="text"
                 placeholder="Document Name"
                 value={formData.name}
-                onChange={(e) => {
+                onChange={e => {
                   setFormData({ ...formData, name: e.target.value });
                   setErrors({ ...errors, name: "" });
                 }}
@@ -193,10 +218,10 @@ export function TravelDocumentStorage() {
 
             <select
               value={formData.type}
-              onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+              onChange={e => setFormData({ ...formData, type: e.target.value })}
               className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/50"
             >
-              {DOCUMENT_TYPES.map((t) => (
+              {DOCUMENT_TYPES.map(t => (
                 <option key={t.value} value={t.value}>
                   {t.label}
                 </option>
@@ -206,7 +231,9 @@ export function TravelDocumentStorage() {
             <input
               type="date"
               value={formData.expiryDate}
-              onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
+              onChange={e =>
+                setFormData({ ...formData, expiryDate: e.target.value })
+              }
               className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/50"
               placeholder="Expiry Date (optional)"
             />
@@ -214,7 +241,9 @@ export function TravelDocumentStorage() {
             <textarea
               placeholder="Notes (optional)"
               value={formData.notes}
-              onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+              onChange={e =>
+                setFormData({ ...formData, notes: e.target.value })
+              }
               className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 resize-none"
               rows={2}
             />
@@ -222,8 +251,12 @@ export function TravelDocumentStorage() {
             {/* Upload File Section */}
             <div className="border-2 border-dashed border-border/50 rounded-lg p-8 text-center hover:bg-black/20 transition-colors cursor-pointer">
               <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-              <p className="text-sm text-muted-foreground mb-1">Click to upload or drag and drop</p>
-              <p className="text-xs text-muted-foreground">PDF, Image, or Document files</p>
+              <p className="text-sm text-muted-foreground mb-1">
+                Click to upload or drag and drop
+              </p>
+              <p className="text-xs text-muted-foreground">
+                PDF, Image, or Document files
+              </p>
             </div>
 
             <div className="flex gap-3">
@@ -248,7 +281,7 @@ export function TravelDocumentStorage() {
       {/* Documents List */}
       {documents.length > 0 ? (
         <div className="space-y-3">
-          {documents.map((doc) => (
+          {documents.map(doc => (
             <Card
               key={doc.id}
               className={`p-4 border-border/50 ${doc.isExpired ? "border-l-4 border-l-red-500 bg-red-950/10" : ""}`}
@@ -260,11 +293,13 @@ export function TravelDocumentStorage() {
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <h4 className={`font-semibold ${doc.isExpired ? "text-red-400 line-through" : "text-foreground"}`}>
+                    <h4
+                      className={`font-semibold ${doc.isExpired ? "text-red-400 line-through" : "text-foreground"}`}
+                    >
                       {doc.name}
                     </h4>
                     <Badge variant="outline" className="text-xs">
-                      {DOCUMENT_TYPES.find((t) => t.value === doc.type)?.label}
+                      {DOCUMENT_TYPES.find(t => t.value === doc.type)?.label}
                     </Badge>
                     {doc.shared && (
                       <Badge variant="secondary" className="text-xs">
@@ -285,7 +320,9 @@ export function TravelDocumentStorage() {
                   </p>
 
                   {doc.notes && (
-                    <p className="text-xs text-muted-foreground mt-2 italic">{doc.notes}</p>
+                    <p className="text-xs text-muted-foreground mt-2 italic">
+                      {doc.notes}
+                    </p>
                   )}
                 </div>
 
@@ -337,9 +374,12 @@ export function TravelDocumentStorage() {
         <div className="flex gap-3">
           <Lock className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
           <div>
-            <h4 className="font-medium text-sm text-blue-400 mb-1">🔒 Your documents are secure</h4>
+            <h4 className="font-medium text-sm text-blue-400 mb-1">
+              🔒 Your documents are secure
+            </h4>
             <p className="text-xs text-muted-foreground">
-              All documents are encrypted and stored securely. You control who can access them.
+              All documents are encrypted and stored securely. You control who
+              can access them.
             </p>
           </div>
         </div>

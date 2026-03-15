@@ -1,5 +1,13 @@
 import { useState } from "react";
-import { Phone, Mail, MapPin, Plus, Trash2, AlertTriangle, Save } from "lucide-react";
+import {
+  Phone,
+  Mail,
+  MapPin,
+  Plus,
+  Trash2,
+  AlertTriangle,
+  Save,
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -31,9 +39,11 @@ export function EmergencyContacts() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     if (!formData.name.trim()) newErrors.name = "Name required";
-    if (!formData.relationship) newErrors.relationship = "Relationship required";
+    if (!formData.relationship)
+      newErrors.relationship = "Relationship required";
     if (!formData.phone.trim()) newErrors.phone = "Phone required";
-    if (!/^\+?[\d\s\-()]+$/.test(formData.phone)) newErrors.phone = "Invalid phone format";
+    if (!/^\+?[\d\s\-()]+$/.test(formData.phone))
+      newErrors.phone = "Invalid phone format";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -52,25 +62,31 @@ export function EmergencyContacts() {
     };
 
     setContacts([newContact, ...contacts]);
-    setFormData({ name: "", relationship: "", phone: "", email: "", address: "" });
+    setFormData({
+      name: "",
+      relationship: "",
+      phone: "",
+      email: "",
+      address: "",
+    });
     setErrors({});
     setShowForm(false);
   };
 
   const handleDeleteContact = (id: string) => {
-    setContacts(contacts.filter((c) => c.id !== id));
+    setContacts(contacts.filter(c => c.id !== id));
   };
 
   const handleSetPrimary = (id: string) => {
     setContacts(
-      contacts.map((c) => ({
+      contacts.map(c => ({
         ...c,
         isPrimary: c.id === id,
       }))
     );
   };
 
-  const primaryContact = contacts.find((c) => c.isPrimary);
+  const primaryContact = contacts.find(c => c.isPrimary);
 
   return (
     <div className="space-y-6">
@@ -80,19 +96,29 @@ export function EmergencyContacts() {
           <div className="flex items-start gap-4">
             <AlertTriangle className="w-6 h-6 text-red-500 flex-shrink-0 mt-1" />
             <div className="flex-1">
-              <p className="text-xs font-medium text-muted-foreground mb-2">PRIMARY EMERGENCY CONTACT</p>
-              <h3 className="text-xl font-bold text-foreground mb-3">{primaryContact.name}</h3>
+              <p className="text-xs font-medium text-muted-foreground mb-2">
+                PRIMARY EMERGENCY CONTACT
+              </p>
+              <h3 className="text-xl font-bold text-foreground mb-3">
+                {primaryContact.name}
+              </h3>
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <Phone className="w-4 h-4 text-muted-foreground" />
-                  <a href={`tel:${primaryContact.phone}`} className="text-sm hover:text-primary transition-colors">
+                  <a
+                    href={`tel:${primaryContact.phone}`}
+                    className="text-sm hover:text-primary transition-colors"
+                  >
                     {primaryContact.phone}
                   </a>
                 </div>
                 {primaryContact.email && (
                   <div className="flex items-center gap-2">
                     <Mail className="w-4 h-4 text-muted-foreground" />
-                    <a href={`mailto:${primaryContact.email}`} className="text-sm hover:text-primary transition-colors">
+                    <a
+                      href={`mailto:${primaryContact.email}`}
+                      className="text-sm hover:text-primary transition-colors"
+                    >
                       {primaryContact.email}
                     </a>
                   </div>
@@ -122,7 +148,7 @@ export function EmergencyContacts() {
                 type="text"
                 placeholder="Full Name"
                 value={formData.name}
-                onChange={(e) => {
+                onChange={e => {
                   setFormData({ ...formData, name: e.target.value });
                   setErrors({ ...errors, name: "" });
                 }}
@@ -135,7 +161,7 @@ export function EmergencyContacts() {
                 type="text"
                 placeholder="Relationship (e.g., parent, spouse, friend)"
                 value={formData.relationship}
-                onChange={(e) => {
+                onChange={e => {
                   setFormData({ ...formData, relationship: e.target.value });
                   setErrors({ ...errors, relationship: "" });
                 }}
@@ -148,7 +174,7 @@ export function EmergencyContacts() {
                 type="tel"
                 placeholder="Phone Number"
                 value={formData.phone}
-                onChange={(e) => {
+                onChange={e => {
                   setFormData({ ...formData, phone: e.target.value });
                   setErrors({ ...errors, phone: "" });
                 }}
@@ -160,14 +186,18 @@ export function EmergencyContacts() {
               type="email"
               placeholder="Email (optional)"
               value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onChange={e =>
+                setFormData({ ...formData, email: e.target.value })
+              }
               className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
             />
 
             <textarea
               placeholder="Address (optional)"
               value={formData.address}
-              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+              onChange={e =>
+                setFormData({ ...formData, address: e.target.value })
+              }
               className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 resize-none"
               rows={2}
             />
@@ -195,31 +225,44 @@ export function EmergencyContacts() {
       {/* Contacts List */}
       {contacts.length > 0 ? (
         <div className="space-y-3">
-          {contacts.map((contact) => (
-            <Card key={contact.id} className={`p-4 border-border/50 ${contact.isPrimary ? "ring-2 ring-red-500/50" : ""}`}>
+          {contacts.map(contact => (
+            <Card
+              key={contact.id}
+              className={`p-4 border-border/50 ${contact.isPrimary ? "ring-2 ring-red-500/50" : ""}`}
+            >
               <div className="flex items-start justify-between mb-3">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
-                    <h4 className="font-semibold text-foreground">{contact.name}</h4>
+                    <h4 className="font-semibold text-foreground">
+                      {contact.name}
+                    </h4>
                     {contact.isPrimary && (
                       <Badge variant="destructive" className="text-xs">
                         Primary
                       </Badge>
                     )}
                   </div>
-                  <p className="text-xs text-muted-foreground mb-3">{contact.relationship}</p>
+                  <p className="text-xs text-muted-foreground mb-3">
+                    {contact.relationship}
+                  </p>
 
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
                       <Phone className="w-3 h-3 text-muted-foreground" />
-                      <a href={`tel:${contact.phone}`} className="text-xs hover:text-primary transition-colors">
+                      <a
+                        href={`tel:${contact.phone}`}
+                        className="text-xs hover:text-primary transition-colors"
+                      >
                         {contact.phone}
                       </a>
                     </div>
                     {contact.email && (
                       <div className="flex items-center gap-2">
                         <Mail className="w-3 h-3 text-muted-foreground" />
-                        <a href={`mailto:${contact.email}`} className="text-xs hover:text-primary transition-colors">
+                        <a
+                          href={`mailto:${contact.email}`}
+                          className="text-xs hover:text-primary transition-colors"
+                        >
                           {contact.email}
                         </a>
                       </div>
@@ -227,7 +270,9 @@ export function EmergencyContacts() {
                     {contact.address && (
                       <div className="flex items-start gap-2">
                         <MapPin className="w-3 h-3 text-muted-foreground mt-0.5" />
-                        <span className="text-xs text-muted-foreground">{contact.address}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {contact.address}
+                        </span>
                       </div>
                     )}
                   </div>
@@ -265,7 +310,9 @@ export function EmergencyContacts() {
 
       {/* Safety Tips */}
       <Card className="border-emerald-500/20 bg-emerald-950/20 p-4">
-        <h4 className="font-medium text-sm text-emerald-400 mb-3">🛡️ Safety Tips</h4>
+        <h4 className="font-medium text-sm text-emerald-400 mb-3">
+          🛡️ Safety Tips
+        </h4>
         <ul className="text-xs text-muted-foreground space-y-2">
           <li>• Keep at least 2 trusted contacts on file</li>
           <li>• Share your itinerary with your primary contact</li>

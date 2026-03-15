@@ -4,14 +4,31 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Link, useParams } from "wouter";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
-  Users, Search, Plane, MessageSquare, ChevronRight,
-  Mail, Calendar, ArrowLeft, Loader2, MapPin, UserPlus, Copy, CheckCircle
+  Users,
+  Search,
+  Plane,
+  MessageSquare,
+  ChevronRight,
+  Mail,
+  Calendar,
+  ArrowLeft,
+  Loader2,
+  MapPin,
+  UserPlus,
+  Copy,
+  CheckCircle,
 } from "lucide-react";
 
 export function AdminClientsList() {
@@ -24,15 +41,17 @@ export function AdminClientsList() {
   const [copied, setCopied] = useState(false);
 
   const createInvite = trpc.invites.create.useMutation({
-    onSuccess: (data) => {
+    onSuccess: data => {
       setGeneratedLink(data.inviteUrl);
       if (data.emailSent) {
         toast.success(`Invite email sent to ${inviteEmail} ✉️`);
       } else {
-        toast.warning(`Link created but email failed: ${data.emailError ?? "unknown error"}. Copy the link below.`);
+        toast.warning(
+          `Link created but email failed: ${data.emailError ?? "unknown error"}. Copy the link below.`
+        );
       }
     },
-    onError: (err) => {
+    onError: err => {
       toast.error("Failed to create invite: " + err.message);
     },
   });
@@ -62,10 +81,12 @@ export function AdminClientsList() {
     setCopied(false);
   };
 
-  const filtered = clients?.filter(c =>
-    (c.name ?? "").toLowerCase().includes(search.toLowerCase()) ||
-    (c.email ?? "").toLowerCase().includes(search.toLowerCase())
-  ) ?? [];
+  const filtered =
+    clients?.filter(
+      c =>
+        (c.name ?? "").toLowerCase().includes(search.toLowerCase()) ||
+        (c.email ?? "").toLowerCase().includes(search.toLowerCase())
+    ) ?? [];
   return (
     <AdminLayout title="Clients" subtitle="Manage your travel clients">
       {/* Search + Invite */}
@@ -89,7 +110,12 @@ export function AdminClientsList() {
       </div>
 
       {/* Invite Dialog */}
-      <Dialog open={showInviteDialog} onOpenChange={(open) => { if (!open) handleCloseInvite(); }}>
+      <Dialog
+        open={showInviteDialog}
+        onOpenChange={open => {
+          if (!open) handleCloseInvite();
+        }}
+      >
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="font-serif">Send Portal Invite</DialogTitle>
@@ -100,7 +126,9 @@ export function AdminClientsList() {
           {!generatedLink ? (
             <div className="space-y-4 mt-2">
               <div>
-                <Label className="font-sans text-sm font-medium">Client Name (optional)</Label>
+                <Label className="font-sans text-sm font-medium">
+                  Client Name (optional)
+                </Label>
                 <Input
                   value={inviteName}
                   onChange={e => setInviteName(e.target.value)}
@@ -109,7 +137,9 @@ export function AdminClientsList() {
                 />
               </div>
               <div>
-                <Label className="font-sans text-sm font-medium">Client Email *</Label>
+                <Label className="font-sans text-sm font-medium">
+                  Client Email *
+                </Label>
                 <Input
                   type="email"
                   value={inviteEmail}
@@ -146,18 +176,21 @@ export function AdminClientsList() {
                 <div className="flex items-center gap-2 mb-2">
                   <CheckCircle className="w-5 h-5 text-green-600" />
                   <span className="font-sans font-medium text-green-800 text-sm">
-                    {createInvite.data?.emailSent ? `Email sent to ${inviteEmail}!` : "Invite link generated!"}
+                    {createInvite.data?.emailSent
+                      ? `Email sent to ${inviteEmail}!`
+                      : "Invite link generated!"}
                   </span>
                 </div>
                 <p className="text-green-700 font-sans text-xs">
                   {createInvite.data?.emailSent
                     ? `${inviteName || inviteEmail} will receive a branded email with their portal link. It expires in 7 days.`
-                    : `This link expires in 7 days. Share it with ${inviteName || inviteEmail} to give them access to their portal.`
-                  }
+                    : `This link expires in 7 days. Share it with ${inviteName || inviteEmail} to give them access to their portal.`}
                 </p>
               </div>
               <div className="bg-muted rounded-lg p-3">
-                <p className="font-mono text-xs text-muted-foreground break-all">{generatedLink}</p>
+                <p className="font-mono text-xs text-muted-foreground break-all">
+                  {generatedLink}
+                </p>
               </div>
               <div className="flex gap-2">
                 <Button
@@ -197,7 +230,9 @@ export function AdminClientsList() {
             {search ? "No clients found" : "No Clients Yet"}
           </h3>
           <p className="text-muted-foreground font-sans text-sm">
-            {search ? "Try a different search term." : "Clients will appear here once they sign in."}
+            {search
+              ? "Try a different search term."
+              : "Clients will appear here once they sign in."}
           </p>
         </div>
       )}
@@ -211,25 +246,38 @@ export function AdminClientsList() {
                   {client.name?.charAt(0) ?? "?"}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-serif font-semibold text-foreground truncate">{client.name ?? "Unknown"}</h3>
+                  <h3 className="font-serif font-semibold text-foreground truncate">
+                    {client.name ?? "Unknown"}
+                  </h3>
                   <p className="text-muted-foreground font-sans text-xs truncate flex items-center gap-1 mt-0.5">
                     <Mail className="w-3 h-3" />
                     {client.email ?? "No email"}
                   </p>
                   <p className="text-muted-foreground font-sans text-xs mt-0.5 flex items-center gap-1">
                     <Calendar className="w-3 h-3" />
-                    Joined {new Date(client.createdAt).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
+                    Joined{" "}
+                    {new Date(client.createdAt).toLocaleDateString("en-US", {
+                      month: "short",
+                      year: "numeric",
+                    })}
                   </p>
                 </div>
               </div>
               <div className="flex gap-2">
                 <Link href={`/admin/clients/${client.id}`} className="flex-1">
-                  <Button variant="outline" size="sm" className="w-full font-sans text-xs">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full font-sans text-xs"
+                  >
                     View Profile <ChevronRight className="w-3.5 h-3.5 ml-1" />
                   </Button>
                 </Link>
                 <Link href={`/admin/trips/new?client=${client.id}`}>
-                  <Button size="sm" className="bg-primary text-primary-foreground font-sans text-xs">
+                  <Button
+                    size="sm"
+                    className="bg-primary text-primary-foreground font-sans text-xs"
+                  >
                     <Plane className="w-3.5 h-3.5" />
                   </Button>
                 </Link>
@@ -246,8 +294,10 @@ export function AdminClientDetail() {
   const params = useParams<{ id: string }>();
   const clientId = Number(params.id);
 
-  const { data: client, isLoading: clientLoading } = trpc.admin.getClient.useQuery({ id: clientId });
-  const { data: trips, isLoading: tripsLoading } = trpc.admin.getClientTrips.useQuery({ userId: clientId });
+  const { data: client, isLoading: clientLoading } =
+    trpc.admin.getClient.useQuery({ id: clientId });
+  const { data: trips, isLoading: tripsLoading } =
+    trpc.admin.getClientTrips.useQuery({ userId: clientId });
 
   if (clientLoading) {
     return (
@@ -273,9 +323,16 @@ export function AdminClientDetail() {
   }
 
   return (
-    <AdminLayout title={client.name ?? "Client Profile"} subtitle={client.email ?? ""}>
+    <AdminLayout
+      title={client.name ?? "Client Profile"}
+      subtitle={client.email ?? ""}
+    >
       <Link href="/admin/clients">
-        <Button variant="ghost" size="sm" className="mb-6 font-sans text-muted-foreground">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="mb-6 font-sans text-muted-foreground"
+        >
           <ArrowLeft className="w-4 h-4 mr-1" /> Back to Clients
         </Button>
       </Link>
@@ -288,35 +345,60 @@ export function AdminClientDetail() {
               <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center text-primary font-serif font-bold text-3xl mx-auto mb-3">
                 {client.name?.charAt(0) ?? "?"}
               </div>
-              <h2 className="text-xl font-serif font-bold text-foreground">{client.name ?? "Unknown"}</h2>
-              <p className="text-muted-foreground font-sans text-sm">{client.email ?? ""}</p>
+              <h2 className="text-xl font-serif font-bold text-foreground">
+                {client.name ?? "Unknown"}
+              </h2>
+              <p className="text-muted-foreground font-sans text-sm">
+                {client.email ?? ""}
+              </p>
             </div>
             <div className="space-y-3 text-sm font-sans">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Member Since</span>
                 <span className="text-foreground font-medium">
-                  {new Date(client.createdAt).toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+                  {new Date(client.createdAt).toLocaleDateString("en-US", {
+                    month: "long",
+                    year: "numeric",
+                  })}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Last Active</span>
                 <span className="text-foreground font-medium">
-                  {new Date(client.lastSignedIn).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                  {new Date(client.lastSignedIn).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                  })}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Total Trips</span>
-                <span className="text-foreground font-medium">{trips?.length ?? 0}</span>
+                <span className="text-foreground font-medium">
+                  {trips?.length ?? 0}
+                </span>
               </div>
             </div>
             <div className="flex gap-2 mt-6">
-              <Link href={`/admin/trips/new?client=${client.id}`} className="flex-1">
-                <Button size="sm" className="w-full bg-primary text-primary-foreground font-sans text-xs">
+              <Link
+                href={`/admin/trips/new?client=${client.id}`}
+                className="flex-1"
+              >
+                <Button
+                  size="sm"
+                  className="w-full bg-primary text-primary-foreground font-sans text-xs"
+                >
                   <Plane className="w-3.5 h-3.5 mr-1.5" /> New Trip
                 </Button>
               </Link>
-              <Link href={`/admin/messages?client=${client.id}`} className="flex-1">
-                <Button variant="outline" size="sm" className="w-full font-sans text-xs">
+              <Link
+                href={`/admin/messages?client=${client.id}`}
+                className="flex-1"
+              >
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full font-sans text-xs"
+                >
                   <MessageSquare className="w-3.5 h-3.5 mr-1.5" /> Message
                 </Button>
               </Link>
@@ -327,20 +409,31 @@ export function AdminClientDetail() {
         {/* Trips */}
         <div className="lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-serif font-semibold text-foreground">Trips</h3>
+            <h3 className="text-lg font-serif font-semibold text-foreground">
+              Trips
+            </h3>
             <Link href={`/admin/trips/new?client=${client.id}`}>
-              <Button size="sm" className="bg-primary text-primary-foreground font-sans text-xs">
+              <Button
+                size="sm"
+                className="bg-primary text-primary-foreground font-sans text-xs"
+              >
                 + New Trip
               </Button>
             </Link>
           </div>
 
-          {tripsLoading && <div className="flex justify-center py-8"><Loader2 className="w-6 h-6 animate-spin text-secondary" /></div>}
+          {tripsLoading && (
+            <div className="flex justify-center py-8">
+              <Loader2 className="w-6 h-6 animate-spin text-secondary" />
+            </div>
+          )}
 
           {!tripsLoading && (!trips || trips.length === 0) && (
             <div className="text-center py-12 border-2 border-dashed border-border rounded-2xl">
               <Plane className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-              <p className="text-muted-foreground font-sans text-sm">No trips yet for this client.</p>
+              <p className="text-muted-foreground font-sans text-sm">
+                No trips yet for this client.
+              </p>
             </div>
           )}
 
@@ -350,29 +443,44 @@ export function AdminClientDetail() {
                 <CardContent className="p-5">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <h4 className="font-serif font-semibold text-foreground">{trip.title}</h4>
+                      <h4 className="font-serif font-semibold text-foreground">
+                        {trip.title}
+                      </h4>
                       <p className="text-muted-foreground font-sans text-sm flex items-center gap-1 mt-1">
                         <MapPin className="w-3.5 h-3.5" />
                         {trip.destination}
                       </p>
                       {trip.startDate && (
                         <p className="text-muted-foreground font-sans text-xs mt-1">
-                          {new Date(trip.startDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                          {trip.endDate && ` – ${new Date(trip.endDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`}
+                          {new Date(trip.startDate).toLocaleDateString(
+                            "en-US",
+                            { month: "short", day: "numeric" }
+                          )}
+                          {trip.endDate &&
+                            ` – ${new Date(trip.endDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`}
                         </p>
                       )}
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge className={`text-xs font-sans ${
-                        trip.status === "confirmed" ? "bg-green-100 text-green-800" :
-                        trip.status === "active" ? "bg-amber-100 text-amber-800" :
-                        trip.status === "completed" ? "bg-gray-100 text-gray-700" :
-                        "bg-blue-100 text-blue-800"
-                      }`}>
+                      <Badge
+                        className={`text-xs font-sans ${
+                          trip.status === "confirmed"
+                            ? "bg-green-100 text-green-800"
+                            : trip.status === "active"
+                              ? "bg-amber-100 text-amber-800"
+                              : trip.status === "completed"
+                                ? "bg-gray-100 text-gray-700"
+                                : "bg-blue-100 text-blue-800"
+                        }`}
+                      >
                         {trip.status}
                       </Badge>
                       <Link href={`/admin/trips/${trip.id}`}>
-                        <Button variant="ghost" size="sm" className="text-secondary font-sans text-xs">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-secondary font-sans text-xs"
+                        >
                           Edit <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
                         </Button>
                       </Link>

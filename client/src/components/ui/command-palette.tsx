@@ -2,10 +2,26 @@ import { useState, useEffect, useRef, useMemo, type ReactNode } from "react";
 import { useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import {
-  Search, X, LayoutDashboard, Calendar, MessageSquare, CheckSquare,
-  FileText, Globe, Plane, Bell, Home, Settings, HelpCircle, ArrowRight
+  Search,
+  X,
+  LayoutDashboard,
+  Calendar,
+  MessageSquare,
+  CheckSquare,
+  FileText,
+  Globe,
+  Plane,
+  Bell,
+  Home,
+  Settings,
+  HelpCircle,
+  ArrowRight,
 } from "lucide-react";
-import { useKeyboardShortcuts, SHORTCUTS, formatShortcut } from "@/hooks/useKeyboardShortcuts";
+import {
+  useKeyboardShortcuts,
+  SHORTCUTS,
+  formatShortcut,
+} from "@/hooks/useKeyboardShortcuts";
 
 interface CommandItem {
   id: string;
@@ -32,11 +48,11 @@ interface CommandPaletteProps {
 /**
  * Command palette for quick navigation and actions.
  * Opens with ⌘K (Ctrl+K on Windows).
- * 
+ *
  * @example
  * ```tsx
  * const { isOpen, open, close } = useCommandPalette();
- * 
+ *
  * return (
  *   <CommandPalette isOpen={isOpen} onClose={close} />
  * );
@@ -61,7 +77,10 @@ export function CommandPalette({
         id: "home",
         label: "Go to Home",
         icon: <Home className="w-4 h-4" />,
-        onSelect: () => { navigate("/"); onClose(); },
+        onSelect: () => {
+          navigate("/");
+          onClose();
+        },
         category: "Navigation",
         keywords: ["landing", "main"],
       },
@@ -70,7 +89,10 @@ export function CommandPalette({
         label: "Go to Dashboard",
         icon: <LayoutDashboard className="w-4 h-4" />,
         shortcut: formatShortcut({ key: "1", alt: true }),
-        onSelect: () => { navigate("/portal"); onClose(); },
+        onSelect: () => {
+          navigate("/portal");
+          onClose();
+        },
         category: "Navigation",
         keywords: ["portal", "overview"],
       },
@@ -79,7 +101,10 @@ export function CommandPalette({
         label: "Go to Itinerary",
         icon: <Calendar className="w-4 h-4" />,
         shortcut: formatShortcut({ key: "2", alt: true }),
-        onSelect: () => { navigate("/portal/itinerary"); onClose(); },
+        onSelect: () => {
+          navigate("/portal/itinerary");
+          onClose();
+        },
         category: "Navigation",
         keywords: ["schedule", "trip", "plan"],
       },
@@ -88,7 +113,10 @@ export function CommandPalette({
         label: "Go to Messages",
         icon: <MessageSquare className="w-4 h-4" />,
         shortcut: formatShortcut({ key: "3", alt: true }),
-        onSelect: () => { navigate("/portal/messages"); onClose(); },
+        onSelect: () => {
+          navigate("/portal/messages");
+          onClose();
+        },
         category: "Navigation",
         keywords: ["chat", "contact", "jessica"],
       },
@@ -97,7 +125,10 @@ export function CommandPalette({
         label: "Go to Packing List",
         icon: <CheckSquare className="w-4 h-4" />,
         shortcut: formatShortcut({ key: "4", alt: true }),
-        onSelect: () => { navigate("/portal/packing"); onClose(); },
+        onSelect: () => {
+          navigate("/portal/packing");
+          onClose();
+        },
         category: "Navigation",
         keywords: ["checklist", "items"],
       },
@@ -105,7 +136,10 @@ export function CommandPalette({
         id: "documents",
         label: "Go to Documents",
         icon: <FileText className="w-4 h-4" />,
-        onSelect: () => { navigate("/portal/documents"); onClose(); },
+        onSelect: () => {
+          navigate("/portal/documents");
+          onClose();
+        },
         category: "Navigation",
         keywords: ["files", "passport", "tickets"],
       },
@@ -113,7 +147,10 @@ export function CommandPalette({
         id: "guides",
         label: "Go to Travel Guides",
         icon: <Globe className="w-4 h-4" />,
-        onSelect: () => { navigate("/portal/guides"); onClose(); },
+        onSelect: () => {
+          navigate("/portal/guides");
+          onClose();
+        },
         category: "Navigation",
         keywords: ["tips", "destination"],
       },
@@ -121,7 +158,10 @@ export function CommandPalette({
         id: "bookings",
         label: "Go to Bookings",
         icon: <Plane className="w-4 h-4" />,
-        onSelect: () => { navigate("/portal/bookings"); onClose(); },
+        onSelect: () => {
+          navigate("/portal/bookings");
+          onClose();
+        },
         category: "Navigation",
         keywords: ["reservations", "flights", "hotels"],
       },
@@ -129,7 +169,10 @@ export function CommandPalette({
         id: "alerts",
         label: "Go to Alerts",
         icon: <Bell className="w-4 h-4" />,
-        onSelect: () => { navigate("/portal/alerts"); onClose(); },
+        onSelect: () => {
+          navigate("/portal/alerts");
+          onClose();
+        },
         category: "Navigation",
         keywords: ["notifications", "updates"],
       },
@@ -138,7 +181,10 @@ export function CommandPalette({
         label: "Show Keyboard Shortcuts",
         icon: <HelpCircle className="w-4 h-4" />,
         shortcut: "/",
-        onSelect: () => { document.dispatchEvent(new KeyboardEvent("keydown", { key: "/" })); onClose(); },
+        onSelect: () => {
+          document.dispatchEvent(new KeyboardEvent("keydown", { key: "/" }));
+          onClose();
+        },
         category: "Help",
         keywords: ["shortcuts", "hotkeys"],
       },
@@ -153,7 +199,7 @@ export function CommandPalette({
     if (!query.trim()) return allCommands;
 
     const lowerQuery = query.toLowerCase();
-    return allCommands.filter((cmd) => {
+    return allCommands.filter(cmd => {
       const searchText = [
         cmd.label,
         cmd.description,
@@ -171,7 +217,7 @@ export function CommandPalette({
   // Group by category
   const groupedCommands = useMemo(() => {
     const groups: Record<string, CommandItem[]> = {};
-    filteredCommands.forEach((cmd) => {
+    filteredCommands.forEach(cmd => {
       const cat = cmd.category || "General";
       if (!groups[cat]) groups[cat] = [];
       groups[cat].push(cmd);
@@ -201,12 +247,13 @@ export function CommandPalette({
       { combo: SHORTCUTS.escape, handler: onClose, description: "Close" },
       {
         combo: { key: "ArrowDown" },
-        handler: () => setSelectedIndex((i) => Math.min(i + 1, flatCommands.length - 1)),
+        handler: () =>
+          setSelectedIndex(i => Math.min(i + 1, flatCommands.length - 1)),
         description: "Next",
       },
       {
         combo: { key: "ArrowUp" },
-        handler: () => setSelectedIndex((i) => Math.max(i - 1, 0)),
+        handler: () => setSelectedIndex(i => Math.max(i - 1, 0)),
         description: "Previous",
       },
       {
@@ -220,7 +267,9 @@ export function CommandPalette({
 
   // Scroll selected item into view
   useEffect(() => {
-    const selectedEl = listRef.current?.querySelector(`[data-index="${selectedIndex}"]`);
+    const selectedEl = listRef.current?.querySelector(
+      `[data-index="${selectedIndex}"]`
+    );
     selectedEl?.scrollIntoView({ block: "nearest" });
   }, [selectedIndex]);
 
@@ -244,7 +293,7 @@ export function CommandPalette({
               ref={inputRef}
               type="text"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={e => setQuery(e.target.value)}
               placeholder={placeholder}
               className="flex-1 px-3 py-4 bg-transparent border-0 outline-none text-foreground placeholder:text-muted-foreground font-sans"
             />
@@ -276,7 +325,7 @@ export function CommandPalette({
                   <div className="px-3 py-2 text-xs font-sans font-semibold text-muted-foreground uppercase tracking-wider">
                     {category}
                   </div>
-                  {items.map((cmd) => {
+                  {items.map(cmd => {
                     const index = flatCommands.indexOf(cmd);
                     const isSelected = index === selectedIndex;
                     return (
@@ -295,18 +344,24 @@ export function CommandPalette({
                         <div
                           className={cn(
                             "w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0",
-                            isSelected ? "bg-secondary-foreground/20" : "bg-muted"
+                            isSelected
+                              ? "bg-secondary-foreground/20"
+                              : "bg-muted"
                           )}
                         >
                           {cmd.icon}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="font-sans font-medium truncate">{cmd.label}</p>
+                          <p className="font-sans font-medium truncate">
+                            {cmd.label}
+                          </p>
                           {cmd.description && (
                             <p
                               className={cn(
                                 "text-xs truncate",
-                                isSelected ? "text-secondary-foreground/70" : "text-muted-foreground"
+                                isSelected
+                                  ? "text-secondary-foreground/70"
+                                  : "text-muted-foreground"
                               )}
                             >
                               {cmd.description}
@@ -325,7 +380,9 @@ export function CommandPalette({
                             {cmd.shortcut}
                           </kbd>
                         )}
-                        {isSelected && <ArrowRight className="w-4 h-4 flex-shrink-0 opacity-50" />}
+                        {isSelected && (
+                          <ArrowRight className="w-4 h-4 flex-shrink-0 opacity-50" />
+                        )}
                       </button>
                     );
                   })}
@@ -371,6 +428,6 @@ export function useCommandPalette() {
     isOpen,
     open: () => setIsOpen(true),
     close: () => setIsOpen(false),
-    toggle: () => setIsOpen((v) => !v),
+    toggle: () => setIsOpen(v => !v),
   };
 }

@@ -5,28 +5,67 @@ import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import {
-  getTrips, getTripById, createTrip, updateTrip, deleteTrip,
-  getItineraryItems, createItineraryItem, updateItineraryItem, deleteItineraryItem,
-  getDocuments, createDocument, deleteDocument,
-  getMessages, createMessage, markMessagesRead, getMessageThreads,
-  getPackingItems, createPackingItem, updatePackingItem, deletePackingItem,
-  getBookings, createBooking, updateBooking, deleteBooking,
-  getDestinationGuides, getDestinationGuideByDestination, createDestinationGuide, updateDestinationGuide,
-  getTravelAlerts, markAlertRead,
-  getAllUsers, getUserById, updateUserProfile,
+  getTrips,
+  getTripById,
+  createTrip,
+  updateTrip,
+  deleteTrip,
+  getItineraryItems,
+  createItineraryItem,
+  updateItineraryItem,
+  deleteItineraryItem,
+  getDocuments,
+  createDocument,
+  deleteDocument,
+  getMessages,
+  createMessage,
+  markMessagesRead,
+  getMessageThreads,
+  getPackingItems,
+  createPackingItem,
+  updatePackingItem,
+  deletePackingItem,
+  getBookings,
+  createBooking,
+  updateBooking,
+  deleteBooking,
+  getDestinationGuides,
+  getDestinationGuideByDestination,
+  createDestinationGuide,
+  updateDestinationGuide,
+  getTravelAlerts,
+  markAlertRead,
+  getAllUsers,
+  getUserById,
+  updateUserProfile,
   getAdminStats,
-  createNotification, getNotifications, getUnreadNotificationCount,
-  markNotificationRead, markAllNotificationsRead, broadcastNotification,
-  savePushSubscription, deletePushSubscription,
-  createInviteToken, getInviteToken, markInviteTokenUsed, getInviteTokensCreatedBy,
+  createNotification,
+  getNotifications,
+  getUnreadNotificationCount,
+  markNotificationRead,
+  markAllNotificationsRead,
+  broadcastNotification,
+  savePushSubscription,
+  deletePushSubscription,
+  createInviteToken,
+  getInviteToken,
+  markInviteTokenUsed,
+  getInviteTokensCreatedBy,
 } from "./db";
-import { broadcastMessage, broadcastTyping, broadcastRead } from "./messageBroker";
+import {
+  broadcastMessage,
+  broadcastTyping,
+  broadcastRead,
+} from "./messageBroker";
 import { storagePut } from "./storage";
 import { sendInviteEmail, notifyOwnerOfInquiry } from "./email";
 
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
   if (ctx.user.role !== "admin") {
-    throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required" });
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Admin access required",
+    });
   }
   return next({ ctx });
 });
@@ -34,20 +73,22 @@ const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
 export const appRouter = router({
   system: systemRouter,
   auth: router({
-    me: publicProcedure.query((opts) => opts.ctx.user),
+    me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {
       const cookieOptions = getSessionCookieOptions(ctx.req);
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
       return { success: true } as const;
     }),
     updateProfile: protectedProcedure
-      .input(z.object({
-        name: z.string().optional(),
-        phone: z.string().optional(),
-        emergencyContactName: z.string().optional(),
-        emergencyContactPhone: z.string().optional(),
-        emergencyContactRelation: z.string().optional(),
-      }))
+      .input(
+        z.object({
+          name: z.string().optional(),
+          phone: z.string().optional(),
+          emergencyContactName: z.string().optional(),
+          emergencyContactPhone: z.string().optional(),
+          emergencyContactRelation: z.string().optional(),
+        })
+      )
       .mutation(async ({ ctx, input }) => {
         return await updateUserProfile(ctx.user.id, input);
       }),
@@ -71,17 +112,21 @@ export const appRouter = router({
         return trip;
       }),
     create: adminProcedure
-      .input(z.object({
-        userId: z.number(),
-        title: z.string(),
-        destination: z.string(),
-        coverImageUrl: z.string().optional(),
-        startDate: z.date().optional(),
-        endDate: z.date().optional(),
-        status: z.enum(["planning", "confirmed", "active", "completed", "cancelled"]).optional(),
-        notes: z.string().optional(),
-        confirmationCode: z.string().optional(),
-      }))
+      .input(
+        z.object({
+          userId: z.number(),
+          title: z.string(),
+          destination: z.string(),
+          coverImageUrl: z.string().optional(),
+          startDate: z.date().optional(),
+          endDate: z.date().optional(),
+          status: z
+            .enum(["planning", "confirmed", "active", "completed", "cancelled"])
+            .optional(),
+          notes: z.string().optional(),
+          confirmationCode: z.string().optional(),
+        })
+      )
       .mutation(async ({ input }) => {
         return await createTrip({
           userId: input.userId,
@@ -90,23 +135,27 @@ export const appRouter = router({
           coverImageUrl: input.coverImageUrl ?? null,
           startDate: input.startDate ?? null,
           endDate: input.endDate ?? null,
-          status: input.status ?? 'planning',
+          status: input.status ?? "planning",
           notes: input.notes ?? null,
           confirmationCode: input.confirmationCode ?? null,
         });
       }),
     update: adminProcedure
-      .input(z.object({
-        id: z.number(),
-        title: z.string().optional(),
-        destination: z.string().optional(),
-        coverImageUrl: z.string().optional(),
-        startDate: z.date().optional(),
-        endDate: z.date().optional(),
-        status: z.enum(["planning", "confirmed", "active", "completed", "cancelled"]).optional(),
-        notes: z.string().optional(),
-        confirmationCode: z.string().optional(),
-      }))
+      .input(
+        z.object({
+          id: z.number(),
+          title: z.string().optional(),
+          destination: z.string().optional(),
+          coverImageUrl: z.string().optional(),
+          startDate: z.date().optional(),
+          endDate: z.date().optional(),
+          status: z
+            .enum(["planning", "confirmed", "active", "completed", "cancelled"])
+            .optional(),
+          notes: z.string().optional(),
+          confirmationCode: z.string().optional(),
+        })
+      )
       .mutation(async ({ input }) => {
         const { id, ...data } = input;
         return await updateTrip(id, data);
@@ -125,19 +174,31 @@ export const appRouter = router({
         return await getItineraryItems(input.tripId);
       }),
     create: adminProcedure
-      .input(z.object({
-        tripId: z.number(),
-        dayNumber: z.number(),
-        date: z.date().optional(),
-        time: z.string().optional(),
-        title: z.string(),
-        description: z.string().optional(),
-        location: z.string().optional(),
-        category: z.enum(["flight", "hotel", "activity", "dining", "transport", "free_time", "other"]).optional(),
-        confirmationNumber: z.string().optional(),
-        notes: z.string().optional(),
-        sortOrder: z.number().optional(),
-      }))
+      .input(
+        z.object({
+          tripId: z.number(),
+          dayNumber: z.number(),
+          date: z.date().optional(),
+          time: z.string().optional(),
+          title: z.string(),
+          description: z.string().optional(),
+          location: z.string().optional(),
+          category: z
+            .enum([
+              "flight",
+              "hotel",
+              "activity",
+              "dining",
+              "transport",
+              "free_time",
+              "other",
+            ])
+            .optional(),
+          confirmationNumber: z.string().optional(),
+          notes: z.string().optional(),
+          sortOrder: z.number().optional(),
+        })
+      )
       .mutation(async ({ input }) => {
         return await createItineraryItem({
           tripId: input.tripId,
@@ -147,24 +208,36 @@ export const appRouter = router({
           title: input.title,
           description: input.description ?? null,
           location: input.location ?? null,
-          category: input.category ?? 'other',
+          category: input.category ?? "other",
           confirmationNumber: input.confirmationNumber ?? null,
           notes: input.notes ?? null,
           sortOrder: input.sortOrder ?? 0,
         });
       }),
     update: adminProcedure
-      .input(z.object({
-        id: z.number(),
-        time: z.string().optional(),
-        title: z.string().optional(),
-        description: z.string().optional(),
-        location: z.string().optional(),
-        category: z.enum(["flight", "hotel", "activity", "dining", "transport", "free_time", "other"]).optional(),
-        confirmationNumber: z.string().optional(),
-        notes: z.string().optional(),
-        sortOrder: z.number().optional(),
-      }))
+      .input(
+        z.object({
+          id: z.number(),
+          time: z.string().optional(),
+          title: z.string().optional(),
+          description: z.string().optional(),
+          location: z.string().optional(),
+          category: z
+            .enum([
+              "flight",
+              "hotel",
+              "activity",
+              "dining",
+              "transport",
+              "free_time",
+              "other",
+            ])
+            .optional(),
+          confirmationNumber: z.string().optional(),
+          notes: z.string().optional(),
+          sortOrder: z.number().optional(),
+        })
+      )
       .mutation(async ({ input }) => {
         const { id, ...data } = input;
         return await updateItineraryItem(id, data);
@@ -184,17 +257,27 @@ export const appRouter = router({
         return await getDocuments(userId, input.tripId);
       }),
     create: protectedProcedure
-      .input(z.object({
-        tripId: z.number().optional(),
-        name: z.string(),
-        type: z.enum(["passport", "boarding_pass", "hotel_confirmation", "tour_confirmation", "travel_insurance", "visa", "other"]),
-        fileUrl: z.string(),
-        fileKey: z.string(),
-        mimeType: z.string().optional(),
-        fileSize: z.number().optional(),
-        expiryDate: z.date().optional(),
-        notes: z.string().optional(),
-      }))
+      .input(
+        z.object({
+          tripId: z.number().optional(),
+          name: z.string(),
+          type: z.enum([
+            "passport",
+            "boarding_pass",
+            "hotel_confirmation",
+            "tour_confirmation",
+            "travel_insurance",
+            "visa",
+            "other",
+          ]),
+          fileUrl: z.string(),
+          fileKey: z.string(),
+          mimeType: z.string().optional(),
+          fileSize: z.number().optional(),
+          expiryDate: z.date().optional(),
+          notes: z.string().optional(),
+        })
+      )
       .mutation(async ({ ctx, input }) => {
         return await createDocument({
           userId: ctx.user.id,
@@ -212,51 +295,79 @@ export const appRouter = router({
     delete: protectedProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ ctx, input }) => {
-        return await deleteDocument(input.id, ctx.user.id, ctx.user.role === "admin");
+        return await deleteDocument(
+          input.id,
+          ctx.user.id,
+          ctx.user.role === "admin"
+        );
       }),
   }),
 
   messages: router({
     uploadAttachment: protectedProcedure
-      .input(z.object({
-        fileName: z.string(),
-        mimeType: z.string(),
-        base64Data: z.string(), // base64-encoded file content
-        fileSize: z.number().max(16 * 1024 * 1024, "File too large (max 16MB)"),
-      }))
+      .input(
+        z.object({
+          fileName: z.string(),
+          mimeType: z.string(),
+          base64Data: z.string(), // base64-encoded file content
+          fileSize: z
+            .number()
+            .max(16 * 1024 * 1024, "File too large (max 16MB)"),
+        })
+      )
       .mutation(async ({ ctx, input }) => {
         const allowedTypes = [
-          "image/jpeg", "image/png", "image/gif", "image/webp", "image/heic",
+          "image/jpeg",
+          "image/png",
+          "image/gif",
+          "image/webp",
+          "image/heic",
           "application/pdf",
           "application/msword",
           "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
           "text/plain",
         ];
         if (!allowedTypes.includes(input.mimeType)) {
-          throw new TRPCError({ code: "BAD_REQUEST", message: "File type not allowed" });
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "File type not allowed",
+          });
         }
         const suffix = Math.random().toString(36).slice(2, 8);
         const safeFileName = input.fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
         const key = `chat-attachments/${ctx.user.id}/${Date.now()}-${suffix}-${safeFileName}`;
         const buffer = Buffer.from(input.base64Data, "base64");
         const { url } = await storagePut(key, buffer, input.mimeType);
-        return { url, key, fileName: input.fileName, mimeType: input.mimeType, fileSize: input.fileSize };
+        return {
+          url,
+          key,
+          fileName: input.fileName,
+          mimeType: input.mimeType,
+          fileSize: input.fileSize,
+        };
       }),
     list: protectedProcedure
-      .input(z.object({ otherUserId: z.number().optional(), tripId: z.number().optional() }))
+      .input(
+        z.object({
+          otherUserId: z.number().optional(),
+          tripId: z.number().optional(),
+        })
+      )
       .query(async ({ ctx, input }) => {
         return await getMessages(ctx.user.id, input.otherUserId, input.tripId);
       }),
     send: protectedProcedure
-      .input(z.object({
-        toUserId: z.number(),
-        tripId: z.number().optional(),
-        content: z.string().min(1).max(4000),
-        attachmentUrl: z.string().optional(),
-        attachmentName: z.string().optional(),
-        attachmentType: z.string().optional(),
-        attachmentSize: z.number().optional(),
-      }))
+      .input(
+        z.object({
+          toUserId: z.number(),
+          tripId: z.number().optional(),
+          content: z.string().min(1).max(4000),
+          attachmentUrl: z.string().optional(),
+          attachmentName: z.string().optional(),
+          attachmentType: z.string().optional(),
+          attachmentSize: z.number().optional(),
+        })
+      )
       .mutation(async ({ ctx, input }) => {
         const msg = await createMessage({
           fromUserId: ctx.user.id,
@@ -293,10 +404,12 @@ export const appRouter = router({
         return result;
       }),
     typing: protectedProcedure
-      .input(z.object({
-        toUserId: z.number(),
-        isTyping: z.boolean(),
-      }))
+      .input(
+        z.object({
+          toUserId: z.number(),
+          isTyping: z.boolean(),
+        })
+      )
       .mutation(async ({ ctx, input }) => {
         broadcastTyping({
           fromUserId: ctx.user.id,
@@ -305,12 +418,11 @@ export const appRouter = router({
         });
         return { ok: true };
       }),
-    threads: protectedProcedure
-      .query(async ({ ctx }) => {
-        // Admin: get all unique conversation threads
-        // Client: get their thread with Jessica (admin)
-        return await getMessageThreads(ctx.user.id, ctx.user.role === "admin");
-      }),
+    threads: protectedProcedure.query(async ({ ctx }) => {
+      // Admin: get all unique conversation threads
+      // Client: get their thread with Jessica (admin)
+      return await getMessageThreads(ctx.user.id, ctx.user.role === "admin");
+    }),
   }),
 
   packing: router({
@@ -320,13 +432,15 @@ export const appRouter = router({
         return await getPackingItems(input.tripId, ctx.user.id);
       }),
     create: protectedProcedure
-      .input(z.object({
-        tripId: z.number(),
-        category: z.string().optional(),
-        item: z.string(),
-        quantity: z.number().optional(),
-        notes: z.string().optional(),
-      }))
+      .input(
+        z.object({
+          tripId: z.number(),
+          category: z.string().optional(),
+          item: z.string(),
+          quantity: z.number().optional(),
+          notes: z.string().optional(),
+        })
+      )
       .mutation(async ({ ctx, input }) => {
         return await createPackingItem({
           tripId: input.tripId,
@@ -357,18 +471,30 @@ export const appRouter = router({
         return await getBookings(input.tripId);
       }),
     create: adminProcedure
-      .input(z.object({
-        tripId: z.number(),
-        userId: z.number(),
-        type: z.enum(["flight", "hotel", "cruise", "tour", "car_rental", "transfer", "other"]),
-        vendor: z.string().optional(),
-        confirmationNumber: z.string().optional(),
-        status: z.enum(["pending", "confirmed", "cancelled", "waitlisted"]).optional(),
-        checkIn: z.date().optional(),
-        checkOut: z.date().optional(),
-        amount: z.number().optional(),
-        notes: z.string().optional(),
-      }))
+      .input(
+        z.object({
+          tripId: z.number(),
+          userId: z.number(),
+          type: z.enum([
+            "flight",
+            "hotel",
+            "cruise",
+            "tour",
+            "car_rental",
+            "transfer",
+            "other",
+          ]),
+          vendor: z.string().optional(),
+          confirmationNumber: z.string().optional(),
+          status: z
+            .enum(["pending", "confirmed", "cancelled", "waitlisted"])
+            .optional(),
+          checkIn: z.date().optional(),
+          checkOut: z.date().optional(),
+          amount: z.number().optional(),
+          notes: z.string().optional(),
+        })
+      )
       .mutation(async ({ input }) => {
         return await createBooking({
           tripId: input.tripId,
@@ -376,23 +502,27 @@ export const appRouter = router({
           type: input.type,
           vendor: input.vendor ?? null,
           confirmationNumber: input.confirmationNumber ?? null,
-          status: input.status ?? 'pending',
+          status: input.status ?? "pending",
           checkIn: input.checkIn ?? null,
           checkOut: input.checkOut ?? null,
           amount: input.amount ?? null,
-          currency: 'USD',
+          currency: "USD",
           notes: input.notes ?? null,
           documentUrl: null,
         });
       }),
     update: adminProcedure
-      .input(z.object({
-        id: z.number(),
-        status: z.enum(["pending", "confirmed", "cancelled", "waitlisted"]).optional(),
-        confirmationNumber: z.string().optional(),
-        notes: z.string().optional(),
-        amount: z.number().optional(),
-      }))
+      .input(
+        z.object({
+          id: z.number(),
+          status: z
+            .enum(["pending", "confirmed", "cancelled", "waitlisted"])
+            .optional(),
+          confirmationNumber: z.string().optional(),
+          notes: z.string().optional(),
+          amount: z.number().optional(),
+        })
+      )
       .mutation(async ({ input }) => {
         const { id, ...data } = input;
         return await updateBooking(id, data);
@@ -414,19 +544,21 @@ export const appRouter = router({
         return await getDestinationGuideByDestination(input.destination);
       }),
     create: adminProcedure
-      .input(z.object({
-        destination: z.string(),
-        country: z.string().optional(),
-        heroImageUrl: z.string().optional(),
-        overview: z.string().optional(),
-        currency: z.string().optional(),
-        language: z.string().optional(),
-        timezone: z.string().optional(),
-        bestTimeToVisit: z.string().optional(),
-        weatherInfo: z.string().optional(),
-        tipsJson: z.any().optional(),
-        emergencyNumbers: z.any().optional(),
-      }))
+      .input(
+        z.object({
+          destination: z.string(),
+          country: z.string().optional(),
+          heroImageUrl: z.string().optional(),
+          overview: z.string().optional(),
+          currency: z.string().optional(),
+          language: z.string().optional(),
+          timezone: z.string().optional(),
+          bestTimeToVisit: z.string().optional(),
+          weatherInfo: z.string().optional(),
+          tipsJson: z.any().optional(),
+          emergencyNumbers: z.any().optional(),
+        })
+      )
       .mutation(async ({ input }) => {
         return await createDestinationGuide({
           destination: input.destination,
@@ -443,18 +575,20 @@ export const appRouter = router({
         });
       }),
     update: adminProcedure
-      .input(z.object({
-        id: z.number(),
-        overview: z.string().optional(),
-        currency: z.string().optional(),
-        language: z.string().optional(),
-        timezone: z.string().optional(),
-        bestTimeToVisit: z.string().optional(),
-        weatherInfo: z.string().optional(),
-        tipsJson: z.any().optional(),
-        emergencyNumbers: z.any().optional(),
-        heroImageUrl: z.string().optional(),
-      }))
+      .input(
+        z.object({
+          id: z.number(),
+          overview: z.string().optional(),
+          currency: z.string().optional(),
+          language: z.string().optional(),
+          timezone: z.string().optional(),
+          bestTimeToVisit: z.string().optional(),
+          weatherInfo: z.string().optional(),
+          tipsJson: z.any().optional(),
+          emergencyNumbers: z.any().optional(),
+          heroImageUrl: z.string().optional(),
+        })
+      )
       .mutation(async ({ input }) => {
         const { id, ...data } = input;
         return await updateDestinationGuide(id, data);
@@ -473,13 +607,15 @@ export const appRouter = router({
         return await markAlertRead(input.id);
       }),
     create: adminProcedure
-      .input(z.object({
-        tripId: z.number().optional(),
-        userId: z.number().optional(),
-        title: z.string(),
-        content: z.string(),
-        severity: z.enum(["info", "warning", "urgent"]).optional(),
-      }))
+      .input(
+        z.object({
+          tripId: z.number().optional(),
+          userId: z.number().optional(),
+          title: z.string(),
+          content: z.string(),
+          severity: z.enum(["info", "warning", "urgent"]).optional(),
+        })
+      )
       .mutation(async ({ input }) => {
         const { getDb } = await import("./db");
         const { travelAlerts } = await import("../drizzle/schema");
@@ -509,15 +645,26 @@ export const appRouter = router({
     }),
     // Admin: send to a specific user
     send: adminProcedure
-      .input(z.object({
-        userId: z.number(),
-        tripId: z.number().optional(),
-        title: z.string(),
-        body: z.string(),
-        type: z.enum(["message", "itinerary", "document", "alert", "booking", "system"]).optional(),
-        channel: z.enum(["in_app", "email", "push", "all"]).optional(),
-        actionUrl: z.string().optional(),
-      }))
+      .input(
+        z.object({
+          userId: z.number(),
+          tripId: z.number().optional(),
+          title: z.string(),
+          body: z.string(),
+          type: z
+            .enum([
+              "message",
+              "itinerary",
+              "document",
+              "alert",
+              "booking",
+              "system",
+            ])
+            .optional(),
+          channel: z.enum(["in_app", "email", "push", "all"]).optional(),
+          actionUrl: z.string().optional(),
+        })
+      )
       .mutation(async ({ input }) => {
         return await createNotification({
           userId: input.userId,
@@ -531,14 +678,25 @@ export const appRouter = router({
       }),
     // Admin: broadcast to all clients
     broadcast: adminProcedure
-      .input(z.object({
-        title: z.string(),
-        body: z.string(),
-        type: z.enum(["message", "itinerary", "document", "alert", "booking", "system"]).optional(),
-        channel: z.enum(["in_app", "email", "push", "all"]).optional(),
-        tripId: z.number().optional(),
-        actionUrl: z.string().optional(),
-      }))
+      .input(
+        z.object({
+          title: z.string(),
+          body: z.string(),
+          type: z
+            .enum([
+              "message",
+              "itinerary",
+              "document",
+              "alert",
+              "booking",
+              "system",
+            ])
+            .optional(),
+          channel: z.enum(["in_app", "email", "push", "all"]).optional(),
+          tripId: z.number().optional(),
+          actionUrl: z.string().optional(),
+        })
+      )
       .mutation(async ({ input }) => {
         return await broadcastNotification({
           tripId: input.tripId ?? null,
@@ -553,14 +711,22 @@ export const appRouter = router({
 
   push: router({
     subscribe: protectedProcedure
-      .input(z.object({
-        endpoint: z.string(),
-        p256dh: z.string(),
-        auth: z.string(),
-        userAgent: z.string().optional(),
-      }))
+      .input(
+        z.object({
+          endpoint: z.string(),
+          p256dh: z.string(),
+          auth: z.string(),
+          userAgent: z.string().optional(),
+        })
+      )
       .mutation(async ({ ctx, input }) => {
-        return await savePushSubscription(ctx.user.id, input.endpoint, input.p256dh, input.auth, input.userAgent);
+        return await savePushSubscription(
+          ctx.user.id,
+          input.endpoint,
+          input.p256dh,
+          input.auth,
+          input.userAgent
+        );
       }),
     unsubscribe: protectedProcedure
       .input(z.object({ endpoint: z.string() }))
@@ -590,12 +756,14 @@ export const appRouter = router({
   invites: router({
     // Admin: create an invite link for a new client
     create: adminProcedure
-      .input(z.object({
-        email: z.string().email(),
-        name: z.string().optional(),
-        tripId: z.number().optional(),
-        origin: z.string().url(),
-      }))
+      .input(
+        z.object({
+          email: z.string().email(),
+          name: z.string().optional(),
+          tripId: z.number().optional(),
+          origin: z.string().url(),
+        })
+      )
       .mutation(async ({ ctx, input }) => {
         const invite = await createInviteToken(
           input.email,
@@ -615,7 +783,8 @@ export const appRouter = router({
             expiresInDays: 7,
           });
           emailSent = emailResult.success;
-          if (!emailResult.success) emailError = (emailResult as { error: string }).error;
+          if (!emailResult.success)
+            emailError = (emailResult as { error: string }).error;
         } catch (e) {
           emailError = e instanceof Error ? e.message : String(e);
         }
@@ -631,18 +800,39 @@ export const appRouter = router({
       .query(async ({ input }) => {
         const invite = await getInviteToken(input.token);
         if (!invite) return { valid: false, reason: "Token not found" };
-        if (invite.usedAt) return { valid: false, reason: "This invite has already been used" };
-        if (new Date() > invite.expiresAt) return { valid: false, reason: "This invite has expired" };
-        return { valid: true, invite: { email: invite.email, name: invite.name, tripId: invite.tripId } };
+        if (invite.usedAt)
+          return { valid: false, reason: "This invite has already been used" };
+        if (new Date() > invite.expiresAt)
+          return { valid: false, reason: "This invite has expired" };
+        return {
+          valid: true,
+          invite: {
+            email: invite.email,
+            name: invite.name,
+            tripId: invite.tripId,
+          },
+        };
       }),
     // Protected: mark token as used after the user signs in
     accept: protectedProcedure
       .input(z.object({ token: z.string() }))
       .mutation(async ({ ctx, input }) => {
         const invite = await getInviteToken(input.token);
-        if (!invite) throw new TRPCError({ code: "NOT_FOUND", message: "Invite not found" });
-        if (invite.usedAt) throw new TRPCError({ code: "BAD_REQUEST", message: "Invite already used" });
-        if (new Date() > invite.expiresAt) throw new TRPCError({ code: "BAD_REQUEST", message: "Invite expired" });
+        if (!invite)
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Invite not found",
+          });
+        if (invite.usedAt)
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Invite already used",
+          });
+        if (new Date() > invite.expiresAt)
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Invite expired",
+          });
         await markInviteTokenUsed(input.token, ctx.user.id);
         return { success: true };
       }),
@@ -651,25 +841,33 @@ export const appRouter = router({
   webhooks: router({
     // TravelJoy form submission webhook
     traveljoyInquiry: publicProcedure
-      .input(z.object({
-        name: z.string().optional(),
-        email: z.string().email().optional(),
-        phone: z.string().optional(),
-        destination: z.string().optional(),
-        tripType: z.string().optional(),
-        message: z.string().optional(),
-        inquiryUrl: z.string().optional(),
-      }))
+      .input(
+        z.object({
+          name: z.string().optional(),
+          email: z.string().email().optional(),
+          phone: z.string().optional(),
+          destination: z.string().optional(),
+          tripType: z.string().optional(),
+          message: z.string().optional(),
+          inquiryUrl: z.string().optional(),
+        })
+      )
       .mutation(async ({ input }) => {
         try {
           const result = await notifyOwnerOfInquiry({
             inquiryData: input,
             inquiryUrl: input.inquiryUrl,
           });
-          return { success: result.success, id: result.success ? result.id : undefined };
+          return {
+            success: result.success,
+            id: result.success ? result.id : undefined,
+          };
         } catch (err) {
           console.error("[webhooks.traveljoyInquiry] Error:", err);
-          return { success: false, error: err instanceof Error ? err.message : "Unknown error" };
+          return {
+            success: false,
+            error: err instanceof Error ? err.message : "Unknown error",
+          };
         }
       }),
   }),

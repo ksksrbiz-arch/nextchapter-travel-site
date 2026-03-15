@@ -15,7 +15,7 @@ export function useFormState<T extends Record<string, any>>(
   const handleChange = useCallback(
     (field: keyof T, value: any) => {
       setValues(prev => ({ ...prev, [field]: value }));
-      
+
       // Clear error for this field when user starts typing
       if (errors[field as string]) {
         setErrors(prev => ({ ...prev, [field]: undefined }));
@@ -73,17 +73,14 @@ export function useFormState<T extends Record<string, any>>(
 /**
  * Hook for managing a single input field state with validation
  */
-export function useField(
-  initialValue: string = "",
-  rule?: ValidationRule
-) {
+export function useField(initialValue: string = "", rule?: ValidationRule) {
   const [value, setValue] = useState(initialValue);
   const [error, setError] = useState<string | undefined>();
 
   const handleChange = useCallback(
     (newValue: string) => {
       setValue(newValue);
-      
+
       // Clear error when user starts typing
       if (error) {
         setError(undefined);
@@ -110,6 +107,11 @@ export function useField(
     setError,
     handleChange,
     reset,
-    bind: { value, onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => handleChange(e.target.value) }
+    bind: {
+      value,
+      onChange: (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+      ) => handleChange(e.target.value),
+    },
   };
 }

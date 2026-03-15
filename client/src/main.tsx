@@ -1,5 +1,5 @@
 import { trpc } from "@/lib/trpc";
-import { UNAUTHED_ERR_MSG } from '@shared/const';
+import { UNAUTHED_ERR_MSG } from "@shared/const";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink, TRPCClientError } from "@trpc/client";
 import { createRoot } from "react-dom/client";
@@ -54,7 +54,9 @@ const trpcClient = trpc.createClient({
 
 const rootElement = document.getElementById("root");
 if (!rootElement) {
-  throw new Error("[NextChapter] Root DOM element #root not found. Check index.html.");
+  throw new Error(
+    "[NextChapter] Root DOM element #root not found. Check index.html."
+  );
 }
 
 createRoot(rootElement).render(

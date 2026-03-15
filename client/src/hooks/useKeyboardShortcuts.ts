@@ -20,19 +20,19 @@ interface Shortcut {
 
 /**
  * Keyboard shortcut manager hook.
- * 
+ *
  * @example
  * ```tsx
  * useKeyboardShortcuts([
- *   { 
- *     combo: { key: "k", meta: true }, 
+ *   {
+ *     combo: { key: "k", meta: true },
  *     handler: () => setSearchOpen(true),
- *     description: "Open search" 
+ *     description: "Open search"
  *   },
- *   { 
- *     combo: { key: "Escape" }, 
+ *   {
+ *     combo: { key: "Escape" },
  *     handler: () => setModalOpen(false),
- *     description: "Close modal" 
+ *     description: "Close modal"
  *   },
  * ]);
  * ```
@@ -44,7 +44,7 @@ export function useKeyboardShortcuts(shortcuts: Shortcut[], enabled = true) {
 
       // Don't trigger shortcuts when typing in inputs
       const target = event.target as HTMLElement;
-      const isEditable = 
+      const isEditable =
         target.tagName === "INPUT" ||
         target.tagName === "TEXTAREA" ||
         target.isContentEditable;
@@ -71,9 +71,7 @@ export function useKeyboardShortcuts(shortcuts: Shortcut[], enabled = true) {
           !!combo.alt === event.altKey;
 
         // Special handling for meta key on Mac
-        const metaMatches = combo.meta
-          ? event.metaKey || event.ctrlKey
-          : true;
+        const metaMatches = combo.meta ? event.metaKey || event.ctrlKey : true;
 
         if (keyMatches && modifiersMatch && metaMatches) {
           event.preventDefault();
@@ -113,7 +111,8 @@ export const SHORTCUTS = {
  * Creates a shortcut string for display (e.g., "⌘K" or "Ctrl+K")
  */
 export function formatShortcut(combo: KeyCombo): string {
-  const isMac = typeof navigator !== "undefined" && navigator.platform.includes("Mac");
+  const isMac =
+    typeof navigator !== "undefined" && navigator.platform.includes("Mac");
   const parts: string[] = [];
 
   if (combo.ctrl) parts.push(isMac ? "⌃" : "Ctrl");
@@ -122,9 +121,10 @@ export function formatShortcut(combo: KeyCombo): string {
   if (combo.alt) parts.push(isMac ? "⌥" : "Alt");
 
   // Format the key nicely
-  const key = combo.key.length === 1 
-    ? combo.key.toUpperCase() 
-    : combo.key.replace("Arrow", "").replace("Escape", "Esc");
+  const key =
+    combo.key.length === 1
+      ? combo.key.toUpperCase()
+      : combo.key.replace("Arrow", "").replace("Escape", "Esc");
 
   parts.push(key);
 

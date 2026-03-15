@@ -81,7 +81,9 @@ describe("invites.validate (public)", () => {
   it("returns invalid for a non-existent token", async () => {
     const { ctx } = createPublicContext();
     const caller = appRouter.createCaller(ctx);
-    const result = await caller.invites.validate({ token: "nonexistent-token-xyz" });
+    const result = await caller.invites.validate({
+      token: "nonexistent-token-xyz",
+    });
     expect(result.valid).toBe(false);
     expect(result.reason).toBe("Token not found");
   });
@@ -91,7 +93,9 @@ describe("invites.list (admin only)", () => {
   it("throws FORBIDDEN for non-admin users", async () => {
     const { ctx } = createClientContext();
     const caller = appRouter.createCaller(ctx);
-    await expect(caller.invites.list()).rejects.toThrow("Admin access required");
+    await expect(caller.invites.list()).rejects.toThrow(
+      "Admin access required"
+    );
   });
 });
 

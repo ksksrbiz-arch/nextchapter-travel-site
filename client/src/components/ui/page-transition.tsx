@@ -21,7 +21,7 @@ export function PageTransition({ children, className }: PageTransitionProps) {
     if (location !== prevLocation.current) {
       // Route changed - trigger exit animation
       setIsVisible(false);
-      
+
       const timeout = setTimeout(() => {
         // After exit animation, update content and trigger enter animation
         setDisplayChildren(children);
@@ -40,9 +40,7 @@ export function PageTransition({ children, className }: PageTransitionProps) {
     <div
       className={cn(
         "transition-all duration-200 ease-out",
-        isVisible 
-          ? "opacity-100 translate-y-0" 
-          : "opacity-0 translate-y-2",
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2",
         className
       )}
     >
@@ -55,17 +53,17 @@ export function PageTransition({ children, className }: PageTransitionProps) {
  * Simpler stagger animation for list items.
  * Wrap a list container and children will animate in sequence.
  */
-export function StaggerContainer({ 
-  children, 
+export function StaggerContainer({
+  children,
   className,
-  delay = 50 
-}: { 
-  children: ReactNode; 
+  delay = 50,
+}: {
+  children: ReactNode;
   className?: string;
   delay?: number;
 }) {
   return (
-    <div 
+    <div
       className={className}
       style={{ "--stagger-delay": `${delay}ms` } as React.CSSProperties}
     >
@@ -77,21 +75,21 @@ export function StaggerContainer({
 /**
  * Individual stagger item - use inside StaggerContainer
  */
-export function StaggerItem({ 
-  children, 
-  index = 0, 
-  className 
-}: { 
-  children: ReactNode; 
+export function StaggerItem({
+  children,
+  index = 0,
+  className,
+}: {
+  children: ReactNode;
   index?: number;
   className?: string;
 }) {
   return (
     <div
       className={cn("animate-fade-in-up opacity-0", className)}
-      style={{ 
+      style={{
         animationDelay: `calc(var(--stagger-delay, 50ms) * ${index})`,
-        animationFillMode: "forwards"
+        animationFillMode: "forwards",
       }}
     >
       {children}

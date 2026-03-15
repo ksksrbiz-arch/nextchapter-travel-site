@@ -8,13 +8,23 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { toast } from "sonner";
 import {
-  Send, MessageSquare, Users, CheckCheck, Check, Wifi, WifiOff, Circle
+  Send,
+  MessageSquare,
+  Users,
+  CheckCheck,
+  Check,
+  Wifi,
+  WifiOff,
+  Circle,
 } from "lucide-react";
 import { useSearch } from "wouter";
 import { cn } from "@/lib/utils";
 import { useSSEMessages, SSEMessagePayload } from "@/hooks/useSSEMessages";
 import {
-  AttachmentPicker, AttachmentPreview, AttachmentBubble, AttachmentMeta
+  AttachmentPicker,
+  AttachmentPreview,
+  AttachmentBubble,
+  AttachmentMeta,
 } from "@/components/ChatAttachment";
 
 type Message = {
@@ -42,23 +52,33 @@ export default function AdminMessages() {
   const { user } = useAuth();
   const search = useSearch();
   const params = new URLSearchParams(search);
-  const defaultClientId = params.get("client") ? Number(params.get("client")) : undefined;
+  const defaultClientId = params.get("client")
+    ? Number(params.get("client"))
+    : undefined;
 
   const { data: clients } = trpc.admin.clients.useQuery();
-  const [selectedClientId, setSelectedClientId] = useState<number | null>(defaultClientId ?? null);
+  const [selectedClientId, setSelectedClientId] = useState<number | null>(
+    defaultClientId ?? null
+  );
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [clientTyping, setClientTyping] = useState(false);
-  const [typingTimeout, setTypingTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
-  const [pendingAttachment, setPendingAttachment] = useState<AttachmentMeta | null>(null);
+  const [typingTimeout, setTypingTimeout] = useState<ReturnType<
+    typeof setTimeout
+  > | null>(null);
+  const [pendingAttachment, setPendingAttachment] =
+    useState<AttachmentMeta | null>(null);
   // Track unread counts per client
   const [unreadCounts, setUnreadCounts] = useState<Record<number, number>>({});
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const selectedClient = (clients as Client[] | undefined)?.find(c => c.id === selectedClientId);
+  const selectedClient = (clients as Client[] | undefined)?.find(
+    c => c.id === selectedClientId
+  );
   // Only show non-admin clients
-  const clientList = (clients as Client[] | undefined)?.filter(c => c.role !== "admin") ?? [];
+  const clientList =
+    (clients as Client[] | undefined)?.filter(c => c.role !== "admin") ?? [];
 
   // Load initial messages for selected client
   const { data: initialMessages, isLoading } = trpc.messages.list.useQuery(
@@ -78,12 +98,14 @@ export default function AdminMessages() {
       if (selectedClientId) {
         setUnreadCounts(prev => ({ ...prev, [selectedClientId]: 0 }));
       }
-    }
+    },
   });
 
   useEffect(() => {
     if (selectedClientId && messages.length > 0) {
-      const hasUnread = messages.some(m => m.fromUserId === selectedClientId && !m.isRead);
+      const hasUnread = messages.some(
+        m => m.fromUserId === selectedClientId && !m.isRead
+      );
       if (hasUnread) {
         markRead.mutate({ fromUserId: selectedClientId });
       }
@@ -94,43 +116,54 @@ export default function AdminMessages() {
   const typingMutation = trpc.messages.typing.useMutation();
 
   // SSE real-time connection
-  const handleSSEMessage = useCallback((msg: SSEMessagePayload) => {
-    if (!user) return;
-    const isRelevant =
-      (msg.fromUserId === user.id && msg.toUserId === selectedClientId) ||
-      (msg.fromUserId === selectedClientId && msg.toUserId === user.id);
+  const handleSSEMessage = useCallback(
+    (msg: SSEMessagePayload) => {
+      if (!user) return;
+      const isRelevant =
+        (msg.fromUserId === user.id && msg.toUserId === selectedClientId) ||
+        (msg.fromUserId === selectedClientId && msg.toUserId === user.id);
 
-    if (isRelevant) {
-      setMessages(prev => {
-        if (prev.find(m => m.id === msg.id)) return prev;
-        return [...prev, { ...msg, createdAt: new Date(msg.createdAt) }];
-      });
-      // Auto-mark as read if we're viewing this thread
-      if (msg.fromUserId === selectedClientId && selectedClientId) {
-        markRead.mutate({ fromUserId: selectedClientId });
+      if (isRelevant) {
+        setMessages(prev => {
+          if (prev.find(m => m.id === msg.id)) return prev;
+          return [...prev, { ...msg, createdAt: new Date(msg.createdAt) }];
+        });
+        // Auto-mark as read if we're viewing this thread
+        if (msg.fromUserId === selectedClientId && selectedClientId) {
+          markRead.mutate({ fromUserId: selectedClientId });
+        }
+      } else if (msg.toUserId === user.id) {
+        // Increment unread badge for other clients
+        setUnreadCounts(prev => ({
+          ...prev,
+          [msg.fromUserId]: (prev[msg.fromUserId] ?? 0) + 1,
+        }));
       }
-    } else if (msg.toUserId === user.id) {
-      // Increment unread badge for other clients
-      setUnreadCounts(prev => ({
-        ...prev,
-        [msg.fromUserId]: (prev[msg.fromUserId] ?? 0) + 1,
-      }));
-    }
-  }, [user, selectedClientId]);
+    },
+    [user, selectedClientId]
+  );
 
-  const handleSSETyping = useCallback((evt: { fromUserId: number; isTyping: boolean }) => {
-    if (evt.fromUserId === selectedClientId) {
-      setClientTyping(evt.isTyping);
-    }
-  }, [selectedClientId]);
+  const handleSSETyping = useCallback(
+    (evt: { fromUserId: number; isTyping: boolean }) => {
+      if (evt.fromUserId === selectedClientId) {
+        setClientTyping(evt.isTyping);
+      }
+    },
+    [selectedClientId]
+  );
 
-  const handleSSERead = useCallback((evt: { byUserId: number }) => {
-    if (evt.byUserId === selectedClientId) {
-      setMessages(prev =>
-        prev.map(m => m.fromUserId === user?.id ? { ...m, isRead: true } : m)
-      );
-    }
-  }, [selectedClientId, user]);
+  const handleSSERead = useCallback(
+    (evt: { byUserId: number }) => {
+      if (evt.byUserId === selectedClientId) {
+        setMessages(prev =>
+          prev.map(m =>
+            m.fromUserId === user?.id ? { ...m, isRead: true } : m
+          )
+        );
+      }
+    },
+    [selectedClientId, user]
+  );
 
   const { connected } = useSSEMessages({
     onMessage: handleSSEMessage,
@@ -229,11 +262,12 @@ export default function AdminMessages() {
   return (
     <AdminLayout title="Messages" subtitle="Real-time client communication">
       <div className="flex gap-0 h-[calc(100dvh-12rem)] rounded-2xl border border-border overflow-hidden bg-card">
-
         {/* Client Thread List */}
         <div className="w-64 xl:w-72 flex-shrink-0 border-r border-border flex flex-col">
           <div className="p-4 border-b border-border flex items-center justify-between">
-            <h3 className="font-serif font-semibold text-foreground text-sm">Conversations</h3>
+            <h3 className="font-serif font-semibold text-foreground text-sm">
+              Conversations
+            </h3>
             <div className="flex items-center gap-1.5">
               {connected ? (
                 <span className="flex items-center gap-1 text-xs text-emerald-600">
@@ -250,7 +284,9 @@ export default function AdminMessages() {
             {clientList.length === 0 ? (
               <div className="p-6 text-center">
                 <Users className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-                <p className="text-muted-foreground font-sans text-xs">No clients yet</p>
+                <p className="text-muted-foreground font-sans text-xs">
+                  No clients yet
+                </p>
               </div>
             ) : (
               clientList.map(client => {
@@ -283,13 +319,19 @@ export default function AdminMessages() {
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className={cn(
-                        "font-sans text-sm truncate",
-                        unread > 0 ? "font-semibold text-foreground" : "font-medium text-foreground"
-                      )}>
+                      <p
+                        className={cn(
+                          "font-sans text-sm truncate",
+                          unread > 0
+                            ? "font-semibold text-foreground"
+                            : "font-medium text-foreground"
+                        )}
+                      >
                         {client.name ?? "Unknown"}
                       </p>
-                      <p className="font-sans text-xs text-muted-foreground truncate">{client.email ?? ""}</p>
+                      <p className="font-sans text-xs text-muted-foreground truncate">
+                        {client.email ?? ""}
+                      </p>
                     </div>
                     {unread > 0 && (
                       <Circle className="w-2 h-2 fill-primary text-primary flex-shrink-0" />
@@ -309,9 +351,12 @@ export default function AdminMessages() {
                 <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
                   <MessageSquare className="w-8 h-8 text-primary" />
                 </div>
-                <h3 className="text-lg font-serif font-semibold text-foreground mb-2">Select a Conversation</h3>
+                <h3 className="text-lg font-serif font-semibold text-foreground mb-2">
+                  Select a Conversation
+                </h3>
                 <p className="text-muted-foreground font-sans text-sm max-w-xs">
-                  Choose a client from the left to view and send messages in real time.
+                  Choose a client from the left to view and send messages in
+                  real time.
                 </p>
               </div>
             </div>
@@ -334,7 +379,7 @@ export default function AdminMessages() {
                         <span className="animate-pulse">●</span> Typing...
                       </span>
                     ) : (
-                      selectedClient?.email ?? ""
+                      (selectedClient?.email ?? "")
                     )}
                   </p>
                 </div>
@@ -346,8 +391,11 @@ export default function AdminMessages() {
                   <div className="flex justify-center py-8">
                     <div className="flex gap-1">
                       {[0, 1, 2].map(i => (
-                        <div key={i} className="w-2 h-2 rounded-full bg-muted-foreground/30 animate-bounce"
-                          style={{ animationDelay: `${i * 0.15}s` }} />
+                        <div
+                          key={i}
+                          className="w-2 h-2 rounded-full bg-muted-foreground/30 animate-bounce"
+                          style={{ animationDelay: `${i * 0.15}s` }}
+                        />
                       ))}
                     </div>
                   </div>
@@ -365,16 +413,27 @@ export default function AdminMessages() {
                   <div key={date} className="space-y-1">
                     <div className="flex items-center gap-3 py-2">
                       <div className="flex-1 h-px bg-border" />
-                      <span className="text-xs text-muted-foreground font-sans font-medium px-2">{date}</span>
+                      <span className="text-xs text-muted-foreground font-sans font-medium px-2">
+                        {date}
+                      </span>
                       <div className="flex-1 h-px bg-border" />
                     </div>
 
                     {msgs.map((msg, idx) => {
                       const isFromMe = msg.fromUserId === user?.id;
-                      const showAvatar = !isFromMe && (idx === 0 || msgs[idx - 1]?.fromUserId !== msg.fromUserId);
+                      const showAvatar =
+                        !isFromMe &&
+                        (idx === 0 ||
+                          msgs[idx - 1]?.fromUserId !== msg.fromUserId);
 
                       return (
-                        <div key={msg.id} className={cn("flex items-end gap-2", isFromMe ? "flex-row-reverse" : "flex-row")}>
+                        <div
+                          key={msg.id}
+                          className={cn(
+                            "flex items-end gap-2",
+                            isFromMe ? "flex-row-reverse" : "flex-row"
+                          )}
+                        >
                           <div className="w-7 flex-shrink-0">
                             {!isFromMe && showAvatar && (
                               <Avatar className="h-7 w-7">
@@ -384,7 +443,12 @@ export default function AdminMessages() {
                               </Avatar>
                             )}
                           </div>
-                          <div className={cn("max-w-[70%] flex flex-col gap-1", isFromMe ? "items-end" : "items-start")}>
+                          <div
+                            className={cn(
+                              "max-w-[70%] flex flex-col gap-1",
+                              isFromMe ? "items-end" : "items-start"
+                            )}
+                          >
                             {msg.attachmentUrl && (
                               <AttachmentBubble
                                 url={msg.attachmentUrl}
@@ -394,23 +458,30 @@ export default function AdminMessages() {
                                 isFromMe={isFromMe}
                               />
                             )}
-                            {msg.content && msg.content.trim() && msg.content !== " " && (
-                            <div className={cn(
-                              "px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed shadow-sm font-sans",
-                              isFromMe
-                                ? "bg-primary text-primary-foreground rounded-br-sm"
-                                : "bg-card border border-border text-foreground rounded-bl-sm"
-                            )}>
-                              {msg.content}
-                            </div>
-                            )}
-                            <div className="flex items-center gap-1 px-1">
-                              <span className="text-[10px] text-muted-foreground font-sans">{formatTime(msg.createdAt)}</span>
-                              {isFromMe && (
-                                msg.isRead
-                                  ? <CheckCheck className="w-3 h-3 text-secondary" />
-                                  : <Check className="w-3 h-3 text-muted-foreground" />
+                            {msg.content &&
+                              msg.content.trim() &&
+                              msg.content !== " " && (
+                                <div
+                                  className={cn(
+                                    "px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed shadow-sm font-sans",
+                                    isFromMe
+                                      ? "bg-primary text-primary-foreground rounded-br-sm"
+                                      : "bg-card border border-border text-foreground rounded-bl-sm"
+                                  )}
+                                >
+                                  {msg.content}
+                                </div>
                               )}
+                            <div className="flex items-center gap-1 px-1">
+                              <span className="text-[10px] text-muted-foreground font-sans">
+                                {formatTime(msg.createdAt)}
+                              </span>
+                              {isFromMe &&
+                                (msg.isRead ? (
+                                  <CheckCheck className="w-3 h-3 text-secondary" />
+                                ) : (
+                                  <Check className="w-3 h-3 text-muted-foreground" />
+                                ))}
                             </div>
                           </div>
                         </div>
@@ -430,8 +501,11 @@ export default function AdminMessages() {
                     <div className="bg-card border border-border rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm">
                       <div className="flex gap-1 items-center h-4">
                         {[0, 1, 2].map(i => (
-                          <div key={i} className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce"
-                            style={{ animationDelay: `${i * 0.15}s` }} />
+                          <div
+                            key={i}
+                            className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce"
+                            style={{ animationDelay: `${i * 0.15}s` }}
+                          />
                         ))}
                       </div>
                     </div>
@@ -458,17 +532,27 @@ export default function AdminMessages() {
                   value={input}
                   onChange={handleInputChange}
                   onKeyDown={handleKeyDown}
-                  placeholder={pendingAttachment ? "Add a caption..." : `Message ${selectedClient?.name ?? "client"}...`}
+                  placeholder={
+                    pendingAttachment
+                      ? "Add a caption..."
+                      : `Message ${selectedClient?.name ?? "client"}...`
+                  }
                   className="flex-1 font-sans border-border resize-none min-h-[44px] max-h-[120px] py-2.5 text-sm leading-relaxed rounded-xl"
                   rows={1}
                 />
                 <Button
                   onClick={handleSend}
-                  disabled={(!input.trim() && !pendingAttachment) || sendMutation.isPending || !selectedClientId}
+                  disabled={
+                    (!input.trim() && !pendingAttachment) ||
+                    sendMutation.isPending ||
+                    !selectedClientId
+                  }
                   size="icon"
                   className={cn(
                     "h-11 w-11 rounded-full flex-shrink-0 transition-all duration-200",
-                    (input.trim() || pendingAttachment) ? "bg-primary hover:bg-primary/90 active:scale-95" : "bg-muted text-muted-foreground"
+                    input.trim() || pendingAttachment
+                      ? "bg-primary hover:bg-primary/90 active:scale-95"
+                      : "bg-muted text-muted-foreground"
                   )}
                 >
                   <Send className="w-4 h-4" />

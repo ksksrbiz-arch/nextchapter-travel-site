@@ -68,7 +68,12 @@ export function requestLogger() {
   };
 }
 
-export function errorHandler(err: unknown, req: Request, res: Response, next: NextFunction) {
+export function errorHandler(
+  err: unknown,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   if (res.headersSent) {
     return next(err);
   }

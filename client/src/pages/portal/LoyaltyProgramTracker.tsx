@@ -1,5 +1,14 @@
 import { useState } from "react";
-import { Gift, Plus, Trash2, Compass, Award, TrendingUp, AlertCircle, Zap } from "lucide-react";
+import {
+  Gift,
+  Plus,
+  Trash2,
+  Compass,
+  Award,
+  TrendingUp,
+  AlertCircle,
+  Zap,
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -36,7 +45,14 @@ const LOYALTY_PROGRAMS = [
   "Coffee Shops",
 ];
 
-const MEMBER_LEVELS = ["Standard", "Silver", "Gold", "Platinum", "Elite", "VIP"];
+const MEMBER_LEVELS = [
+  "Standard",
+  "Silver",
+  "Gold",
+  "Platinum",
+  "Elite",
+  "VIP",
+];
 
 export function LoyaltyProgramTracker() {
   const [accounts, setAccounts] = useState<LoyaltyAccount[]>([
@@ -52,7 +68,11 @@ export function LoyaltyProgramTracker() {
       website: "www.mileageplus.com",
       lastUpdated: new Date().toISOString(),
       recentActivity: [
-        { date: "2026-03-10", points: 5000, description: "Flight booking: NYC-LAX" },
+        {
+          date: "2026-03-10",
+          points: 5000,
+          description: "Flight booking: NYC-LAX",
+        },
         { date: "2026-03-05", points: 3000, description: "Partner purchase" },
         { date: "2026-02-28", points: 2500, description: "Credit card bonus" },
       ],
@@ -75,10 +95,14 @@ export function LoyaltyProgramTracker() {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    if (!formData.programName.trim()) newErrors.programName = "Program name required";
-    if (!formData.accountNumber) newErrors.accountNumber = "Account number required";
-    if (!formData.issuerName.trim()) newErrors.issuerName = "Issuer name required";
-    if (!formData.balance || isNaN(parseFloat(formData.balance))) newErrors.balance = "Valid points required";
+    if (!formData.programName.trim())
+      newErrors.programName = "Program name required";
+    if (!formData.accountNumber)
+      newErrors.accountNumber = "Account number required";
+    if (!formData.issuerName.trim())
+      newErrors.issuerName = "Issuer name required";
+    if (!formData.balance || isNaN(parseFloat(formData.balance)))
+      newErrors.balance = "Valid points required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -117,7 +141,7 @@ export function LoyaltyProgramTracker() {
   };
 
   const handleDeleteAccount = (id: string) => {
-    setAccounts(accounts.filter((a) => a.id !== id));
+    setAccounts(accounts.filter(a => a.id !== id));
   };
 
   const totalPoints = accounts.reduce((sum, a) => sum + a.balance, 0);
@@ -142,23 +166,31 @@ export function LoyaltyProgramTracker() {
     <div className="space-y-6">
       {/* Summary */}
       <Card className="bg-gradient-to-br from-blue-950/30 to-cyan-950/30 border-blue-500/20 p-6">
-        <h3 className="text-sm font-medium text-muted-foreground mb-4">Loyalty Balance Summary</h3>
+        <h3 className="text-sm font-medium text-muted-foreground mb-4">
+          Loyalty Balance Summary
+        </h3>
 
         <div className="grid grid-cols-3 gap-3">
           <div className="p-3 bg-black/20 rounded-lg">
             <p className="text-xs text-muted-foreground">Programs</p>
-            <p className="text-2xl font-bold text-foreground">{totalAccounts}</p>
+            <p className="text-2xl font-bold text-foreground">
+              {totalAccounts}
+            </p>
           </div>
 
           <div className="p-3 bg-black/20 rounded-lg border border-blue-500/30">
             <p className="text-xs text-blue-300">Total Points</p>
-            <p className="text-2xl font-bold text-blue-400">{totalPoints.toLocaleString()}</p>
+            <p className="text-2xl font-bold text-blue-400">
+              {totalPoints.toLocaleString()}
+            </p>
           </div>
 
           <div className="p-3 bg-black/20 rounded-lg">
             <p className="text-xs text-muted-foreground">Avg/Program</p>
             <p className="text-2xl font-bold text-foreground">
-              {totalAccounts > 0 ? Math.round(totalPoints / totalAccounts).toLocaleString() : "0"}
+              {totalAccounts > 0
+                ? Math.round(totalPoints / totalAccounts).toLocaleString()
+                : "0"}
             </p>
           </div>
         </div>
@@ -184,7 +216,7 @@ export function LoyaltyProgramTracker() {
                   type="text"
                   placeholder="Program Name"
                   value={formData.programName}
-                  onChange={(e) => {
+                  onChange={e => {
                     setFormData({ ...formData, programName: e.target.value });
                     setErrors({ ...errors, programName: "" });
                   }}
@@ -194,10 +226,12 @@ export function LoyaltyProgramTracker() {
 
               <select
                 value={formData.category}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                onChange={e =>
+                  setFormData({ ...formData, category: e.target.value })
+                }
                 className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/50"
               >
-                {LOYALTY_PROGRAMS.map((cat) => (
+                {LOYALTY_PROGRAMS.map(cat => (
                   <option key={cat} value={cat}>
                     {cat}
                   </option>
@@ -211,7 +245,7 @@ export function LoyaltyProgramTracker() {
                   type="text"
                   placeholder="Account Number"
                   value={formData.accountNumber}
-                  onChange={(e) => {
+                  onChange={e => {
                     setFormData({ ...formData, accountNumber: e.target.value });
                     setErrors({ ...errors, accountNumber: "" });
                   }}
@@ -224,7 +258,7 @@ export function LoyaltyProgramTracker() {
                   type="text"
                   placeholder="Issuer Name"
                   value={formData.issuerName}
-                  onChange={(e) => {
+                  onChange={e => {
                     setFormData({ ...formData, issuerName: e.target.value });
                     setErrors({ ...errors, issuerName: "" });
                   }}
@@ -236,10 +270,12 @@ export function LoyaltyProgramTracker() {
             <div className="grid grid-cols-2 gap-3">
               <select
                 value={formData.memberLevel}
-                onChange={(e) => setFormData({ ...formData, memberLevel: e.target.value })}
+                onChange={e =>
+                  setFormData({ ...formData, memberLevel: e.target.value })
+                }
                 className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/50"
               >
-                {MEMBER_LEVELS.map((level) => (
+                {MEMBER_LEVELS.map(level => (
                   <option key={level} value={level}>
                     {level}
                   </option>
@@ -248,7 +284,12 @@ export function LoyaltyProgramTracker() {
 
               <select
                 value={formData.pointsTier}
-                onChange={(e) => setFormData({ ...formData, pointsTier: e.target.value as any })}
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    pointsTier: e.target.value as any,
+                  })
+                }
                 className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/50"
               >
                 <option value="Silver">Silver Tier</option>
@@ -264,7 +305,7 @@ export function LoyaltyProgramTracker() {
                 placeholder="Current Balance (Points)"
                 min="0"
                 value={formData.balance}
-                onChange={(e) => {
+                onChange={e => {
                   setFormData({ ...formData, balance: e.target.value });
                   setErrors({ ...errors, balance: "" });
                 }}
@@ -277,7 +318,9 @@ export function LoyaltyProgramTracker() {
                 type="date"
                 placeholder="Expiry Date"
                 value={formData.expiryDate}
-                onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
+                onChange={e =>
+                  setFormData({ ...formData, expiryDate: e.target.value })
+                }
                 className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/50"
               />
 
@@ -285,7 +328,9 @@ export function LoyaltyProgramTracker() {
                 type="url"
                 placeholder="Website (optional)"
                 value={formData.website}
-                onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                onChange={e =>
+                  setFormData({ ...formData, website: e.target.value })
+                }
                 className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
               />
             </div>
@@ -312,16 +357,24 @@ export function LoyaltyProgramTracker() {
       {/* Accounts List */}
       {accounts.length > 0 ? (
         <div className="space-y-3">
-          {accounts.map((account) => (
+          {accounts.map(account => (
             <Card key={account.id} className="p-4 border-border/50">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
                     <Award className="w-5 h-5 text-primary" />
-                    <h4 className="font-semibold text-foreground">{account.programName}</h4>
-                    <Badge className={`text-xs ${getTierColor(account.pointsTier)}`}>{account.pointsTier}</Badge>
+                    <h4 className="font-semibold text-foreground">
+                      {account.programName}
+                    </h4>
+                    <Badge
+                      className={`text-xs ${getTierColor(account.pointsTier)}`}
+                    >
+                      {account.pointsTier}
+                    </Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground">{account.issuerName}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {account.issuerName}
+                  </p>
                 </div>
 
                 <button
@@ -336,23 +389,35 @@ export function LoyaltyProgramTracker() {
               <div className="grid grid-cols-2 gap-3 mb-4 p-3 bg-black/20 rounded-lg text-sm">
                 <div>
                   <p className="text-xs text-muted-foreground">Account #</p>
-                  <p className="font-mono font-semibold text-foreground">{account.accountNumber}</p>
+                  <p className="font-mono font-semibold text-foreground">
+                    {account.accountNumber}
+                  </p>
                 </div>
 
                 <div className="text-right">
                   <p className="text-xs text-muted-foreground">Member Level</p>
-                  <p className="font-medium text-foreground">{account.memberLevel}</p>
+                  <p className="font-medium text-foreground">
+                    {account.memberLevel}
+                  </p>
                 </div>
 
                 <div>
-                  <p className="text-xs text-muted-foreground">Current Balance</p>
-                  <p className="font-bold text-blue-400">{account.balance.toLocaleString()} pts</p>
+                  <p className="text-xs text-muted-foreground">
+                    Current Balance
+                  </p>
+                  <p className="font-bold text-blue-400">
+                    {account.balance.toLocaleString()} pts
+                  </p>
                 </div>
 
                 <div className="text-right">
                   <p className="text-xs text-muted-foreground">Expires</p>
-                  <p className={`font-medium ${account.expiryDate ? "text-foreground" : "text-muted-foreground"}`}>
-                    {account.expiryDate ? new Date(account.expiryDate).toLocaleDateString() : "No expiry"}
+                  <p
+                    className={`font-medium ${account.expiryDate ? "text-foreground" : "text-muted-foreground"}`}
+                  >
+                    {account.expiryDate
+                      ? new Date(account.expiryDate).toLocaleDateString()
+                      : "No expiry"}
                   </p>
                 </div>
               </div>
@@ -375,17 +440,25 @@ export function LoyaltyProgramTracker() {
               {/* Recent Activity */}
               {account.recentActivity.length > 0 && (
                 <div className="border-t border-border/50 pt-3">
-                  <h5 className="text-xs font-semibold text-muted-foreground mb-2">Recent Activity</h5>
+                  <h5 className="text-xs font-semibold text-muted-foreground mb-2">
+                    Recent Activity
+                  </h5>
                   <div className="space-y-1">
                     {account.recentActivity.slice(0, 3).map((activity, idx) => (
-                      <div key={idx} className="flex items-center justify-between text-xs">
+                      <div
+                        key={idx}
+                        className="flex items-center justify-between text-xs"
+                      >
                         <div>
-                          <p className="text-foreground">{activity.description}</p>
-                          <p className="text-muted-foreground">{activity.date}</p>
+                          <p className="text-foreground">
+                            {activity.description}
+                          </p>
+                          <p className="text-muted-foreground">
+                            {activity.date}
+                          </p>
                         </div>
                         <p className="font-semibold text-blue-400 flex items-center gap-1">
-                          <TrendingUp className="w-3 h-3" />
-                          +{activity.points}
+                          <TrendingUp className="w-3 h-3" />+{activity.points}
                         </p>
                       </div>
                     ))}

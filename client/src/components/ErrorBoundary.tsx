@@ -28,7 +28,11 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error(`ErrorBoundary${this.props.context ? ` [${this.props.context}]` : ""} caught:`, error, errorInfo);
+    console.error(
+      `ErrorBoundary${this.props.context ? ` [${this.props.context}]` : ""} caught:`,
+      error,
+      errorInfo
+    );
   }
 
   handleReset = () => {
@@ -56,7 +60,8 @@ class ErrorBoundary extends Component<Props, State> {
               Something went wrong
             </h2>
             <p className="text-muted-foreground font-sans text-sm text-center mb-6">
-              {this.state.error.message || "An unexpected error occurred. Please try again."}
+              {this.state.error.message ||
+                "An unexpected error occurred. Please try again."}
             </p>
 
             {/* Actions */}

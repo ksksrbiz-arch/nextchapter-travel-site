@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { DollarSign, TrendingUp, ArrowRightLeft, RefreshCw } from "lucide-react";
+import {
+  DollarSign,
+  TrendingUp,
+  ArrowRightLeft,
+  RefreshCw,
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
@@ -24,14 +29,55 @@ export function CurrencyConverter() {
   const [amount, setAmount] = useState("1000");
   const [favorite, setFavorite] = useState(false);
 
-  const currencies = ["USD", "EUR", "GBP", "CAD", "AUD", "JPY", "MXN", "CHF", "CNY", "INR"];
+  const currencies = [
+    "USD",
+    "EUR",
+    "GBP",
+    "CAD",
+    "AUD",
+    "JPY",
+    "MXN",
+    "CHF",
+    "CNY",
+    "INR",
+  ];
 
   // Mock conversion - in real app would use API
   const getRate = (from: string, to: string): number => {
     const mockRates: Record<string, Record<string, number>> = {
-      USD: { EUR: 0.92, GBP: 0.79, CAD: 1.36, AUD: 1.53, JPY: 149.5, MXN: 17.05, CHF: 0.88, CNY: 7.2, INR: 83.1 },
-      EUR: { USD: 1.09, GBP: 0.86, CAD: 1.48, AUD: 1.66, JPY: 162.9, MXN: 18.54, CHF: 0.96, CNY: 7.83, INR: 90.4 },
-      GBP: { USD: 1.27, EUR: 1.16, CAD: 1.72, AUD: 1.94, JPY: 189.4, MXN: 21.58, CHF: 1.11, CNY: 9.11, INR: 105.1 },
+      USD: {
+        EUR: 0.92,
+        GBP: 0.79,
+        CAD: 1.36,
+        AUD: 1.53,
+        JPY: 149.5,
+        MXN: 17.05,
+        CHF: 0.88,
+        CNY: 7.2,
+        INR: 83.1,
+      },
+      EUR: {
+        USD: 1.09,
+        GBP: 0.86,
+        CAD: 1.48,
+        AUD: 1.66,
+        JPY: 162.9,
+        MXN: 18.54,
+        CHF: 0.96,
+        CNY: 7.83,
+        INR: 90.4,
+      },
+      GBP: {
+        USD: 1.27,
+        EUR: 1.16,
+        CAD: 1.72,
+        AUD: 1.94,
+        JPY: 189.4,
+        MXN: 21.58,
+        CHF: 1.11,
+        CNY: 9.11,
+        INR: 105.1,
+      },
     };
     return mockRates[from]?.[to] || 1;
   };
@@ -52,14 +98,16 @@ export function CurrencyConverter() {
 
         {/* From Currency */}
         <div className="mb-4">
-          <label className="text-xs font-medium text-muted-foreground mb-2 block">From</label>
+          <label className="text-xs font-medium text-muted-foreground mb-2 block">
+            From
+          </label>
           <div className="space-y-2">
             <select
               value={fromCurrency}
-              onChange={(e) => setFromCurrency(e.target.value)}
+              onChange={e => setFromCurrency(e.target.value)}
               className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/50"
             >
-              {currencies.map((c) => (
+              {currencies.map(c => (
                 <option key={c} value={c}>
                   {c}
                 </option>
@@ -69,7 +117,7 @@ export function CurrencyConverter() {
               type="number"
               placeholder="Amount"
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+              onChange={e => setAmount(e.target.value)}
               className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
             />
           </div>
@@ -87,14 +135,16 @@ export function CurrencyConverter() {
 
         {/* To Currency */}
         <div className="mb-6">
-          <label className="text-xs font-medium text-muted-foreground mb-2 block">To</label>
+          <label className="text-xs font-medium text-muted-foreground mb-2 block">
+            To
+          </label>
           <div className="space-y-2">
             <select
               value={toCurrency}
-              onChange={(e) => setToCurrency(e.target.value)}
+              onChange={e => setToCurrency(e.target.value)}
               className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/50"
             >
-              {currencies.map((c) => (
+              {currencies.map(c => (
                 <option key={c} value={c}>
                   {c}
                 </option>
@@ -118,7 +168,8 @@ export function CurrencyConverter() {
             </Badge>
           </div>
           <div className="text-sm font-semibold text-foreground">
-            {amount || "0"} {fromCurrency} = {convertedAmount.toFixed(2)} {toCurrency}
+            {amount || "0"} {fromCurrency} = {convertedAmount.toFixed(2)}{" "}
+            {toCurrency}
           </div>
         </div>
 
@@ -143,14 +194,24 @@ export function CurrencyConverter() {
         </h3>
 
         <div className="space-y-2">
-          {MOCK_RATES.map((rate) => (
-            <div key={rate.pair} className="p-3 bg-black/20 rounded-lg flex items-center justify-between">
+          {MOCK_RATES.map(rate => (
+            <div
+              key={rate.pair}
+              className="p-3 bg-black/20 rounded-lg flex items-center justify-between"
+            >
               <div>
-                <p className="text-sm font-medium text-foreground">{rate.pair}</p>
-                <p className="text-xs text-muted-foreground">1 USD = {rate.rate}</p>
+                <p className="text-sm font-medium text-foreground">
+                  {rate.pair}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  1 USD = {rate.rate}
+                </p>
               </div>
-              <div className={`text-sm font-semibold ${rate.change >= 0 ? "text-emerald-500" : "text-red-500"}`}>
-                {rate.change >= 0 ? "+" : ""}{rate.change}%
+              <div
+                className={`text-sm font-semibold ${rate.change >= 0 ? "text-emerald-500" : "text-red-500"}`}
+              >
+                {rate.change >= 0 ? "+" : ""}
+                {rate.change}%
               </div>
             </div>
           ))}
@@ -159,7 +220,9 @@ export function CurrencyConverter() {
 
       {/* Conversion Tips */}
       <Card className="border-blue-500/20 bg-blue-950/20 p-4">
-        <h4 className="font-medium text-sm text-blue-400 mb-3">💡 Money-Saving Tips</h4>
+        <h4 className="font-medium text-sm text-blue-400 mb-3">
+          💡 Money-Saving Tips
+        </h4>
         <ul className="text-xs text-muted-foreground space-y-2">
           <li>• Exchange money before traveling for better rates</li>
           <li>• Avoid airport exchanges - rates are typically higher</li>

@@ -1,9 +1,9 @@
 /**
  * Offline-First Synchronization Service
- * 
+ *
  * Manages local data caching, synchronization with backend,
  * and conflict resolution for offline-capable features.
- * 
+ *
  * Strategy:
  * - IndexedDB for structured data (itinerary, expenses, documents)
  * - Service Worker for request interception & caching
@@ -48,7 +48,7 @@ class OfflineSyncService {
       console.error("IndexedDB init failed");
     };
 
-    request.onupgradeneeded = (event) => {
+    request.onupgradeneeded = event => {
       const db = (event.target as IDBOpenDBRequest).result;
 
       // Store for trip itinerary
@@ -209,7 +209,7 @@ class OfflineSyncService {
     const request = store.getAll();
 
     request.onsuccess = () => {
-      this.syncQueue = request.result.filter((action) => !action.synced);
+      this.syncQueue = request.result.filter(action => !action.synced);
       console.log(`📋 Loaded ${this.syncQueue.length} pending actions`);
     };
   }
@@ -224,12 +224,12 @@ class OfflineSyncService {
     const store = transaction.objectStore(entity);
 
     if (id) {
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         const request = store.get(id);
         request.onsuccess = () => resolve(request.result);
       });
     } else {
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         const request = store.getAll();
         request.onsuccess = () => resolve(request.result);
       });
@@ -259,7 +259,7 @@ class OfflineSyncService {
     const store = transaction.objectStore("syncQueue");
     store.delete(id);
 
-    this.syncQueue = this.syncQueue.filter((a) => a.id !== id);
+    this.syncQueue = this.syncQueue.filter(a => a.id !== id);
   }
 
   /**
@@ -267,9 +267,9 @@ class OfflineSyncService {
    */
   getSyncStats() {
     return {
-      pending: this.syncQueue.filter((a) => !a.synced).length,
-      synced: this.syncQueue.filter((a) => a.synced).length,
-      failed: this.syncQueue.filter((a) => a.error).length,
+      pending: this.syncQueue.filter(a => !a.synced).length,
+      synced: this.syncQueue.filter(a => a.synced).length,
+      failed: this.syncQueue.filter(a => a.error).length,
       isOnline: this.isOnline,
     };
   }

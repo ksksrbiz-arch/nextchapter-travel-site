@@ -7,7 +7,7 @@
 
 export interface TripMedia {
   id: string;
-  type: 'photo' | 'video';
+  type: "photo" | "video";
   url: string;
   timestamp: number; // Unix timestamp when captured
   caption?: string;
@@ -58,8 +58,26 @@ export interface MemorySummary {
   bestTimes: string[]; // golden hour, sunset, blue hour, etc.
 }
 
-const EMOTIONS = ['happy', 'excited', 'surprised', 'relaxed', 'adventurous', 'tender', 'grateful', 'amazed'];
-const ALBUM_THEMES = ['Adventure Highlights', 'Foodie Journey', 'Sunset Moments', 'Family Fun', 'Solo Exploration', 'Relaxation Reads', 'Cultural Immersion', 'Night Life'];
+const EMOTIONS = [
+  "happy",
+  "excited",
+  "surprised",
+  "relaxed",
+  "adventurous",
+  "tender",
+  "grateful",
+  "amazed",
+];
+const ALBUM_THEMES = [
+  "Adventure Highlights",
+  "Foodie Journey",
+  "Sunset Moments",
+  "Family Fun",
+  "Solo Exploration",
+  "Relaxation Reads",
+  "Cultural Immersion",
+  "Night Life",
+];
 
 class MemoryCurationService {
   private mediaCache: Map<string, TripMedia[]> = new Map();
@@ -71,7 +89,7 @@ class MemoryCurationService {
    * Simulates computer vision with confidence scoring
    */
   async processMedia(
-    media: Omit<TripMedia, 'emotion' | 'confidence'>
+    media: Omit<TripMedia, "emotion" | "confidence">
   ): Promise<TripMedia> {
     // Simulate processing delay (500-1500ms)
     await new Promise(resolve =>
@@ -79,8 +97,7 @@ class MemoryCurationService {
     );
 
     // Simulate emotion detection based on media characteristics
-    const emotion =
-      EMOTIONS[Math.floor(Math.random() * EMOTIONS.length)];
+    const emotion = EMOTIONS[Math.floor(Math.random() * EMOTIONS.length)];
     const confidence = 0.75 + Math.random() * 0.2; // 75-95%
 
     return {
@@ -95,7 +112,7 @@ class MemoryCurationService {
    */
   async addMedia(
     tripId: string,
-    media: Omit<TripMedia, 'emotion' | 'confidence'>
+    media: Omit<TripMedia, "emotion" | "confidence">
   ): Promise<TripMedia> {
     const processedMedia = await this.processMedia(media);
 
@@ -134,7 +151,9 @@ class MemoryCurationService {
     const scored = media.map((m, idx) => ({
       media: m,
       score: m.confidence * (0.8 + Math.random() * 0.2), // Confidence + uniqueness
-      isUnique: idx === 0 || media.slice(0, idx).every(prev => prev.emotion !== m.emotion),
+      isUnique:
+        idx === 0 ||
+        media.slice(0, idx).every(prev => prev.emotion !== m.emotion),
     }));
 
     // Select top 20% as highlights, but ensure emotion variety
@@ -142,14 +161,17 @@ class MemoryCurationService {
       .filter(s => s.isUnique || s.score > 0.85)
       .sort((a, b) => b.score - a.score)
       .slice(0, Math.max(3, Math.ceil(media.length * 0.2)))
-      .map(s => ({
-        id: `hl-${s.media.id}`,
-        mediaId: s.media.id,
-        emotion: s.media.emotion || 'memorable',
-        confidence: s.media.confidence,
-        reason: this.generateHighlightReason(s.media),
-        timestamp: s.media.timestamp,
-      } as HighlightMoment));
+      .map(
+        s =>
+          ({
+            id: `hl-${s.media.id}`,
+            mediaId: s.media.id,
+            emotion: s.media.emotion || "memorable",
+            confidence: s.media.confidence,
+            reason: this.generateHighlightReason(s.media),
+            timestamp: s.media.timestamp,
+          }) as HighlightMoment
+      );
 
     this.highlightsCache.set(tripId, highlights);
     return highlights;
@@ -171,7 +193,7 @@ class MemoryCurationService {
     // Group by dominant emotions
     const emotionGroups = new Map<string, TripMedia[]>();
     media.forEach(m => {
-      const key = m.emotion || 'other';
+      const key = m.emotion || "other";
       if (!emotionGroups.has(key)) {
         emotionGroups.set(key, []);
       }
@@ -181,9 +203,8 @@ class MemoryCurationService {
     // Create albums for emotions with 3+ media items
     emotionGroups.forEach((items, emotion) => {
       if (items.length >= 3) {
-        const theme = ALBUM_THEMES[
-          EMOTIONS.indexOf(emotion) % ALBUM_THEMES.length
-        ];
+        const theme =
+          ALBUM_THEMES[EMOTIONS.indexOf(emotion) % ALBUM_THEMES.length];
 
         albums.push({
           id: `album-${emotion}-${tripId}`,
@@ -205,9 +226,9 @@ class MemoryCurationService {
       albums.unshift({
         id: `album-full-${tripId}`,
         tripId,
-        name: 'Complete Journey',
-        description: 'All moments from your journey',
-        emotion: 'grateful',
+        name: "Complete Journey",
+        description: "All moments from your journey",
+        emotion: "grateful",
         mediaIds: media
           .sort((a, b) => a.timestamp - b.timestamp)
           .map(m => m.id),
@@ -239,7 +260,10 @@ class MemoryCurationService {
         dailyEmotions.set(day, new Map());
       }
       const dayMap = dailyEmotions.get(day)!;
-      dayMap.set(m.emotion || 'other', (dayMap.get(m.emotion || 'other') ?? 0) + 1);
+      dayMap.set(
+        m.emotion || "other",
+        (dayMap.get(m.emotion || "other") ?? 0) + 1
+      );
     });
 
     const emotionalJourney = Array.from(dailyEmotions.entries()).map(
@@ -297,10 +321,12 @@ class MemoryCurationService {
 
     // Identify special times
     sorted.forEach(([hour, count]) => {
-      if (hour >= 5 && hour <= 7 && count > 0) times.push('Early Sunrise');
-      if (hour >= 17 && hour <= 19 && count > 0) times.push('Golden Hour Sunset');
-      if (hour >= 20 && hour <= 22 && count > 0) times.push('Blue Hour Evening');
-      if (hour >= 22 || hour <= 3) times.push('Night Magic');
+      if (hour >= 5 && hour <= 7 && count > 0) times.push("Early Sunrise");
+      if (hour >= 17 && hour <= 19 && count > 0)
+        times.push("Golden Hour Sunset");
+      if (hour >= 20 && hour <= 22 && count > 0)
+        times.push("Blue Hour Evening");
+      if (hour >= 22 || hour <= 3) times.push("Night Magic");
     });
 
     return [...new Set(times)];
@@ -321,7 +347,7 @@ class MemoryCurationService {
       name,
       description,
       mediaIds,
-      emotion: 'curated',
+      emotion: "curated",
       coverImageId: mediaIds[0],
       createdAt: Date.now(),
       isPublic: false,
@@ -355,7 +381,7 @@ class MemoryCurationService {
   private generateHighlightReason(media: TripMedia): string {
     const reasons = [
       `Perfectly captured ${media.emotion} moment with ${(media.confidence * 100).toFixed(0)}% confidence`,
-      `Stunning ${media.emotion} expression caught at ${media.location?.name || 'this location'}`,
+      `Stunning ${media.emotion} expression caught at ${media.location?.name || "this location"}`,
       `Peak emotion frame — bright and clear composition`,
       `Spontaneous ${media.emotion} moment with excellent clarity`,
       `Share-worthy memory that captures the essence of the trip`,
@@ -372,23 +398,22 @@ class MemoryCurationService {
 
     const emotionBreakdown = new Map<string, number>();
     media.forEach(m => {
-      const emotion = m.emotion || 'unidentified';
-      emotionBreakdown.set(
-        emotion,
-        (emotionBreakdown.get(emotion) ?? 0) + 1
-      );
+      const emotion = m.emotion || "unidentified";
+      emotionBreakdown.set(emotion, (emotionBreakdown.get(emotion) ?? 0) + 1);
     });
 
     return {
-      totalPhotos: media.filter(m => m.type === 'photo').length,
-      totalVideos: media.filter(m => m.type === 'video').length,
+      totalPhotos: media.filter(m => m.type === "photo").length,
+      totalVideos: media.filter(m => m.type === "video").length,
       highlightMoments: highlights.length,
       averageConfidence:
         media.length > 0
           ? media.reduce((sum, m) => sum + m.confidence, 0) / media.length
           : 0,
       emotionBreakdown: Object.fromEntries(emotionBreakdown),
-      capturedLocations: [...new Set(media.map(m => m.location?.name).filter(Boolean))].length,
+      capturedLocations: [
+        ...new Set(media.map(m => m.location?.name).filter(Boolean)),
+      ].length,
     };
   }
 }

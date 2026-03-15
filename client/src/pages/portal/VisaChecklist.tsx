@@ -88,7 +88,8 @@ const VISA_DATA: Record<string, DocumentRequirement[]> = {
 };
 
 export function VisaChecklist() {
-  const [selectedCountry, setSelectedCountry] = useState<string>("United States");
+  const [selectedCountry, setSelectedCountry] =
+    useState<string>("United States");
   const [requirements, setRequirements] = useState<DocumentRequirement[]>(
     VISA_DATA["United States"] || []
   );
@@ -101,7 +102,7 @@ export function VisaChecklist() {
 
   const toggleRequirement = (id: string) => {
     setRequirements(
-      requirements.map((req) =>
+      requirements.map(req =>
         req.id === id ? { ...req, completed: !req.completed } : req
       )
     );
@@ -111,9 +112,11 @@ export function VisaChecklist() {
     setNotes({ ...notes, [id]: note });
   };
 
-  const completedCount = requirements.filter((r) => r.completed).length;
-  const requiredCount = requirements.filter((r) => r.type === "required").length;
-  const completedRequired = requirements.filter((r) => r.type === "required" && r.completed).length;
+  const completedCount = requirements.filter(r => r.completed).length;
+  const requiredCount = requirements.filter(r => r.type === "required").length;
+  const completedRequired = requirements.filter(
+    r => r.type === "required" && r.completed
+  ).length;
 
   return (
     <div className="space-y-6">
@@ -121,7 +124,7 @@ export function VisaChecklist() {
       <Card className="p-6 border-border/50">
         <h3 className="text-lg font-semibold mb-4">Select Destination</h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {Object.keys(VISA_DATA).map((country) => (
+          {Object.keys(VISA_DATA).map(country => (
             <button
               key={country}
               onClick={() => handleCountryChange(country)}
@@ -139,17 +142,23 @@ export function VisaChecklist() {
 
       {/* Progress Overview */}
       <Card className="bg-gradient-to-br from-blue-950/30 to-cyan-950/30 border-blue-500/20 p-6">
-        <h3 className="text-sm font-medium text-muted-foreground mb-3">Checklist Progress</h3>
+        <h3 className="text-sm font-medium text-muted-foreground mb-3">
+          Checklist Progress
+        </h3>
         <div className="space-y-3">
           <div>
             <div className="flex justify-between text-sm mb-2">
               <span className="text-muted-foreground">Total Completed</span>
-              <span className="font-semibold">{completedCount} of {requirements.length}</span>
+              <span className="font-semibold">
+                {completedCount} of {requirements.length}
+              </span>
             </div>
             <div className="w-full bg-black/30 rounded-full h-2">
               <div
                 className="bg-gradient-to-r from-blue-500 to-cyan-500 h-2 rounded-full transition-all"
-                style={{ width: `${(completedCount / requirements.length) * 100}%` }}
+                style={{
+                  width: `${(completedCount / requirements.length) * 100}%`,
+                }}
               />
             </div>
           </div>
@@ -157,12 +166,16 @@ export function VisaChecklist() {
           <div>
             <div className="flex justify-between text-sm mb-2">
               <span className="text-muted-foreground">Required Documents</span>
-              <span className="font-semibold text-blue-400">{completedRequired} of {requiredCount}</span>
+              <span className="font-semibold text-blue-400">
+                {completedRequired} of {requiredCount}
+              </span>
             </div>
             <div className="w-full bg-black/30 rounded-full h-2">
               <div
                 className="bg-blue-500 h-2 rounded-full transition-all"
-                style={{ width: `${(completedRequired / requiredCount) * 100}%` }}
+                style={{
+                  width: `${(completedRequired / requiredCount) * 100}%`,
+                }}
               />
             </div>
           </div>
@@ -172,7 +185,7 @@ export function VisaChecklist() {
       {/* Requirements List */}
       <div className="space-y-3">
         {requirements.length > 0 ? (
-          requirements.map((req) => (
+          requirements.map(req => (
             <Card key={req.id} className="p-4 border-border/50">
               <div className="flex items-start gap-4">
                 <button
@@ -188,23 +201,29 @@ export function VisaChecklist() {
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-2">
-                    <h4 className={`text-sm font-medium ${req.completed ? "text-muted-foreground line-through" : "text-foreground"}`}>
+                    <h4
+                      className={`text-sm font-medium ${req.completed ? "text-muted-foreground line-through" : "text-foreground"}`}
+                    >
                       {req.title}
                     </h4>
                     <Badge
-                      variant={req.type === "required" ? "default" : "secondary"}
+                      variant={
+                        req.type === "required" ? "default" : "secondary"
+                      }
                       className="text-xs"
                     >
                       {req.type === "required" ? "Required" : "Recommended"}
                     </Badge>
                   </div>
 
-                  <p className="text-xs text-muted-foreground mb-3">{req.description}</p>
+                  <p className="text-xs text-muted-foreground mb-3">
+                    {req.description}
+                  </p>
 
                   <textarea
                     placeholder="Add notes about this requirement..."
                     value={notes[req.id] || ""}
-                    onChange={(e) => updateNote(req.id, e.target.value)}
+                    onChange={e => updateNote(req.id, e.target.value)}
                     className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 resize-none"
                     rows={2}
                   />
@@ -227,9 +246,12 @@ export function VisaChecklist() {
           <div className="flex gap-3">
             <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
             <div>
-              <h4 className="text-sm font-medium text-emerald-400 mb-1">All Required Documents Complete!</h4>
+              <h4 className="text-sm font-medium text-emerald-400 mb-1">
+                All Required Documents Complete!
+              </h4>
               <p className="text-xs text-muted-foreground">
-                Don't forget to check embassy websites closest to your departure date for any updates.
+                Don't forget to check embassy websites closest to your departure
+                date for any updates.
               </p>
             </div>
           </div>

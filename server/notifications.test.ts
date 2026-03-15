@@ -3,7 +3,7 @@ import { appRouter } from "./routers";
 import type { TrpcContext } from "./_core/context";
 
 // Mock db module
-vi.mock("./db", async (importOriginal) => {
+vi.mock("./db", async importOriginal => {
   const actual = await importOriginal<typeof import("./db")>();
   return {
     ...actual,
@@ -25,7 +25,16 @@ vi.mock("./db", async (importOriginal) => {
     getUnreadNotificationCount: vi.fn().mockResolvedValue(1),
     markNotificationRead: vi.fn().mockResolvedValue({ success: true }),
     markAllNotificationsRead: vi.fn().mockResolvedValue({ success: true }),
-    createNotification: vi.fn().mockResolvedValue({ id: 2, userId: 2, title: "Hello", body: "World", type: "system", channel: "in_app" }),
+    createNotification: vi
+      .fn()
+      .mockResolvedValue({
+        id: 2,
+        userId: 2,
+        title: "Hello",
+        body: "World",
+        type: "system",
+        channel: "in_app",
+      }),
     broadcastNotification: vi.fn().mockResolvedValue({ count: 3 }),
     savePushSubscription: vi.fn().mockResolvedValue({ success: true }),
     deletePushSubscription: vi.fn().mockResolvedValue({ success: true }),
@@ -90,7 +99,11 @@ describe("notifications router", () => {
 
   it("admin can send notification to specific user", async () => {
     const caller = appRouter.createCaller(makeUserCtx("admin"));
-    const result = await caller.notifications.send({ userId: 2, title: "Hi", body: "Hello" });
+    const result = await caller.notifications.send({
+      userId: 2,
+      title: "Hi",
+      body: "Hello",
+    });
     expect(result).toHaveProperty("id");
   });
 
@@ -103,7 +116,10 @@ describe("notifications router", () => {
 
   it("admin can broadcast to all clients", async () => {
     const caller = appRouter.createCaller(makeUserCtx("admin"));
-    const result = await caller.notifications.broadcast({ title: "All", body: "Everyone" });
+    const result = await caller.notifications.broadcast({
+      title: "All",
+      body: "Everyone",
+    });
     expect(result).toHaveProperty("count");
   });
 });
@@ -113,7 +129,8 @@ describe("push router", () => {
     const caller = appRouter.createCaller(makeUserCtx());
     const result = await caller.push.subscribe({
       endpoint: "https://push.example.com/sub/abc123",
-      p256dh: "BNcRdreALRFXTkOOUHK1EtK2wtaz5Ry4YfYCA_0QTpQtUbVlTiESgX776I0w6skurHmImy9dN0lahaf4HEAyXA",
+      p256dh:
+        "BNcRdreALRFXTkOOUHK1EtK2wtaz5Ry4YfYCA_0QTpQtUbVlTiESgX776I0w6skurHmImy9dN0lahaf4HEAyXA",
       auth: "tBHItJI5svbpez7KI4CCXg",
       userAgent: "Mozilla/5.0",
     });
@@ -122,7 +139,9 @@ describe("push router", () => {
 
   it("unsubscribe removes a push subscription", async () => {
     const caller = appRouter.createCaller(makeUserCtx());
-    const result = await caller.push.unsubscribe({ endpoint: "https://push.example.com/sub/abc123" });
+    const result = await caller.push.unsubscribe({
+      endpoint: "https://push.example.com/sub/abc123",
+    });
     expect(result).toEqual({ success: true });
   });
 });

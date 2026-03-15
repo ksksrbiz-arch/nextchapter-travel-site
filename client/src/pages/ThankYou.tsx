@@ -12,7 +12,13 @@ export function ThankYou() {
   }, [setVideoContext]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12" style={{ background: "linear-gradient(to bottom, rgba(10,22,40,0.75) 0%, rgba(10,22,40,0.85) 100%)" }}>
+    <div
+      className="min-h-screen flex items-center justify-center px-4 py-12"
+      style={{
+        background:
+          "linear-gradient(to bottom, rgba(10,22,40,0.75) 0%, rgba(10,22,40,0.85) 100%)",
+      }}
+    >
       <div className="max-w-2xl w-full">
         {/* Success icon */}
         <div className="flex justify-center mb-8">
@@ -51,9 +57,12 @@ export function ThankYou() {
                 </div>
               </div>
               <div className="flex-1">
-                <h3 className="text-white font-semibold mb-1">Jessica Reviews Your Request</h3>
+                <h3 className="text-white font-semibold mb-1">
+                  Jessica Reviews Your Request
+                </h3>
                 <p className="text-white/70 text-sm">
-                  Within 24 hours, Jessica will review your trip details and preferences.
+                  Within 24 hours, Jessica will review your trip details and
+                  preferences.
                 </p>
               </div>
             </div>
@@ -66,9 +75,12 @@ export function ThankYou() {
                 </div>
               </div>
               <div className="flex-1">
-                <h3 className="text-white font-semibold mb-1">Initial Consultation</h3>
+                <h3 className="text-white font-semibold mb-1">
+                  Initial Consultation
+                </h3>
                 <p className="text-white/70 text-sm">
-                  Jessica will reach out via email or phone to discuss your vision, budget, and travel style.
+                  Jessica will reach out via email or phone to discuss your
+                  vision, budget, and travel style.
                 </p>
               </div>
             </div>
@@ -81,9 +93,12 @@ export function ThankYou() {
                 </div>
               </div>
               <div className="flex-1">
-                <h3 className="text-white font-semibold mb-1">Personalized Itinerary</h3>
+                <h3 className="text-white font-semibold mb-1">
+                  Personalized Itinerary
+                </h3>
                 <p className="text-white/70 text-sm">
-                  You'll receive a custom-crafted itinerary with flights, accommodations, activities, and insider tips.
+                  You'll receive a custom-crafted itinerary with flights,
+                  accommodations, activities, and insider tips.
                 </p>
               </div>
             </div>
@@ -98,7 +113,8 @@ export function ThankYou() {
               <div className="flex-1">
                 <h3 className="text-white font-semibold mb-1">Portal Access</h3>
                 <p className="text-white/70 text-sm">
-                  You'll receive an invite to Jessica's client portal to track your trip, access documents, and stay connected.
+                  You'll receive an invite to Jessica's client portal to track
+                  your trip, access documents, and stay connected.
                 </p>
               </div>
             </div>
@@ -111,9 +127,12 @@ export function ThankYou() {
                 </div>
               </div>
               <div className="flex-1">
-                <h3 className="text-white font-semibold mb-1">Enjoy Your Journey</h3>
+                <h3 className="text-white font-semibold mb-1">
+                  Enjoy Your Journey
+                </h3>
                 <p className="text-white/70 text-sm">
-                  Depart with confidence. Jessica is available 24/7 for any questions or changes during your trip.
+                  Depart with confidence. Jessica is available 24/7 for any
+                  questions or changes during your trip.
                 </p>
               </div>
             </div>

@@ -14,14 +14,20 @@ export function DashboardSkeleton() {
       {/* Quick links grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="bg-gray-200 dark:bg-gray-700 rounded-lg h-24" />
+          <div
+            key={i}
+            className="bg-gray-200 dark:bg-gray-700 rounded-lg h-24"
+          />
         ))}
       </div>
 
       {/* Trips list */}
       <div className="space-y-3">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="bg-gray-100 dark:bg-gray-800 rounded-lg h-20" />
+          <div
+            key={i}
+            className="bg-gray-100 dark:bg-gray-800 rounded-lg h-20"
+          />
         ))}
       </div>
     </div>
@@ -55,7 +61,10 @@ export function ItinerarySkeleton() {
         <div key={dayIdx} className="space-y-3">
           <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/3" />
           {[...Array(2)].map((_, itemIdx) => (
-            <div key={itemIdx} className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 space-y-2">
+            <div
+              key={itemIdx}
+              className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 space-y-2"
+            >
               <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-2/3" />
               <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2" />
             </div>
@@ -78,7 +87,10 @@ export function DocumentsSkeleton() {
           <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-1/4" />
           <div className="space-y-2">
             {[...Array(2)].map((_, docIdx) => (
-              <div key={docIdx} className="bg-gray-100 dark:bg-gray-800 rounded-lg h-16" />
+              <div
+                key={docIdx}
+                className="bg-gray-100 dark:bg-gray-800 rounded-lg h-16"
+              />
             ))}
           </div>
         </div>
@@ -93,14 +105,20 @@ export function BookingsSkeleton() {
       {/* Stats cards */}
       <div className="grid grid-cols-3 gap-4">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 h-20" />
+          <div
+            key={i}
+            className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 h-20"
+          />
         ))}
       </div>
 
       {/* Booking list */}
       <div className="space-y-3">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="bg-gray-100 dark:bg-gray-800 rounded-lg h-24" />
+          <div
+            key={i}
+            className="bg-gray-100 dark:bg-gray-800 rounded-lg h-24"
+          />
         ))}
       </div>
     </div>
@@ -116,14 +134,20 @@ export function GuidesSkeleton() {
       {/* Filter tabs */}
       <div className="flex gap-2">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="h-8 bg-gray-200 dark:bg-gray-700 rounded-full w-20" />
+          <div
+            key={i}
+            className="h-8 bg-gray-200 dark:bg-gray-700 rounded-full w-20"
+          />
         ))}
       </div>
 
       {/* Guide grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="bg-gray-100 dark:bg-gray-800 rounded-lg h-40" />
+          <div
+            key={i}
+            className="bg-gray-100 dark:bg-gray-800 rounded-lg h-40"
+          />
         ))}
       </div>
     </div>
@@ -136,7 +160,10 @@ export function AlertsSkeleton() {
       {/* Filter tabs */}
       <div className="flex gap-2">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="h-8 bg-gray-200 dark:bg-gray-700 rounded-full w-20" />
+          <div
+            key={i}
+            className="h-8 bg-gray-200 dark:bg-gray-700 rounded-full w-20"
+          />
         ))}
       </div>
 
@@ -160,7 +187,10 @@ export function PackingListSkeleton() {
           <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-1/4" />
           <div className="space-y-2">
             {[...Array(3)].map((_, itemIdx) => (
-              <div key={itemIdx} className="bg-gray-100 dark:bg-gray-800 rounded h-12" />
+              <div
+                key={itemIdx}
+                className="bg-gray-100 dark:bg-gray-800 rounded h-12"
+              />
             ))}
           </div>
         </div>
@@ -172,7 +202,13 @@ export function PackingListSkeleton() {
 /**
  * Generic skeleton that can be used for any loading state
  */
-export function GenericSkeleton({ lines = 5, className = "" }: { lines?: number; className?: string }) {
+export function GenericSkeleton({
+  lines = 5,
+  className = "",
+}: {
+  lines?: number;
+  className?: string;
+}) {
   return (
     <div className={`space-y-2 animate-pulse ${className}`}>
       {[...Array(lines)].map((_, i) => (

@@ -1,5 +1,14 @@
 import { useState } from "react";
-import { Languages, Plus, Trash2, Volume2, Copy, CheckCircle2, Circle, Bookmark } from "lucide-react";
+import {
+  Languages,
+  Plus,
+  Trash2,
+  Volume2,
+  Copy,
+  CheckCircle2,
+  Circle,
+  Bookmark,
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -59,9 +68,9 @@ const CATEGORIES = [
 
 const COMMON_PHRASES: Record<string, Record<string, string>> = {
   Spanish: {
-    "Hello": "Hola",
+    Hello: "Hola",
     "Thank you": "Gracias",
-    "Please": "Por favor",
+    Please: "Por favor",
     "Excuse me": "Disculpe",
     "Where is the bathroom?": "¿Dónde está el baño?",
     "How much does this cost?": "¿Cuánto cuesta esto?",
@@ -71,9 +80,9 @@ const COMMON_PHRASES: Record<string, Record<string, string>> = {
     "Can I have the bill?": "¿Puedo tener la cuenta?",
   },
   French: {
-    "Hello": "Bonjour",
+    Hello: "Bonjour",
     "Thank you": "Merci",
-    "Please": "S'il vous plaît",
+    Please: "S'il vous plaît",
     "Excuse me": "Excusez-moi",
     "Where is the bathroom?": "Où se trouve la salle de bain?",
     "How much does this cost?": "Combien ça coûte?",
@@ -83,9 +92,9 @@ const COMMON_PHRASES: Record<string, Record<string, string>> = {
     "Can I have the bill?": "Puis-je avoir l'addition?",
   },
   Japanese: {
-    "Hello": "こんにちは (Konnichiwa)",
+    Hello: "こんにちは (Konnichiwa)",
     "Thank you": "ありがとうございます (Arigatou gozaimasu)",
-    "Please": "お願いします (Onegai shimasu)",
+    Please: "お願いします (Onegai shimasu)",
     "Excuse me": "すみません (Sumimasen)",
     "Where is the bathroom?": "トイレはどこですか？ (Toire wa doko desu ka?)",
     "How much does this cost?": "これはいくらですか？ (Kore wa ikura desu ka?)",
@@ -140,7 +149,8 @@ export function TranslationHelper() {
 
   const validateSessionForm = () => {
     const newErrors: Record<string, string> = {};
-    if (!sessionForm.destination.trim()) newErrors.destination = "Destination required";
+    if (!sessionForm.destination.trim())
+      newErrors.destination = "Destination required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -165,11 +175,13 @@ export function TranslationHelper() {
   const handleAddPhrase = (sessionId: string) => {
     if (!phraseForm.englishText.trim()) return;
 
-    const commonTranslations = COMMON_PHRASES[currentSession?.language || "Spanish"] || {};
-    const translation = commonTranslations[phraseForm.englishText] || "Translation not available";
+    const commonTranslations =
+      COMMON_PHRASES[currentSession?.language || "Spanish"] || {};
+    const translation =
+      commonTranslations[phraseForm.englishText] || "Translation not available";
 
     setSessions(
-      sessions.map((session) => {
+      sessions.map(session => {
         if (session.id === sessionId) {
           return {
             ...session,
@@ -196,12 +208,14 @@ export function TranslationHelper() {
 
   const handleToggleSaved = (sessionId: string, phraseId: string) => {
     setSessions(
-      sessions.map((session) => {
+      sessions.map(session => {
         if (session.id === sessionId) {
           return {
             ...session,
-            phrases: session.phrases.map((phrase) =>
-              phrase.id === phraseId ? { ...phrase, saved: !phrase.saved } : phrase
+            phrases: session.phrases.map(phrase =>
+              phrase.id === phraseId
+                ? { ...phrase, saved: !phrase.saved }
+                : phrase
             ),
           };
         }
@@ -212,11 +226,11 @@ export function TranslationHelper() {
 
   const handleDeletePhrase = (sessionId: string, phraseId: string) => {
     setSessions(
-      sessions.map((session) => {
+      sessions.map(session => {
         if (session.id === sessionId) {
           return {
             ...session,
-            phrases: session.phrases.filter((p) => p.id !== phraseId),
+            phrases: session.phrases.filter(p => p.id !== phraseId),
           };
         }
         return session;
@@ -225,7 +239,7 @@ export function TranslationHelper() {
   };
 
   const handleDeleteSession = (sessionId: string) => {
-    setSessions(sessions.filter((s) => s.id !== sessionId));
+    setSessions(sessions.filter(s => s.id !== sessionId));
     setSelectedSession(null);
   };
 
@@ -235,7 +249,7 @@ export function TranslationHelper() {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const currentSession = sessions.find((s) => s.id === selectedSession);
+  const currentSession = sessions.find(s => s.id === selectedSession);
 
   return (
     <div className="space-y-6">
@@ -252,7 +266,9 @@ export function TranslationHelper() {
           {/* Create Session Form */}
           {showForm && (
             <Card className="p-6 border-border/50">
-              <h3 className="text-lg font-semibold mb-4">New Translation Session</h3>
+              <h3 className="text-lg font-semibold mb-4">
+                New Translation Session
+              </h3>
 
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-3">
@@ -261,8 +277,11 @@ export function TranslationHelper() {
                       type="text"
                       placeholder="Destination"
                       value={sessionForm.destination}
-                      onChange={(e) => {
-                        setSessionForm({ ...sessionForm, destination: e.target.value });
+                      onChange={e => {
+                        setSessionForm({
+                          ...sessionForm,
+                          destination: e.target.value,
+                        });
                         setErrors({ ...errors, destination: "" });
                       }}
                       className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
@@ -271,10 +290,15 @@ export function TranslationHelper() {
 
                   <select
                     value={sessionForm.language}
-                    onChange={(e) => setSessionForm({ ...sessionForm, language: e.target.value })}
+                    onChange={e =>
+                      setSessionForm({
+                        ...sessionForm,
+                        language: e.target.value,
+                      })
+                    }
                     className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/50"
                   >
-                    {LANGUAGES.map((lang) => (
+                    {LANGUAGES.map(lang => (
                       <option key={lang} value={lang}>
                         {lang}
                       </option>
@@ -304,7 +328,7 @@ export function TranslationHelper() {
           {/* Sessions List */}
           {sessions.length > 0 ? (
             <div className="space-y-3">
-              {sessions.map((session) => (
+              {sessions.map(session => (
                 <Card
                   key={session.id}
                   className="p-4 border-border/50 cursor-pointer hover:border-primary/50 transition-colors"
@@ -314,13 +338,17 @@ export function TranslationHelper() {
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
                         <Languages className="w-5 h-5 text-primary" />
-                        <h4 className="font-semibold text-foreground">{session.destination}</h4>
+                        <h4 className="font-semibold text-foreground">
+                          {session.destination}
+                        </h4>
                       </div>
-                      <p className="text-sm text-muted-foreground">{session.language}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {session.language}
+                      </p>
                     </div>
 
                     <button
-                      onClick={(e) => {
+                      onClick={e => {
                         e.stopPropagation();
                         handleDeleteSession(session.id);
                       }}
@@ -331,7 +359,8 @@ export function TranslationHelper() {
                   </div>
 
                   <p className="text-xs text-muted-foreground">
-                    {session.phrases.length} phrases • Created {new Date(session.createdAt).toLocaleDateString()}
+                    {session.phrases.length} phrases • Created{" "}
+                    {new Date(session.createdAt).toLocaleDateString()}
                   </p>
                 </Card>
               ))}
@@ -342,7 +371,10 @@ export function TranslationHelper() {
                 icon={Languages}
                 title="No Translation Sessions"
                 description="Create a session to translate phrases for your destination"
-                action={{ label: "Create Session", onClick: () => setShowForm(true) }}
+                action={{
+                  label: "Create Session",
+                  onClick: () => setShowForm(true),
+                }}
               />
             )
           )}
@@ -354,11 +386,18 @@ export function TranslationHelper() {
             {/* Header */}
             <div className="flex items-center justify-between">
               <div>
-                <button onClick={() => setSelectedSession(null)} className="text-primary hover:text-primary/80 text-sm mb-2">
+                <button
+                  onClick={() => setSelectedSession(null)}
+                  className="text-primary hover:text-primary/80 text-sm mb-2"
+                >
                   ← Back to Sessions
                 </button>
-                <h2 className="text-2xl font-bold text-foreground">{currentSession.destination}</h2>
-                <p className="text-muted-foreground">Translating to {currentSession.language}</p>
+                <h2 className="text-2xl font-bold text-foreground">
+                  {currentSession.destination}
+                </h2>
+                <p className="text-muted-foreground">
+                  Translating to {currentSession.language}
+                </p>
               </div>
             </div>
 
@@ -367,20 +406,26 @@ export function TranslationHelper() {
               <div className="grid grid-cols-3 gap-3">
                 <div className="p-3 bg-black/20 rounded-lg">
                   <p className="text-xs text-muted-foreground">Total Phrases</p>
-                  <p className="text-2xl font-bold text-foreground">{currentSession.phrases.length}</p>
+                  <p className="text-2xl font-bold text-foreground">
+                    {currentSession.phrases.length}
+                  </p>
                 </div>
 
                 <div className="p-3 bg-black/20 rounded-lg border border-purple-500/30">
                   <p className="text-xs text-purple-300">Saved</p>
                   <p className="text-2xl font-bold text-purple-400">
-                    {currentSession.phrases.filter((p) => p.saved).length}
+                    {currentSession.phrases.filter(p => p.saved).length}
                   </p>
                 </div>
 
                 <div className="p-3 bg-black/20 rounded-lg">
                   <p className="text-xs text-muted-foreground">Most Used</p>
                   <p className="text-2xl font-bold text-foreground">
-                    {Math.max(0, ...currentSession.phrases.map((p) => p.usageCount))} times
+                    {Math.max(
+                      0,
+                      ...currentSession.phrases.map(p => p.usageCount)
+                    )}{" "}
+                    times
                   </p>
                 </div>
               </div>
@@ -394,51 +439,72 @@ export function TranslationHelper() {
                   type="text"
                   placeholder="Enter English phrase..."
                   value={phraseForm.englishText}
-                  onChange={(e) => setPhraseForm({ ...phraseForm, englishText: e.target.value })}
+                  onChange={e =>
+                    setPhraseForm({
+                      ...phraseForm,
+                      englishText: e.target.value,
+                    })
+                  }
                   className="flex-1 bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
                 />
 
                 <select
                   value={phraseForm.category}
-                  onChange={(e) => setPhraseForm({ ...phraseForm, category: e.target.value })}
+                  onChange={e =>
+                    setPhraseForm({ ...phraseForm, category: e.target.value })
+                  }
                   className="w-32 bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/50"
                 >
-                  {CATEGORIES.map((cat) => (
+                  {CATEGORIES.map(cat => (
                     <option key={cat} value={cat}>
                       {cat}
                     </option>
                   ))}
                 </select>
 
-                <Button onClick={() => handleAddPhrase(currentSession.id)} size="sm">
+                <Button
+                  onClick={() => handleAddPhrase(currentSession.id)}
+                  size="sm"
+                >
                   <Plus className="w-4 h-4" />
                 </Button>
               </div>
             </Card>
 
             {/* Phrases by Category */}
-            {CATEGORIES.map((category) => {
-              const categoryPhrases = currentSession.phrases.filter((p) => p.category === category);
+            {CATEGORIES.map(category => {
+              const categoryPhrases = currentSession.phrases.filter(
+                p => p.category === category
+              );
               if (categoryPhrases.length === 0) return null;
 
               return (
                 <Card key={category} className="p-4 border-border/50">
-                  <h4 className="font-semibold text-foreground mb-3">{category}</h4>
+                  <h4 className="font-semibold text-foreground mb-3">
+                    {category}
+                  </h4>
 
                   <div className="space-y-3">
-                    {categoryPhrases.map((phrase) => (
-                      <div key={phrase.id} className="p-3 bg-black/20 rounded-lg space-y-2">
+                    {categoryPhrases.map(phrase => (
+                      <div
+                        key={phrase.id}
+                        className="p-3 bg-black/20 rounded-lg space-y-2"
+                      >
                         {/* English Text */}
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex-1">
-                            <div className="text-sm font-medium text-foreground">{phrase.englishText}</div>
+                            <div className="text-sm font-medium text-foreground">
+                              {phrase.englishText}
+                            </div>
                             <Badge variant="outline" className="text-xs mt-1">
                               {phrase.category}
                             </Badge>
                           </div>
 
                           <button
-                            onClick={() => handleToggleSaved(currentSession.id, phrase.id)}
+                            onClick={() =>
+                              handleToggleSaved(currentSession.id, phrase.id)
+                            }
                             className="text-muted-foreground hover:text-primary transition-colors flex-shrink-0"
                           >
                             {phrase.saved ? (
@@ -452,14 +518,27 @@ export function TranslationHelper() {
                         {/* Translation */}
                         <div className="flex items-start gap-2">
                           <div className="flex-1">
-                            <p className="text-xs text-muted-foreground mb-1">{currentSession.language}</p>
-                            <p className="text-sm text-foreground italic">{phrase.translatedText}</p>
-                            {phrase.pronunciation && <p className="text-xs text-muted-foreground mt-1">{phrase.pronunciation}</p>}
+                            <p className="text-xs text-muted-foreground mb-1">
+                              {currentSession.language}
+                            </p>
+                            <p className="text-sm text-foreground italic">
+                              {phrase.translatedText}
+                            </p>
+                            {phrase.pronunciation && (
+                              <p className="text-xs text-muted-foreground mt-1">
+                                {phrase.pronunciation}
+                              </p>
+                            )}
                           </div>
 
                           <div className="flex gap-1 flex-shrink-0">
                             <button
-                              onClick={() => handleCopyPhrase(phrase.translatedText, phrase.id)}
+                              onClick={() =>
+                                handleCopyPhrase(
+                                  phrase.translatedText,
+                                  phrase.id
+                                )
+                              }
                               className="p-2 hover:bg-primary/10 rounded transition-colors"
                             >
                               {copiedId === phrase.id ? (
@@ -474,7 +553,9 @@ export function TranslationHelper() {
                             </button>
 
                             <button
-                              onClick={() => handleDeletePhrase(currentSession.id, phrase.id)}
+                              onClick={() =>
+                                handleDeletePhrase(currentSession.id, phrase.id)
+                              }
                               className="p-2 hover:bg-red-500/10 rounded transition-colors"
                             >
                               <Trash2 className="w-4 h-4 text-red-500" />
@@ -483,7 +564,9 @@ export function TranslationHelper() {
                         </div>
 
                         {/* Usage Stats */}
-                        <div className="text-xs text-muted-foreground">Used {phrase.usageCount} times</div>
+                        <div className="text-xs text-muted-foreground">
+                          Used {phrase.usageCount} times
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -498,7 +581,9 @@ export function TranslationHelper() {
                 Language Tips
               </h4>
               <ul className="text-sm text-blue-200/80 space-y-1">
-                <li>• Learn common phrases: greetings, thank you, and "help"</li>
+                <li>
+                  • Learn common phrases: greetings, thank you, and "help"
+                </li>
                 <li>• Practice pronunciation before your trip</li>
                 <li>• Save frequently used phrases for quick reference</li>
                 <li>• Keep offline translation app as backup</li>

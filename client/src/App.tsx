@@ -59,7 +59,10 @@ import BusinessOperationsPage from "./pages/portal/BusinessOperationsPage";
 
 // Admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
-import { AdminClientsList, AdminClientDetail } from "./pages/admin/AdminClients";
+import {
+  AdminClientsList,
+  AdminClientDetail,
+} from "./pages/admin/AdminClients";
 import { AdminTripsList, AdminTripDetail } from "./pages/admin/AdminTrips";
 import AdminMessages from "./pages/admin/AdminMessages";
 import AdminGuides from "./pages/admin/AdminGuides";
@@ -108,9 +111,18 @@ function Router() {
       {/* Phase 4: In-Trip Mobile Experience */}
       <Route path="/portal/live-itinerary" component={LiveItineraryPage} />
       <Route path="/portal/family-checkin" component={FamilyCheckInPage} />
-      <Route path="/portal/location-guides" component={LocationAwareGuidesPage} />
-      <Route path="/portal/crisis-management" component={CrisisManagementPage} />
-      <Route path="/portal/flight-alternatives" component={FlightAlternativesPage} />
+      <Route
+        path="/portal/location-guides"
+        component={LocationAwareGuidesPage}
+      />
+      <Route
+        path="/portal/crisis-management"
+        component={CrisisManagementPage}
+      />
+      <Route
+        path="/portal/flight-alternatives"
+        component={FlightAlternativesPage}
+      />
       <Route path="/portal/expense-tracker" component={ExpenseTrackerPage} />
 
       {/* Phase 4.5: Post-Trip Memory Curation */}
@@ -120,7 +132,10 @@ function Router() {
       <Route path="/portal/memory-archives" component={MemoryArchivesPage} />
 
       {/* Phase 6: Business Operations & AI Co-pilot */}
-      <Route path="/portal/business-operations" component={BusinessOperationsPage} />
+      <Route
+        path="/portal/business-operations"
+        component={BusinessOperationsPage}
+      />
 
       {/* Admin dashboard */}
       <Route path="/admin" component={AdminDashboard} />

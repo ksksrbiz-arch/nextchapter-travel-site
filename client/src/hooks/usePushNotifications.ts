@@ -42,8 +42,8 @@ export function usePushNotifications() {
     setStatus(Notification.permission as PushStatus);
 
     // Check if already subscribed
-    navigator.serviceWorker.ready.then((reg) => {
-      reg.pushManager.getSubscription().then((sub) => {
+    navigator.serviceWorker.ready.then(reg => {
+      reg.pushManager.getSubscription().then(sub => {
         setIsSubscribed(!!sub);
       });
     });

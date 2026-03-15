@@ -1,12 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
-  Plus, Share2, Lock, Globe, Trash2, Edit2, Image, Zap, Users,
-  MapPin, Calendar, ChevronRight, BookOpen
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import memoryCuration from '@/_core/services/memoryCuration';
-import type { MemoryAlbum, MemorySummary } from '@/_core/services/memoryCuration';
+  Plus,
+  Share2,
+  Lock,
+  Globe,
+  Trash2,
+  Edit2,
+  Image,
+  Zap,
+  Users,
+  MapPin,
+  Calendar,
+  ChevronRight,
+  BookOpen,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import memoryCuration from "@/_core/services/memoryCuration";
+import type {
+  MemoryAlbum,
+  MemorySummary,
+} from "@/_core/services/memoryCuration";
 
 interface MemoryAlbumsProps {
   tripId: string;
@@ -25,7 +39,7 @@ export default function MemoryAlbums({ tripId }: MemoryAlbumsProps) {
   const [albums, setAlbums] = React.useState<MemoryAlbum[]>([]);
   const [summary, setSummary] = React.useState<MemorySummary | null>(null);
   const [selectedAlbum, setSelectedAlbum] = useState<MemoryAlbum | null>(null);
-  const [newAlbumName, setNewAlbumName] = useState('');
+  const [newAlbumName, setNewAlbumName] = useState("");
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [stats, setStats] = useState<AlbumStats | null>(null);
 
@@ -38,81 +52,82 @@ export default function MemoryAlbums({ tripId }: MemoryAlbumsProps) {
         totalMedia: 42,
         highlights: [
           {
-            id: 'hl-1',
-            mediaId: 'photo-1',
-            emotion: 'amazed',
+            id: "hl-1",
+            mediaId: "photo-1",
+            emotion: "amazed",
             confidence: 0.94,
-            reason: 'Perfectly captured the golden hour moment with crystal clear composition',
+            reason:
+              "Perfectly captured the golden hour moment with crystal clear composition",
             timestamp: Date.now() - 86400000 * 5,
           },
           {
-            id: 'hl-2',
-            mediaId: 'photo-4',
-            emotion: 'happy',
+            id: "hl-2",
+            mediaId: "photo-4",
+            emotion: "happy",
             confidence: 0.92,
-            reason: 'Spontaneous family laughter with genuine joy evident',
+            reason: "Spontaneous family laughter with genuine joy evident",
             timestamp: Date.now() - 86400000 * 2,
           },
         ],
         suggestedAlbums: [
           {
-            id: 'album-1',
+            id: "album-1",
             tripId,
-            name: 'Adventure Highlights',
-            description: 'Best moments of exploration and discovery',
-            emotion: 'adventurous',
-            mediaIds: ['photo-1', 'video-1', 'photo-5'],
-            coverImageId: 'photo-1',
+            name: "Adventure Highlights",
+            description: "Best moments of exploration and discovery",
+            emotion: "adventurous",
+            mediaIds: ["photo-1", "video-1", "photo-5"],
+            coverImageId: "photo-1",
             createdAt: Date.now(),
             isPublic: false,
           },
           {
-            id: 'album-2',
+            id: "album-2",
             tripId,
-            name: 'Culinary Journey',
-            description: 'Food and dining experiences from the trip',
-            emotion: 'happy',
-            mediaIds: ['photo-3', 'photo-6', 'photo-8'],
-            coverImageId: 'photo-3',
+            name: "Culinary Journey",
+            description: "Food and dining experiences from the trip",
+            emotion: "happy",
+            mediaIds: ["photo-3", "photo-6", "photo-8"],
+            coverImageId: "photo-3",
             createdAt: Date.now(),
             isPublic: false,
           },
           {
-            id: 'album-3',
+            id: "album-3",
             tripId,
-            name: 'Sunset Moments',
-            description: 'Golden hour captures from each day',
-            emotion: 'relaxed',
-            mediaIds: ['photo-2', 'photo-7'],
-            coverImageId: 'photo-2',
+            name: "Sunset Moments",
+            description: "Golden hour captures from each day",
+            emotion: "relaxed",
+            mediaIds: ["photo-2", "photo-7"],
+            coverImageId: "photo-2",
             createdAt: Date.now(),
             isPublic: false,
           },
         ],
         emotionalJourney: [
-          { day: 0, emotion: 'excited', intensity: 0.95 },
-          { day: 1, emotion: 'adventurous', intensity: 0.88 },
-          { day: 2, emotion: 'happy', intensity: 0.92 },
-          { day: 3, emotion: 'amazed', intensity: 0.87 },
-          { day: 4, emotion: 'grateful', intensity: 0.85 },
+          { day: 0, emotion: "excited", intensity: 0.95 },
+          { day: 1, emotion: "adventurous", intensity: 0.88 },
+          { day: 2, emotion: "happy", intensity: 0.92 },
+          { day: 3, emotion: "amazed", intensity: 0.87 },
+          { day: 4, emotion: "grateful", intensity: 0.85 },
         ],
         topLocations: [
-          { name: 'San Francisco', mediaCount: 12 },
-          { name: 'Big Sur', mediaCount: 8 },
-          { name: 'Yosemite', mediaCount: 10 },
-          { name: 'Lake Tahoe', mediaCount: 7 },
+          { name: "San Francisco", mediaCount: 12 },
+          { name: "Big Sur", mediaCount: 8 },
+          { name: "Yosemite", mediaCount: 10 },
+          { name: "Lake Tahoe", mediaCount: 7 },
         ],
-        bestTimes: ['Golden Hour Sunset', 'Blue Hour Evening', 'Night Magic'],
+        bestTimes: ["Golden Hour Sunset", "Blue Hour Evening", "Night Magic"],
       };
 
       setSummary(mockSummary);
       setAlbums(mockSummary.suggestedAlbums);
-      
+
       setStats({
         totalPhotos: 36,
         totalVideos: 6,
         highlightMoments: mockSummary.highlights.length,
-        averageConfidence: 0.90,
+        averageConfidence: 0.9,
         emotionBreakdown: {
           excited: 8,
           adventurous: 10,
@@ -132,15 +147,15 @@ export default function MemoryAlbums({ tripId }: MemoryAlbumsProps) {
       id: `custom-${Date.now()}`,
       tripId,
       name: newAlbumName,
-      emotion: 'curated',
+      emotion: "curated",
       mediaIds: summary.highlights.slice(0, 3).map(h => h.mediaId),
-      coverImageId: summary.highlights[0]?.mediaId || 'default',
+      coverImageId: summary.highlights[0]?.mediaId || "default",
       createdAt: Date.now(),
       isPublic: false,
     };
 
     setAlbums([...albums, newAlbum]);
-    setNewAlbumName('');
+    setNewAlbumName("");
     setShowCreateForm(false);
   };
 
@@ -148,7 +163,11 @@ export default function MemoryAlbums({ tripId }: MemoryAlbumsProps) {
     setAlbums(prev =>
       prev.map(a =>
         a.id === albumId
-          ? { ...a, isPublic: !a.isPublic, shares: (a.shares ?? 0) + (a.isPublic ? -1 : 1) }
+          ? {
+              ...a,
+              isPublic: !a.isPublic,
+              shares: (a.shares ?? 0) + (a.isPublic ? -1 : 1),
+            }
           : a
       )
     );
@@ -162,15 +181,15 @@ export default function MemoryAlbums({ tripId }: MemoryAlbumsProps) {
   };
 
   const emotionEmoji = {
-    happy: '😊',
-    excited: '🤩',
-    surprised: '😲',
-    relaxed: '😌',
-    adventurous: '🚀',
-    tender: '💕',
-    grateful: '🙏',
-    amazed: '🤯',
-    curated: '✨',
+    happy: "😊",
+    excited: "🤩",
+    surprised: "😲",
+    relaxed: "😌",
+    adventurous: "🚀",
+    tender: "💕",
+    grateful: "🙏",
+    amazed: "🤯",
+    curated: "✨",
   } as Record<string, string>;
 
   return (
@@ -183,16 +202,32 @@ export default function MemoryAlbums({ tripId }: MemoryAlbumsProps) {
             Your Memory Summary
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            <StatCard label="Photos" value={stats.totalPhotos} icon={<Image className="w-6 h-6" />} />
+            <StatCard
+              label="Photos"
+              value={stats.totalPhotos}
+              icon={<Image className="w-6 h-6" />}
+            />
             <StatCard label="Videos" value={stats.totalVideos} icon="🎬" />
-            <StatCard label="Highlights" value={stats.highlightMoments} icon={<Zap className="w-6 h-6" />} />
-            <StatCard label="Locations" value={stats.capturedLocations} icon={<MapPin className="w-6 h-6" />} />
+            <StatCard
+              label="Highlights"
+              value={stats.highlightMoments}
+              icon={<Zap className="w-6 h-6" />}
+            />
+            <StatCard
+              label="Locations"
+              value={stats.capturedLocations}
+              icon={<MapPin className="w-6 h-6" />}
+            />
             <StatCard
               label="Avg. Quality"
               value={`${Math.round(stats.averageConfidence * 100)}%`}
               icon="⭐"
             />
-            <StatCard label="Media Items" value={stats.totalPhotos + stats.totalVideos} icon="📸" />
+            <StatCard
+              label="Media Items"
+              value={stats.totalPhotos + stats.totalVideos}
+              icon="📸"
+            />
           </div>
         </div>
       )}
@@ -204,10 +239,14 @@ export default function MemoryAlbums({ tripId }: MemoryAlbumsProps) {
           <div className="space-y-3">
             {summary.emotionalJourney.map((day, idx) => (
               <div key={idx} className="flex items-center gap-4">
-                <span className="text-sm font-medium text-gray-400 w-12">Day {day.day + 1}</span>
+                <span className="text-sm font-medium text-gray-400 w-12">
+                  Day {day.day + 1}
+                </span>
                 <div className="flex-1">
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl">{emotionEmoji[day.emotion] || '😊'}</span>
+                    <span className="text-2xl">
+                      {emotionEmoji[day.emotion] || "😊"}
+                    </span>
                     <div className="flex-1 bg-gray-800 rounded-full h-2 overflow-hidden">
                       <div
                         className="bg-gradient-to-r from-blue-500 to-purple-500 h-full transition-all"
@@ -248,7 +287,9 @@ export default function MemoryAlbums({ tripId }: MemoryAlbumsProps) {
                       }}
                     />
                   </div>
-                  <span className="text-sm text-gray-400 w-8">{loc.mediaCount}</span>
+                  <span className="text-sm text-gray-400 w-8">
+                    {loc.mediaCount}
+                  </span>
                 </div>
               </div>
             ))}
@@ -296,7 +337,9 @@ export default function MemoryAlbums({ tripId }: MemoryAlbumsProps) {
           <div className="text-center py-12 bg-gray-900/50 rounded-lg border border-gray-800">
             <BookOpen className="w-12 h-12 text-gray-600 mx-auto mb-3" />
             <p className="text-gray-400">No albums yet</p>
-            <p className="text-gray-500 text-sm mt-1">Create your first album to organize memories</p>
+            <p className="text-gray-500 text-sm mt-1">
+              Create your first album to organize memories
+            </p>
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -309,11 +352,15 @@ export default function MemoryAlbums({ tripId }: MemoryAlbumsProps) {
                 {/* Album Cover */}
                 <div className="relative w-full aspect-video bg-gradient-to-br from-gray-800 to-gray-900 overflow-hidden">
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-6xl opacity-30">{emotionEmoji[album.emotion]}</div>
+                    <div className="text-6xl opacity-30">
+                      {emotionEmoji[album.emotion]}
+                    </div>
                   </div>
                   <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition flex items-end justify-between p-3">
                     <div>
-                      <Badge className="bg-blue-500/80 border-0">{album.mediaIds.length} items</Badge>
+                      <Badge className="bg-blue-500/80 border-0">
+                        {album.mediaIds.length} items
+                      </Badge>
                     </div>
                     <div className="flex gap-1">
                       {album.isPublic ? (
@@ -336,21 +383,25 @@ export default function MemoryAlbums({ tripId }: MemoryAlbumsProps) {
                         </Badge>
                       )}
                     </h4>
-                    <p className="text-gray-400 text-sm mt-1">{album.description}</p>
+                    <p className="text-gray-400 text-sm mt-1">
+                      {album.description}
+                    </p>
                   </div>
 
                   <div className="flex gap-2 pt-2">
                     <Button
                       size="sm"
-                      variant={album.isPublic ? 'default' : 'outline'}
+                      variant={album.isPublic ? "default" : "outline"}
                       onClick={e => {
                         e.stopPropagation();
                         handleShare(album.id);
                       }}
-                      className={album.isPublic ? 'bg-green-600 border-green-600' : ''}
+                      className={
+                        album.isPublic ? "bg-green-600 border-green-600" : ""
+                      }
                     >
                       <Share2 className="w-4 h-4" />
-                      {album.shares ? ` ${album.shares}` : ''}
+                      {album.shares ? ` ${album.shares}` : ""}
                     </Button>
                     <Button
                       size="sm"
@@ -387,13 +438,17 @@ export default function MemoryAlbums({ tripId }: MemoryAlbumsProps) {
           <h3 className="text-lg font-semibold mb-3">Best Photography Times</h3>
           <div className="flex flex-wrap gap-2">
             {summary.bestTimes.map((time, idx) => (
-              <Badge key={idx} className="bg-orange-500/30 text-orange-300 border-orange-500/50">
+              <Badge
+                key={idx}
+                className="bg-orange-500/30 text-orange-300 border-orange-500/50"
+              >
                 {time}
               </Badge>
             ))}
           </div>
           <p className="text-gray-400 text-sm mt-3">
-            These are the times when you captured the most photos during your trip. Perfect for sunset or night shots!
+            These are the times when you captured the most photos during your
+            trip. Perfect for sunset or night shots!
           </p>
         </div>
       )}
@@ -404,7 +459,9 @@ export default function MemoryAlbums({ tripId }: MemoryAlbumsProps) {
           <div className="bg-gray-900 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-gray-900 border-b border-gray-800 p-4 flex items-center justify-between">
               <h2 className="text-2xl font-bold flex items-center gap-2">
-                <span className="text-3xl">{emotionEmoji[selectedAlbum.emotion]}</span>
+                <span className="text-3xl">
+                  {emotionEmoji[selectedAlbum.emotion]}
+                </span>
                 {selectedAlbum.name}
               </h2>
               <button
@@ -433,12 +490,15 @@ export default function MemoryAlbums({ tripId }: MemoryAlbumsProps) {
               <div className="grid grid-cols-2 gap-2 pt-4">
                 <Button
                   onClick={() => handleShare(selectedAlbum.id)}
-                  className={selectedAlbum.isPublic ? 'bg-green-600' : ''}
+                  className={selectedAlbum.isPublic ? "bg-green-600" : ""}
                 >
                   <Share2 className="w-4 h-4 mr-2" />
-                  {selectedAlbum.isPublic ? 'Shared' : 'Share'}
+                  {selectedAlbum.isPublic ? "Shared" : "Share"}
                 </Button>
-                <Button variant="outline" onClick={() => handleDelete(selectedAlbum.id)}>
+                <Button
+                  variant="outline"
+                  onClick={() => handleDelete(selectedAlbum.id)}
+                >
                   <Trash2 className="w-4 h-4 mr-2" />
                   Delete
                 </Button>
@@ -463,7 +523,7 @@ function StatCard({
   return (
     <div className="text-center">
       <div className="text-2xl mb-2 flex justify-center">
-        {typeof icon === 'string' || typeof icon === 'number' ? (
+        {typeof icon === "string" || typeof icon === "number" ? (
           <span>{icon}</span>
         ) : (
           icon

@@ -20,7 +20,7 @@ export interface Client {
   totalSpent: number;
   tripsBooked: number;
   lastBooking: number;
-  status: 'active' | 'inactive' | 'vip' | 'at-risk';
+  status: "active" | "inactive" | "vip" | "at-risk";
   notes: string;
   createdAt: number;
 }
@@ -33,7 +33,7 @@ export interface OperationalTrip {
   startDate: number;
   endDate: number;
   budget: number;
-  status: 'planning' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled';
+  status: "planning" | "confirmed" | "in-progress" | "completed" | "cancelled";
   itinerary: {
     day: number;
     activities: string[];
@@ -59,7 +59,7 @@ export interface OperationalTrip {
 export interface TeamMember {
   id: string;
   name: string;
-  role: 'ceo' | 'cfo' | 'director' | 'coordinator' | 'guide' | 'concierge';
+  role: "ceo" | "cfo" | "director" | "coordinator" | "guide" | "concierge";
   email: string;
   phone: string;
   department: string;
@@ -73,7 +73,7 @@ export interface TeamMember {
 }
 
 export interface BusinessAnalytics {
-  period: 'month' | 'quarter' | 'year';
+  period: "month" | "quarter" | "year";
   totalClients: number;
   totalTrips: number;
   totalRevenue: number;
@@ -82,20 +82,31 @@ export interface BusinessAnalytics {
   growthRate: number; // percentage
   churnRate: number; // percentage
   repeatClientRate: number; // percentage
-  topDestinations: Array<{ destination: string; count: number; revenue: number }>;
-  teamProductivity: Record<string, { tripsManaged: number; satisfaction: number }>;
-  issues: Array<{ description: string; severity: 'low' | 'medium' | 'high'; count: number }>;
+  topDestinations: Array<{
+    destination: string;
+    count: number;
+    revenue: number;
+  }>;
+  teamProductivity: Record<
+    string,
+    { tripsManaged: number; satisfaction: number }
+  >;
+  issues: Array<{
+    description: string;
+    severity: "low" | "medium" | "high";
+    count: number;
+  }>;
 }
 
 export interface AutomationTask {
   id: string;
-  type: 'email' | 'reminder' | 'booking' | 'followup' | 'report';
+  type: "email" | "reminder" | "booking" | "followup" | "report";
   title: string;
   description: string;
   dueDate: number;
-  priority: 'low' | 'medium' | 'high';
+  priority: "low" | "medium" | "high";
   assignedTo?: string;
-  status: 'pending' | 'in-progress' | 'completed' | 'failed';
+  status: "pending" | "in-progress" | "completed" | "failed";
   relatedTrip?: string;
   relatedClient?: string;
   createdAt: number;
@@ -117,25 +128,33 @@ class BusinessOperationsService {
   private initializeDefaultTeam(): void {
     const defaultTeam: TeamMember[] = [
       {
-        id: 'team-jessica',
-        name: 'Jessica Seiders',
-        role: 'cfo',
-        email: 'jessica@nextchaptertravel.com',
-        phone: '1-555-0100',
-        department: 'Finance & Operations',
+        id: "team-jessica",
+        name: "Jessica Seiders",
+        role: "cfo",
+        email: "jessica@nextchaptertravel.com",
+        phone: "1-555-0100",
+        department: "Finance & Operations",
         assignedTrips: [],
-        performance: { clientSatisfaction: 4.8, tripsManaged: 45, hoursLogged: 320 },
+        performance: {
+          clientSatisfaction: 4.8,
+          tripsManaged: 45,
+          hoursLogged: 320,
+        },
         createdAt: Date.now(),
       },
       {
-        id: 'team-wendy',
-        name: 'Wendy',
-        role: 'director',
-        email: 'wendy@nextchaptertravel.com',
-        phone: '1-555-0101',
-        department: 'Operations & Coordination',
+        id: "team-wendy",
+        name: "Wendy",
+        role: "director",
+        email: "wendy@nextchaptertravel.com",
+        phone: "1-555-0101",
+        department: "Operations & Coordination",
         assignedTrips: [],
-        performance: { clientSatisfaction: 4.9, tripsManaged: 52, hoursLogged: 420 },
+        performance: {
+          clientSatisfaction: 4.9,
+          tripsManaged: 52,
+          hoursLogged: 420,
+        },
         createdAt: Date.now(),
       },
     ];
@@ -150,7 +169,7 @@ class BusinessOperationsService {
     name: string,
     email: string,
     phone: string,
-    preferences: Client['preferences']
+    preferences: Client["preferences"]
   ): Client {
     const client: Client = {
       id: `client-${Date.now()}`,
@@ -161,8 +180,8 @@ class BusinessOperationsService {
       totalSpent: 0,
       tripsBooked: 0,
       lastBooking: 0,
-      status: 'active',
-      notes: '',
+      status: "active",
+      notes: "",
       createdAt: Date.now(),
     };
 
@@ -191,7 +210,7 @@ class BusinessOperationsService {
       startDate,
       endDate,
       budget,
-      status: 'planning',
+      status: "planning",
       itinerary: [],
       assignedTeam: {},
       expenses: { actual: 0, budgeted: budget, breakdown: {} },
@@ -210,19 +229,19 @@ class BusinessOperationsService {
   /**
    * Update trip status
    */
-  updateTripStatus(tripId: string, status: OperationalTrip['status']): boolean {
+  updateTripStatus(tripId: string, status: OperationalTrip["status"]): boolean {
     const trip = this.trips.get(tripId);
     if (trip) {
       trip.status = status;
       trip.updatedAt = Date.now();
 
       // Update client status based on trip progress
-      if (status === 'completed') {
+      if (status === "completed") {
         const client = this.clients.get(trip.clientId);
         if (client) {
           client.totalSpent += trip.expenses.actual;
           if (client.tripsBooked >= 2) {
-            client.status = 'vip';
+            client.status = "vip";
           }
         }
       }
@@ -279,7 +298,11 @@ class BusinessOperationsService {
   /**
    * Record trip satisfaction rating
    */
-  recordSatisfaction(tripId: string, rating: number, issues?: string[]): boolean {
+  recordSatisfaction(
+    tripId: string,
+    rating: number,
+    issues?: string[]
+  ): boolean {
     const trip = this.trips.get(tripId);
     if (trip) {
       trip.satisfaction = Math.min(5, Math.max(1, rating));
@@ -294,7 +317,8 @@ class BusinessOperationsService {
           if (member) {
             const current = member.performance.clientSatisfaction;
             const count = member.performance.tripsManaged;
-            member.performance.clientSatisfaction = (current * count + rating) / (count + 1);
+            member.performance.clientSatisfaction =
+              (current * count + rating) / (count + 1);
           }
         }
       });
@@ -321,7 +345,7 @@ class BusinessOperationsService {
   /**
    * Get trips by status
    */
-  getTripsByStatus(status: OperationalTrip['status']): OperationalTrip[] {
+  getTripsByStatus(status: OperationalTrip["status"]): OperationalTrip[] {
     return Array.from(this.trips.values()).filter(t => t.status === status);
   }
 
@@ -344,20 +368,29 @@ class BusinessOperationsService {
   /**
    * Generate business analytics
    */
-  generateAnalytics(period: 'month' | 'quarter' | 'year' = 'month'): BusinessAnalytics {
+  generateAnalytics(
+    period: "month" | "quarter" | "year" = "month"
+  ): BusinessAnalytics {
     const allClients = Array.from(this.clients.values());
     const allTrips = Array.from(this.trips.values());
     const allTeam = Array.from(this.team.values());
 
-    const completedTrips = allTrips.filter(t => t.status === 'completed');
-    const totalRevenue = completedTrips.reduce((sum, t) => sum + t.expenses.actual, 0);
+    const completedTrips = allTrips.filter(t => t.status === "completed");
+    const totalRevenue = completedTrips.reduce(
+      (sum, t) => sum + t.expenses.actual,
+      0
+    );
     const avgClientSatisfaction =
       completedTrips.length > 0
-        ? completedTrips.reduce((sum, t) => sum + t.satisfaction, 0) / completedTrips.length
+        ? completedTrips.reduce((sum, t) => sum + t.satisfaction, 0) /
+          completedTrips.length
         : 0;
 
     // Top destinations
-    const destinationMap = new Map<string, { count: number; revenue: number }>();
+    const destinationMap = new Map<
+      string,
+      { count: number; revenue: number }
+    >();
     completedTrips.forEach(trip => {
       if (!destinationMap.has(trip.destination)) {
         destinationMap.set(trip.destination, { count: 0, revenue: 0 });
@@ -377,7 +410,10 @@ class BusinessOperationsService {
       .slice(0, 5);
 
     // Team productivity
-    const teamProductivity: Record<string, { tripsManaged: number; satisfaction: number }> = {};
+    const teamProductivity: Record<
+      string,
+      { tripsManaged: number; satisfaction: number }
+    > = {};
     allTeam.forEach(member => {
       teamProductivity[member.name] = {
         tripsManaged: member.performance.tripsManaged,
@@ -386,11 +422,19 @@ class BusinessOperationsService {
     });
 
     // Issues summary
-    const issueMap = new Map<string, { count: number; severity: 'low' | 'medium' | 'high' }>();
+    const issueMap = new Map<
+      string,
+      { count: number; severity: "low" | "medium" | "high" }
+    >();
     allTrips.forEach(trip => {
       trip.issues.forEach(issue => {
         if (!issueMap.has(issue)) {
-          const severity = trip.issues.length > 2 ? 'high' : trip.issues.length > 0 ? 'medium' : 'low';
+          const severity =
+            trip.issues.length > 2
+              ? "high"
+              : trip.issues.length > 0
+                ? "medium"
+                : "low";
           issueMap.set(issue, { count: 0, severity });
         }
         const issueData = issueMap.get(issue)!;
@@ -407,7 +451,9 @@ class BusinessOperationsService {
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
 
-    const activeClients = allClients.filter(c => c.status === 'active' || c.status === 'vip').length;
+    const activeClients = allClients.filter(
+      c => c.status === "active" || c.status === "vip"
+    ).length;
     const repeatClients = allClients.filter(c => c.tripsBooked > 1).length;
 
     return {
@@ -415,11 +461,13 @@ class BusinessOperationsService {
       totalClients: allClients.length,
       totalTrips: allTrips.length,
       totalRevenue,
-      avgTripValue: completedTrips.length > 0 ? totalRevenue / completedTrips.length : 0,
+      avgTripValue:
+        completedTrips.length > 0 ? totalRevenue / completedTrips.length : 0,
       avgClientSatisfaction,
       growthRate: 12.5 + Math.random() * 5, // Mock growth
       churnRate: 5.2 + Math.random() * 2, // Mock churn
-      repeatClientRate: allClients.length > 0 ? (repeatClients / allClients.length) * 100 : 0,
+      repeatClientRate:
+        allClients.length > 0 ? (repeatClients / allClients.length) * 100 : 0,
       topDestinations,
       teamProductivity,
       issues,
@@ -430,10 +478,10 @@ class BusinessOperationsService {
    * Create an automation task
    */
   createAutomationTask(
-    type: AutomationTask['type'],
+    type: AutomationTask["type"],
     title: string,
     dueDate: number,
-    priority: 'low' | 'medium' | 'high',
+    priority: "low" | "medium" | "high",
     relatedTrip?: string,
     relatedClient?: string
   ): AutomationTask {
@@ -444,7 +492,7 @@ class BusinessOperationsService {
       description: `Automated ${type} task for Next Chapter Travel`,
       dueDate,
       priority,
-      status: 'pending',
+      status: "pending",
       relatedTrip,
       relatedClient,
       createdAt: Date.now(),
@@ -458,7 +506,9 @@ class BusinessOperationsService {
    * Get pending automation tasks
    */
   getPendingTasks(): AutomationTask[] {
-    return Array.from(this.tasks.values()).filter(t => t.status === 'pending' || t.status === 'in-progress');
+    return Array.from(this.tasks.values()).filter(
+      t => t.status === "pending" || t.status === "in-progress"
+    );
   }
 
   /**
@@ -467,7 +517,7 @@ class BusinessOperationsService {
   completeTask(taskId: string): boolean {
     const task = this.tasks.get(taskId);
     if (task) {
-      task.status = 'completed';
+      task.status = "completed";
       return true;
     }
     return false;
@@ -477,30 +527,32 @@ class BusinessOperationsService {
    * Get business health score (0-100)
    */
   getHealthScore(): number {
-    const analytics = this.generateAnalytics('month');
-    
+    const analytics = this.generateAnalytics("month");
+
     // Base score from satisfaction
     let score = analytics.avgClientSatisfaction * 20; // 0-20
-    
+
     // Add for trip completion rate
-    const completedTrips = this.getTripsByStatus('completed').length;
+    const completedTrips = this.getTripsByStatus("completed").length;
     const totalTrips = this.getAllTrips().length;
     if (totalTrips > 0) {
       score += (completedTrips / totalTrips) * 20; // 0-20
     }
-    
+
     // Add for repeat client rate
     score += analytics.repeatClientRate / 5; // 0-20
-    
+
     // Add for team satisfaction
-    const avgTeamSatisfaction = Object.values(analytics.teamProductivity).reduce(
-      (sum, p) => sum + p.satisfaction, 0
-    ) / Object.keys(analytics.teamProductivity).length;
+    const avgTeamSatisfaction =
+      Object.values(analytics.teamProductivity).reduce(
+        (sum, p) => sum + p.satisfaction,
+        0
+      ) / Object.keys(analytics.teamProductivity).length;
     score += (avgTeamSatisfaction / 5) * 20; // 0-20
-    
+
     // Subtract for unresolved issues
     score -= analytics.issues.length * 2;
-    
+
     return Math.max(0, Math.min(100, Math.round(score)));
   }
 }

@@ -25,26 +25,26 @@ interface ConfettiProps {
 }
 
 const DEFAULT_COLORS = [
-  "oklch(0.72 0.09 65)",   // gold
-  "oklch(0.80 0.10 75)",   // light gold
-  "oklch(0.65 0.08 60)",   // dark gold
-  "oklch(0.90 0.05 90)",   // cream
-  "oklch(0.50 0.03 240)",  // navy accent
+  "oklch(0.72 0.09 65)", // gold
+  "oklch(0.80 0.10 75)", // light gold
+  "oklch(0.65 0.08 60)", // dark gold
+  "oklch(0.90 0.05 90)", // cream
+  "oklch(0.50 0.03 240)", // navy accent
 ];
 
 /**
  * Celebration confetti component.
  * Triggers a burst of confetti pieces that fall with physics-based animation.
- * 
+ *
  * @example
  * ```tsx
  * const [celebrate, setCelebrate] = useState(false);
- * 
- * <Confetti 
- *   active={celebrate} 
- *   onComplete={() => setCelebrate(false)} 
+ *
+ * <Confetti
+ *   active={celebrate}
+ *   onComplete={() => setCelebrate(false)}
  * />
- * 
+ *
  * <Button onClick={() => setCelebrate(true)}>
  *   Book Trip!
  * </Button>
@@ -78,7 +78,7 @@ export function Confetti({
   useEffect(() => {
     if (active) {
       setPieces(generatePieces());
-      
+
       const timeout = setTimeout(() => {
         setPieces([]);
         onComplete?.();
@@ -94,7 +94,7 @@ export function Confetti({
 
   return (
     <div className="fixed inset-0 pointer-events-none z-[9999] overflow-hidden">
-      {pieces.map((piece) => (
+      {pieces.map(piece => (
         <div
           key={piece.id}
           className="absolute top-0 animate-confetti-fall"
@@ -124,19 +124,19 @@ export function Confetti({
 /**
  * Success checkmark animation - great for form completions
  */
-export function SuccessCheckmark({ 
-  show, 
+export function SuccessCheckmark({
+  show,
   size = 64,
-  className 
-}: { 
-  show: boolean; 
+  className,
+}: {
+  show: boolean;
   size?: number;
   className?: string;
 }) {
   if (!show) return null;
 
   return (
-    <div 
+    <div
       className={cn("flex items-center justify-center", className)}
       style={{ width: size, height: size }}
     >
@@ -172,25 +172,32 @@ export function SuccessCheckmark({
 /**
  * Pulsing dot indicator - for active/live states
  */
-export function PulsingDot({ 
+export function PulsingDot({
   color = "bg-green-500",
   size = "sm",
-  className 
-}: { 
+  className,
+}: {
   color?: string;
   size?: "sm" | "md" | "lg";
   className?: string;
 }) {
   const sizes = {
     sm: "w-2 h-2",
-    md: "w-3 h-3", 
-    lg: "w-4 h-4"
+    md: "w-3 h-3",
+    lg: "w-4 h-4",
   };
 
   return (
     <span className={cn("relative inline-flex", className)}>
-      <span className={cn("animate-ping absolute inline-flex h-full w-full rounded-full opacity-75", color)} />
-      <span className={cn("relative inline-flex rounded-full", color, sizes[size])} />
+      <span
+        className={cn(
+          "animate-ping absolute inline-flex h-full w-full rounded-full opacity-75",
+          color
+        )}
+      />
+      <span
+        className={cn("relative inline-flex rounded-full", color, sizes[size])}
+      />
     </span>
   );
 }
@@ -201,7 +208,7 @@ export function PulsingDot({
 export function TypingIndicator({ className }: { className?: string }) {
   return (
     <div className={cn("flex items-center gap-1", className)}>
-      {[0, 1, 2].map((i) => (
+      {[0, 1, 2].map(i => (
         <div
           key={i}
           className="w-2 h-2 rounded-full bg-muted-foreground/40 animate-bounce"
@@ -215,20 +222,16 @@ export function TypingIndicator({ className }: { className?: string }) {
 /**
  * Shimmer loading placeholder - for images or cards
  */
-export function ShimmerPlaceholder({ 
+export function ShimmerPlaceholder({
   className,
-  rounded = "rounded-lg"
-}: { 
+  rounded = "rounded-lg",
+}: {
   className?: string;
   rounded?: string;
 }) {
   return (
-    <div 
-      className={cn(
-        "relative overflow-hidden bg-muted",
-        rounded,
-        className
-      )}
+    <div
+      className={cn("relative overflow-hidden bg-muted", rounded, className)}
     >
       <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
     </div>

@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
-import PortalLayout from '@/components/PortalLayout';
-import MemoryGallery from '@/components/MemoryGallery';
-import MemoryAlbums from '@/components/MemoryAlbums';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Images, BookOpen } from 'lucide-react';
+import React, { useState } from "react";
+import PortalLayout from "@/components/PortalLayout";
+import MemoryGallery from "@/components/MemoryGallery";
+import MemoryAlbums from "@/components/MemoryAlbums";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Images, BookOpen } from "lucide-react";
 
 export default function MemoryCurationPage() {
-  const tripId = 'trip-123'; // In production, get from context
-  const [activeTab, setActiveTab] = useState('gallery');
+  const tripId = "trip-123"; // In production, get from context
+  const [activeTab, setActiveTab] = useState("gallery");
 
   return (
-    <PortalLayout 
-      title="Memory Curation" 
+    <PortalLayout
+      title="Memory Curation"
       subtitle="Organize photos, videos, and memories from your journey"
     >
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">

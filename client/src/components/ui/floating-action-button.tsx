@@ -31,16 +31,16 @@ interface FloatingActionButtonProps {
 /**
  * Floating Action Button with optional speed-dial menu.
  * Great for primary actions like "New Message", "Add Item", etc.
- * 
+ *
  * @example
  * ```tsx
  * // Simple FAB
- * <FloatingActionButton 
- *   icon={<Plus />} 
- *   onClick={() => setShowForm(true)} 
+ * <FloatingActionButton
+ *   icon={<Plus />}
+ *   onClick={() => setShowForm(true)}
  *   label="Add new item"
  * />
- * 
+ *
  * // Speed dial FAB
  * <FloatingActionButton
  *   actions={[
@@ -66,9 +66,12 @@ export function FloatingActionButton({
   // Close on outside click
   useEffect(() => {
     if (!isOpen) return;
-    
+
     const handleClickOutside = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -115,19 +118,15 @@ export function FloatingActionButton({
   return (
     <div
       ref={containerRef}
-      className={cn(
-        "fixed z-40",
-        positionClasses[position],
-        bottomOffset
-      )}
+      className={cn("fixed z-40", positionClasses[position], bottomOffset)}
     >
       {/* Speed dial actions */}
       {hasActions && (
         <div
           className={cn(
             "absolute bottom-full mb-3 flex flex-col-reverse gap-2 transition-all duration-200",
-            isOpen 
-              ? "opacity-100 translate-y-0 pointer-events-auto" 
+            isOpen
+              ? "opacity-100 translate-y-0 pointer-events-auto"
               : "opacity-0 translate-y-4 pointer-events-none"
           )}
         >
@@ -137,12 +136,10 @@ export function FloatingActionButton({
               onClick={() => handleActionClick(action)}
               className={cn(
                 "group flex items-center gap-3 transition-all duration-200",
-                isOpen 
-                  ? "opacity-100 translate-y-0" 
-                  : "opacity-0 translate-y-2",
+                isOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
               )}
-              style={{ 
-                transitionDelay: isOpen ? `${index * 50}ms` : "0ms" 
+              style={{
+                transitionDelay: isOpen ? `${index * 50}ms` : "0ms",
               }}
               aria-label={action.label}
             >
@@ -150,7 +147,7 @@ export function FloatingActionButton({
               <span className="px-3 py-1.5 bg-card border border-border rounded-lg text-sm font-sans text-foreground shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
                 {action.label}
               </span>
-              
+
               {/* Action button */}
               <div
                 className={cn(
@@ -170,18 +167,21 @@ export function FloatingActionButton({
         onClick={handleMainClick}
         className={cn(
           "w-14 h-14 rounded-full bg-secondary text-secondary-foreground shadow-xl flex items-center justify-center transition-all duration-200 hover:bg-secondary/90 active:scale-95 focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2",
-          isOpen && "rotate-45 bg-muted text-muted-foreground hover:bg-muted/90",
+          isOpen &&
+            "rotate-45 bg-muted text-muted-foreground hover:bg-muted/90",
           className
         )}
         aria-label={label}
         aria-expanded={hasActions ? isOpen : undefined}
       >
-        {isOpen ? (openIcon || <X className="w-6 h-6" />) : (icon || <Plus className="w-6 h-6" />)}
+        {isOpen
+          ? openIcon || <X className="w-6 h-6" />
+          : icon || <Plus className="w-6 h-6" />}
       </button>
 
       {/* Backdrop for mobile */}
       {isOpen && hasActions && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/20 backdrop-blur-sm -z-10 md:hidden"
           onClick={() => setIsOpen(false)}
         />

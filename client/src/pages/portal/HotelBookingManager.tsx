@@ -1,5 +1,15 @@
 import { useState } from "react";
-import { Building2, Plus, Trash2, Phone, Globe, MapPin, Key, Star, AlertCircle } from "lucide-react";
+import {
+  Building2,
+  Plus,
+  Trash2,
+  Phone,
+  Globe,
+  MapPin,
+  Key,
+  Star,
+  AlertCircle,
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -43,7 +53,13 @@ const AMENITIES = [
   "Business Center",
 ];
 
-const ROOM_TYPES = ["Standard", "Deluxe", "Suite", "Presidential Suite", "Penthouse"];
+const ROOM_TYPES = [
+  "Standard",
+  "Deluxe",
+  "Suite",
+  "Presidential Suite",
+  "Penthouse",
+];
 
 export function HotelBookingManager() {
   const [reservations, setReservations] = useState<HotelReservation[]>([
@@ -92,12 +108,15 @@ export function HotelBookingManager() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     if (!formData.hotelName.trim()) newErrors.hotelName = "Hotel name required";
-    if (!formData.confirmationCode) newErrors.confirmationCode = "Confirmation code required";
+    if (!formData.confirmationCode)
+      newErrors.confirmationCode = "Confirmation code required";
     if (!formData.checkInDate) newErrors.checkInDate = "Check-in date required";
-    if (!formData.checkOutDate) newErrors.checkOutDate = "Check-out date required";
+    if (!formData.checkOutDate)
+      newErrors.checkOutDate = "Check-out date required";
     if (!formData.guestName) newErrors.guestName = "Guest name required";
     if (!formData.email) newErrors.email = "Email required";
-    if (!formData.totalPrice || isNaN(parseFloat(formData.totalPrice))) newErrors.totalPrice = "Valid price required";
+    if (!formData.totalPrice || isNaN(parseFloat(formData.totalPrice)))
+      newErrors.totalPrice = "Valid price required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -106,7 +125,9 @@ export function HotelBookingManager() {
     if (!validateForm()) return;
 
     const nights = Math.ceil(
-      (new Date(formData.checkOutDate).getTime() - new Date(formData.checkInDate).getTime()) / (1000 * 60 * 60 * 24)
+      (new Date(formData.checkOutDate).getTime() -
+        new Date(formData.checkInDate).getTime()) /
+        (1000 * 60 * 60 * 24)
     );
 
     const newReservation: HotelReservation = {
@@ -153,14 +174,14 @@ export function HotelBookingManager() {
   };
 
   const handleDeleteReservation = (id: string) => {
-    setReservations(reservations.filter((r) => r.id !== id));
+    setReservations(reservations.filter(r => r.id !== id));
   };
 
   const toggleAmenity = (amenity: string) => {
     if (formData.amenities.includes(amenity)) {
       setFormData({
         ...formData,
-        amenities: formData.amenities.filter((a) => a !== amenity),
+        amenities: formData.amenities.filter(a => a !== amenity),
       });
     } else {
       setFormData({
@@ -172,7 +193,8 @@ export function HotelBookingManager() {
 
   const totalNights = reservations.reduce((sum, r) => {
     const nights = Math.ceil(
-      (new Date(r.checkOutDate).getTime() - new Date(r.checkInDate).getTime()) / (1000 * 60 * 60 * 24)
+      (new Date(r.checkOutDate).getTime() - new Date(r.checkInDate).getTime()) /
+        (1000 * 60 * 60 * 24)
     );
     return sum + nights;
   }, 0);
@@ -183,12 +205,16 @@ export function HotelBookingManager() {
     <div className="space-y-6">
       {/* Summary */}
       <Card className="bg-gradient-to-br from-amber-950/30 to-orange-950/30 border-amber-500/20 p-6">
-        <h3 className="text-sm font-medium text-muted-foreground mb-4">Reservations Summary</h3>
+        <h3 className="text-sm font-medium text-muted-foreground mb-4">
+          Reservations Summary
+        </h3>
 
         <div className="grid grid-cols-4 gap-3">
           <div className="p-3 bg-black/20 rounded-lg">
             <p className="text-xs text-muted-foreground">Hotels</p>
-            <p className="text-2xl font-bold text-foreground">{reservations.length}</p>
+            <p className="text-2xl font-bold text-foreground">
+              {reservations.length}
+            </p>
           </div>
 
           <div className="p-3 bg-black/20 rounded-lg border border-amber-500/30">
@@ -198,7 +224,9 @@ export function HotelBookingManager() {
 
           <div className="p-3 bg-black/20 rounded-lg border border-emerald-500/30">
             <p className="text-xs text-emerald-300">Total Spent</p>
-            <p className="text-2xl font-bold text-emerald-400">${totalSpent.toFixed(2)}</p>
+            <p className="text-2xl font-bold text-emerald-400">
+              ${totalSpent.toFixed(2)}
+            </p>
           </div>
 
           <div className="p-3 bg-black/20 rounded-lg">
@@ -230,7 +258,7 @@ export function HotelBookingManager() {
                   type="text"
                   placeholder="Hotel Name"
                   value={formData.hotelName}
-                  onChange={(e) => {
+                  onChange={e => {
                     setFormData({ ...formData, hotelName: e.target.value });
                     setErrors({ ...errors, hotelName: "" });
                   }}
@@ -243,8 +271,11 @@ export function HotelBookingManager() {
                   type="text"
                   placeholder="Confirmation Code"
                   value={formData.confirmationCode}
-                  onChange={(e) => {
-                    setFormData({ ...formData, confirmationCode: e.target.value });
+                  onChange={e => {
+                    setFormData({
+                      ...formData,
+                      confirmationCode: e.target.value,
+                    });
                     setErrors({ ...errors, confirmationCode: "" });
                   }}
                   className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
@@ -257,7 +288,7 @@ export function HotelBookingManager() {
                 <input
                   type="date"
                   value={formData.checkInDate}
-                  onChange={(e) => {
+                  onChange={e => {
                     setFormData({ ...formData, checkInDate: e.target.value });
                     setErrors({ ...errors, checkInDate: "" });
                   }}
@@ -269,7 +300,7 @@ export function HotelBookingManager() {
                 <input
                   type="date"
                   value={formData.checkOutDate}
-                  onChange={(e) => {
+                  onChange={e => {
                     setFormData({ ...formData, checkOutDate: e.target.value });
                     setErrors({ ...errors, checkOutDate: "" });
                   }}
@@ -281,10 +312,12 @@ export function HotelBookingManager() {
             <div className="grid grid-cols-2 gap-3">
               <select
                 value={formData.roomType}
-                onChange={(e) => setFormData({ ...formData, roomType: e.target.value })}
+                onChange={e =>
+                  setFormData({ ...formData, roomType: e.target.value })
+                }
                 className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/50"
               >
-                {ROOM_TYPES.map((t) => (
+                {ROOM_TYPES.map(t => (
                   <option key={t} value={t}>
                     {t}
                   </option>
@@ -295,7 +328,9 @@ export function HotelBookingManager() {
                 type="text"
                 placeholder="Room Number"
                 value={formData.roomNumber}
-                onChange={(e) => setFormData({ ...formData, roomNumber: e.target.value })}
+                onChange={e =>
+                  setFormData({ ...formData, roomNumber: e.target.value })
+                }
                 className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
               />
             </div>
@@ -306,7 +341,7 @@ export function HotelBookingManager() {
                   type="text"
                   placeholder="Guest Name"
                   value={formData.guestName}
-                  onChange={(e) => {
+                  onChange={e => {
                     setFormData({ ...formData, guestName: e.target.value });
                     setErrors({ ...errors, guestName: "" });
                   }}
@@ -319,7 +354,7 @@ export function HotelBookingManager() {
                   type="email"
                   placeholder="Email"
                   value={formData.email}
-                  onChange={(e) => {
+                  onChange={e => {
                     setFormData({ ...formData, email: e.target.value });
                     setErrors({ ...errors, email: "" });
                   }}
@@ -332,7 +367,9 @@ export function HotelBookingManager() {
               type="tel"
               placeholder="Phone Number"
               value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              onChange={e =>
+                setFormData({ ...formData, phone: e.target.value })
+              }
               className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
             />
 
@@ -344,7 +381,7 @@ export function HotelBookingManager() {
                   min="0"
                   step="0.01"
                   value={formData.totalPrice}
-                  onChange={(e) => {
+                  onChange={e => {
                     setFormData({ ...formData, totalPrice: e.target.value });
                     setErrors({ ...errors, totalPrice: "" });
                   }}
@@ -354,7 +391,9 @@ export function HotelBookingManager() {
 
               <select
                 value={formData.currency}
-                onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
+                onChange={e =>
+                  setFormData({ ...formData, currency: e.target.value })
+                }
                 className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/50"
               >
                 <option>USD</option>
@@ -370,7 +409,9 @@ export function HotelBookingManager() {
                 max="5"
                 step="0.1"
                 value={formData.rating}
-                onChange={(e) => setFormData({ ...formData, rating: e.target.value })}
+                onChange={e =>
+                  setFormData({ ...formData, rating: e.target.value })
+                }
                 className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/50"
               />
             </div>
@@ -379,7 +420,9 @@ export function HotelBookingManager() {
               type="text"
               placeholder="Address"
               value={formData.address}
-              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+              onChange={e =>
+                setFormData({ ...formData, address: e.target.value })
+              }
               className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
             />
 
@@ -388,7 +431,9 @@ export function HotelBookingManager() {
                 type="text"
                 placeholder="City"
                 value={formData.city}
-                onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                onChange={e =>
+                  setFormData({ ...formData, city: e.target.value })
+                }
                 className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
               />
 
@@ -396,16 +441,20 @@ export function HotelBookingManager() {
                 type="url"
                 placeholder="Website (optional)"
                 value={formData.website}
-                onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                onChange={e =>
+                  setFormData({ ...formData, website: e.target.value })
+                }
                 className="w-full bg-black/20 border border-border/50 rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
               />
             </div>
 
             {/* Amenities Selection */}
             <div>
-              <label className="text-xs font-medium text-muted-foreground mb-2 block">Amenities</label>
+              <label className="text-xs font-medium text-muted-foreground mb-2 block">
+                Amenities
+              </label>
               <div className="grid grid-cols-2 gap-2">
-                {AMENITIES.map((amenity) => (
+                {AMENITIES.map(amenity => (
                   <button
                     key={amenity}
                     onClick={() => toggleAmenity(amenity)}
@@ -443,9 +492,11 @@ export function HotelBookingManager() {
       {/* Reservations List */}
       {reservations.length > 0 ? (
         <div className="space-y-3">
-          {reservations.map((res) => {
+          {reservations.map(res => {
             const nights = Math.ceil(
-              (new Date(res.checkOutDate).getTime() - new Date(res.checkInDate).getTime()) / (1000 * 60 * 60 * 24)
+              (new Date(res.checkOutDate).getTime() -
+                new Date(res.checkInDate).getTime()) /
+                (1000 * 60 * 60 * 24)
             );
             const pricePerNight = res.totalPrice / nights;
 
@@ -455,11 +506,18 @@ export function HotelBookingManager() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <Building2 className="w-5 h-5 text-primary" />
-                      <h4 className="font-semibold text-foreground">{res.hotelName}</h4>
+                      <h4 className="font-semibold text-foreground">
+                        {res.hotelName}
+                      </h4>
                       {res.rating && (
                         <div className="flex items-center gap-1">
-                          <Star className="w-4 h-4 text-yellow-500" fill="currentColor" />
-                          <span className="text-xs font-medium text-yellow-400">{res.rating}</span>
+                          <Star
+                            className="w-4 h-4 text-yellow-500"
+                            fill="currentColor"
+                          />
+                          <span className="text-xs font-medium text-yellow-400">
+                            {res.rating}
+                          </span>
                         </div>
                       )}
                     </div>
@@ -478,17 +536,23 @@ export function HotelBookingManager() {
                 <div className="grid grid-cols-2 gap-3 mb-4 p-3 bg-black/20 rounded-lg">
                   <div>
                     <p className="text-xs text-muted-foreground">Check-In</p>
-                    <p className="font-medium text-foreground">{res.checkInDate}</p>
+                    <p className="font-medium text-foreground">
+                      {res.checkInDate}
+                    </p>
                   </div>
 
                   <div className="text-right">
                     <p className="text-xs text-muted-foreground">Check-Out</p>
-                    <p className="font-medium text-foreground">{res.checkOutDate}</p>
+                    <p className="font-medium text-foreground">
+                      {res.checkOutDate}
+                    </p>
                   </div>
 
                   <div>
                     <p className="text-xs text-muted-foreground">Room</p>
-                    <p className="font-medium text-foreground">{res.roomType}</p>
+                    <p className="font-medium text-foreground">
+                      {res.roomType}
+                    </p>
                   </div>
 
                   <div className="text-right">
@@ -502,12 +566,17 @@ export function HotelBookingManager() {
                   <div className="flex items-center gap-2">
                     <Key className="w-4 h-4 text-muted-foreground" />
                     <span className="text-muted-foreground">Confirmation:</span>
-                    <span className="font-mono font-semibold text-foreground">{res.confirmationCode}</span>
+                    <span className="font-mono font-semibold text-foreground">
+                      {res.confirmationCode}
+                    </span>
                   </div>
 
                   <div className="flex items-center gap-2">
                     <Phone className="w-4 h-4 text-muted-foreground" />
-                    <a href={`tel:${res.phone}`} className="text-primary hover:text-primary/80">
+                    <a
+                      href={`tel:${res.phone}`}
+                      className="text-primary hover:text-primary/80"
+                    >
                       {res.phone}
                     </a>
                   </div>
@@ -515,7 +584,12 @@ export function HotelBookingManager() {
                   {res.website && (
                     <div className="flex items-center gap-2">
                       <Globe className="w-4 h-4 text-muted-foreground" />
-                      <a href={res.website} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80">
+                      <a
+                        href={res.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:text-primary/80"
+                      >
                         Visit Website
                       </a>
                     </div>
@@ -525,10 +599,16 @@ export function HotelBookingManager() {
                 {/* Amenities */}
                 {res.amenities.length > 0 && (
                   <div className="mb-3">
-                    <p className="text-xs text-muted-foreground mb-2">Amenities</p>
+                    <p className="text-xs text-muted-foreground mb-2">
+                      Amenities
+                    </p>
                     <div className="flex flex-wrap gap-2">
-                      {res.amenities.map((amenity) => (
-                        <Badge key={amenity} variant="outline" className="text-xs">
+                      {res.amenities.map(amenity => (
+                        <Badge
+                          key={amenity}
+                          variant="outline"
+                          className="text-xs"
+                        >
                           {amenity}
                         </Badge>
                       ))}
@@ -547,7 +627,9 @@ export function HotelBookingManager() {
 
                   <div className="text-right">
                     <p className="text-muted-foreground">Per Night</p>
-                    <p className="font-bold text-emerald-400">${pricePerNight.toFixed(2)}</p>
+                    <p className="font-bold text-emerald-400">
+                      ${pricePerNight.toFixed(2)}
+                    </p>
                   </div>
                 </div>
               </Card>
@@ -560,7 +642,10 @@ export function HotelBookingManager() {
             icon={Building2}
             title="No Reservations"
             description="Add your hotel reservations to track bookings and amenities"
-            action={{ label: "Add Reservation", onClick: () => setShowForm(true) }}
+            action={{
+              label: "Add Reservation",
+              onClick: () => setShowForm(true),
+            }}
           />
         )
       )}

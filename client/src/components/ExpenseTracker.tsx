@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import {
   Upload,
   Camera,
@@ -12,20 +12,47 @@ import {
   X,
   Check,
   BarChart3,
-} from 'lucide-react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { getReceiptOCRService, ExtractedExpense } from '../_core/services/receiptOCR';
+} from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  getReceiptOCRService,
+  ExtractedExpense,
+} from "../_core/services/receiptOCR";
 
 const CATEGORY_CONFIG = {
-  food: { emoji: '🍽️', label: 'Food & Dining', color: 'bg-orange-500/10 text-orange-700' },
-  transport: { emoji: '🚗', label: 'Transport', color: 'bg-blue-500/10 text-blue-700' },
-  accommodation: { emoji: '🏨', label: 'Accommodation', color: 'bg-purple-500/10 text-purple-700' },
-  activity: { emoji: '🎯', label: 'Activities', color: 'bg-emerald-500/10 text-emerald-700' },
-  shopping: { emoji: '🛍️', label: 'Shopping', color: 'bg-pink-500/10 text-pink-700' },
-  entertainment: { emoji: '🎉', label: 'Entertainment', color: 'bg-red-500/10 text-red-700' },
-  other: { emoji: '📌', label: 'Other', color: 'bg-gray-500/10 text-gray-700' },
+  food: {
+    emoji: "🍽️",
+    label: "Food & Dining",
+    color: "bg-orange-500/10 text-orange-700",
+  },
+  transport: {
+    emoji: "🚗",
+    label: "Transport",
+    color: "bg-blue-500/10 text-blue-700",
+  },
+  accommodation: {
+    emoji: "🏨",
+    label: "Accommodation",
+    color: "bg-purple-500/10 text-purple-700",
+  },
+  activity: {
+    emoji: "🎯",
+    label: "Activities",
+    color: "bg-emerald-500/10 text-emerald-700",
+  },
+  shopping: {
+    emoji: "🛍️",
+    label: "Shopping",
+    color: "bg-pink-500/10 text-pink-700",
+  },
+  entertainment: {
+    emoji: "🎉",
+    label: "Entertainment",
+    color: "bg-red-500/10 text-red-700",
+  },
+  other: { emoji: "📌", label: "Other", color: "bg-gray-500/10 text-gray-700" },
 };
 
 interface ExpenseTrackerProps {
@@ -64,17 +91,19 @@ const ExpenseTracker: React.FC<ExpenseTrackerProps> = ({ tripId }) => {
         });
 
         if (result) {
-          setExpenses((prev) => [...prev, result]);
+          setExpenses(prev => [...prev, result]);
         }
       };
       reader.readAsDataURL(file);
     } finally {
       setIsProcessing(false);
-      if (fileInputRef.current) fileInputRef.current.value = '';
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
 
-  const handleCameraCapture = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCameraCapture = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -90,19 +119,19 @@ const ExpenseTracker: React.FC<ExpenseTrackerProps> = ({ tripId }) => {
         });
 
         if (result) {
-          setExpenses((prev) => [...prev, result]);
+          setExpenses(prev => [...prev, result]);
         }
       };
       reader.readAsDataURL(file);
     } finally {
       setIsProcessing(false);
-      if (cameraInputRef.current) cameraInputRef.current.value = '';
+      if (cameraInputRef.current) cameraInputRef.current.value = "";
     }
   };
 
   const handleDelete = (id: string) => {
     ocrService.current.deleteExpense(id);
-    setExpenses((prev) => prev.filter((e) => e.id !== id));
+    setExpenses(prev => prev.filter(e => e.id !== id));
   };
 
   const handleEditStart = (expense: ExtractedExpense) => {
@@ -113,7 +142,7 @@ const ExpenseTracker: React.FC<ExpenseTrackerProps> = ({ tripId }) => {
   const handleEditSave = (id: string) => {
     const updated = ocrService.current.updateExpense(id, editData);
     if (updated) {
-      setExpenses((prev) => prev.map((e) => (e.id === id ? updated : e)));
+      setExpenses(prev => prev.map(e => (e.id === id ? updated : e)));
       setEditingId(null);
     }
   };
@@ -121,14 +150,17 @@ const ExpenseTracker: React.FC<ExpenseTrackerProps> = ({ tripId }) => {
   const stats = {
     total: expenses.reduce((sum, e) => sum + e.amount, 0),
     count: expenses.length,
-    average: expenses.length > 0 ? expenses.reduce((sum, e) => sum + e.amount, 0) / expenses.length : 0,
-    highest: expenses.length > 0 ? Math.max(...expenses.map((e) => e.amount)) : 0,
+    average:
+      expenses.length > 0
+        ? expenses.reduce((sum, e) => sum + e.amount, 0) / expenses.length
+        : 0,
+    highest: expenses.length > 0 ? Math.max(...expenses.map(e => e.amount)) : 0,
   };
 
   const categoryTotals = Object.keys(CATEGORY_CONFIG).reduce(
     (acc, cat) => {
       acc[cat] = expenses
-        .filter((e) => e.category === cat)
+        .filter(e => e.category === cat)
         .reduce((sum, e) => sum + e.amount, 0);
       return acc;
     },
@@ -151,7 +183,7 @@ const ExpenseTracker: React.FC<ExpenseTrackerProps> = ({ tripId }) => {
               disabled={isProcessing}
               className="w-full"
             >
-              {isProcessing ? 'Processing...' : 'Choose File'}
+              {isProcessing ? "Processing..." : "Choose File"}
             </Button>
             <input
               ref={fileInputRef}
@@ -168,14 +200,16 @@ const ExpenseTracker: React.FC<ExpenseTrackerProps> = ({ tripId }) => {
             <Camera className="w-8 h-8 text-emerald-600" />
             <div className="text-center">
               <h3 className="font-semibold mb-1">Take Photo</h3>
-              <p className="text-sm text-muted-foreground">Capture with camera</p>
+              <p className="text-sm text-muted-foreground">
+                Capture with camera
+              </p>
             </div>
             <Button
               onClick={() => cameraInputRef.current?.click()}
               disabled={isProcessing}
               className="w-full bg-emerald-600 hover:bg-emerald-700"
             >
-              {isProcessing ? 'Processing...' : 'Open Camera'}
+              {isProcessing ? "Processing..." : "Open Camera"}
             </Button>
             <input
               ref={cameraInputRef}
@@ -193,7 +227,9 @@ const ExpenseTracker: React.FC<ExpenseTrackerProps> = ({ tripId }) => {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="p-4 border-emerald-500/20 bg-emerald-500/5">
           <div className="text-sm text-muted-foreground mb-1">Total Spent</div>
-          <div className="text-2xl font-bold text-emerald-600">${stats.total.toFixed(2)}</div>
+          <div className="text-2xl font-bold text-emerald-600">
+            ${stats.total.toFixed(2)}
+          </div>
         </Card>
         <Card className="p-4 border-blue-500/20 bg-blue-500/5">
           <div className="text-sm text-muted-foreground mb-1">Expenses</div>
@@ -201,11 +237,15 @@ const ExpenseTracker: React.FC<ExpenseTrackerProps> = ({ tripId }) => {
         </Card>
         <Card className="p-4 border-purple-500/20 bg-purple-500/5">
           <div className="text-sm text-muted-foreground mb-1">Average</div>
-          <div className="text-2xl font-bold text-purple-600">${stats.average.toFixed(2)}</div>
+          <div className="text-2xl font-bold text-purple-600">
+            ${stats.average.toFixed(2)}
+          </div>
         </Card>
         <Card className="p-4 border-orange-500/20 bg-orange-500/5">
           <div className="text-sm text-muted-foreground mb-1">Highest</div>
-          <div className="text-2xl font-bold text-orange-600">${stats.highest.toFixed(2)}</div>
+          <div className="text-2xl font-bold text-orange-600">
+            ${stats.highest.toFixed(2)}
+          </div>
         </Card>
       </div>
 
@@ -220,18 +260,23 @@ const ExpenseTracker: React.FC<ExpenseTrackerProps> = ({ tripId }) => {
             .filter(([_, amount]) => amount > 0)
             .sort(([_, a], [__, b]) => b - a)
             .map(([category, amount]) => {
-              const config = CATEGORY_CONFIG[category as keyof typeof CATEGORY_CONFIG];
+              const config =
+                CATEGORY_CONFIG[category as keyof typeof CATEGORY_CONFIG];
               const percentage = (amount / stats.total) * 100;
               return (
                 <div key={category}>
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <span className="text-xl">{config.emoji}</span>
-                      <span className="text-sm font-medium">{config.label}</span>
+                      <span className="text-sm font-medium">
+                        {config.label}
+                      </span>
                     </div>
                     <div className="text-right">
                       <div className="font-semibold">${amount.toFixed(2)}</div>
-                      <div className="text-xs text-muted-foreground">{percentage.toFixed(1)}%</div>
+                      <div className="text-xs text-muted-foreground">
+                        {percentage.toFixed(1)}%
+                      </div>
                     </div>
                   </div>
                   <div className="w-full bg-gray-200/30 rounded-full h-2">
@@ -252,7 +297,7 @@ const ExpenseTracker: React.FC<ExpenseTrackerProps> = ({ tripId }) => {
           <h3 className="font-semibold">All Expenses</h3>
           {[...expenses]
             .sort((a, b) => b.date - a.date)
-            .map((expense) => {
+            .map(expense => {
               const config = CATEGORY_CONFIG[expense.category];
               const isEditing = editingId === expense.id;
 
@@ -264,15 +309,22 @@ const ExpenseTracker: React.FC<ExpenseTrackerProps> = ({ tripId }) => {
                       <div className="flex gap-2">
                         <input
                           type="text"
-                          value={editData.vendor || ''}
-                          onChange={(e) => setEditData({ ...editData, vendor: e.target.value })}
+                          value={editData.vendor || ""}
+                          onChange={e =>
+                            setEditData({ ...editData, vendor: e.target.value })
+                          }
                           className="flex-1 px-3 py-2 bg-black/20 border border-border/50 rounded text-sm"
                           placeholder="Vendor"
                         />
                         <input
                           type="number"
-                          value={editData.amount || ''}
-                          onChange={(e) => setEditData({ ...editData, amount: parseFloat(e.target.value) })}
+                          value={editData.amount || ""}
+                          onChange={e =>
+                            setEditData({
+                              ...editData,
+                              amount: parseFloat(e.target.value),
+                            })
+                          }
                           className="w-24 px-3 py-2 bg-black/20 border border-border/50 rounded text-sm"
                           placeholder="Amount"
                         />
@@ -308,7 +360,9 @@ const ExpenseTracker: React.FC<ExpenseTrackerProps> = ({ tripId }) => {
                           </Badge>
                         </div>
                         <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                          <span>{new Date(expense.date).toLocaleDateString()}</span>
+                          <span>
+                            {new Date(expense.date).toLocaleDateString()}
+                          </span>
                           <span className="flex items-center gap-1">
                             <Zap className="w-3 h-3" />
                             {Math.round(expense.confidence * 100)}% confidence
@@ -316,15 +370,19 @@ const ExpenseTracker: React.FC<ExpenseTrackerProps> = ({ tripId }) => {
                         </div>
                         {expense.items && expense.items.length > 0 && (
                           <div className="text-xs text-muted-foreground/70 mt-1">
-                            {expense.items.join(' • ')}
+                            {expense.items.join(" • ")}
                           </div>
                         )}
                       </div>
 
                       <div className="flex items-center gap-3 ml-4">
                         <div className="text-right">
-                          <div className="text-xl font-bold">${expense.amount.toFixed(2)}</div>
-                          <div className="text-xs text-muted-foreground">{expense.currency}</div>
+                          <div className="text-xl font-bold">
+                            ${expense.amount.toFixed(2)}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {expense.currency}
+                          </div>
                         </div>
                         <div className="flex gap-1">
                           <button
