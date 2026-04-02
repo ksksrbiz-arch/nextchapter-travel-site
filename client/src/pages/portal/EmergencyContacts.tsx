@@ -36,6 +36,12 @@ export function EmergencyContacts() {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  const getSafeTelHref = (phone: string) => {
+    // Allow only characters that are valid for a telephone URI
+    const sanitized = phone.replace(/[^0-9+\-()\s]/g, "");
+    return `tel:${sanitized}`;
+  };
+
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     if (!formData.name.trim()) newErrors.name = "Name required";
@@ -106,7 +112,7 @@ export function EmergencyContacts() {
                 <div className="flex items-center gap-2">
                   <Phone className="w-4 h-4 text-muted-foreground" />
                   <a
-                    href={`tel:${primaryContact.phone}`}
+                    href={getSafeTelHref(primaryContact.phone)}
                     className="text-sm hover:text-primary transition-colors"
                   >
                     {primaryContact.phone}
