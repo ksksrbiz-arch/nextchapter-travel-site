@@ -235,7 +235,7 @@ class MemoryArchivesService {
     const recommendations: TripRecommendation[] = [];
 
     // Generate recommendations based on previous trip
-    const similarTrips = this.findSimilarMemories(memory);
+    const _similarTrips = this.findSimilarMemories(memory);
 
     // Recommendation 1: Return to same destination
     recommendations.push({

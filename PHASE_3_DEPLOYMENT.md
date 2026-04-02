@@ -265,7 +265,7 @@ These Phase 3 components will support Phase 4 features:
 - Include user story format: "As a [user], I want [feature] so that [benefit]"
 
 ### For Beta Feedback
-- Direct feedback to Jessica: jessica@nextchapertravel.com
+- Direct feedback to Jessica: jessica@nextchaptertravel.com
 - Include: What worked well, what was confusing, feature requests
 
 ---
@@ -304,7 +304,7 @@ These Phase 3 components will support Phase 4 features:
 ---
 
 **Deployment Owner**: Development Team  
-**QA Lead**: TBD  
-**DevOps**: TBD  
-**Product Owner**: Jessica Seider  
+**QA Lead**: Jessica Seiders (acting QA sign-off)  
+**DevOps**: Render + Netlify pipeline (maintained by Engineering)  
+**Product Owner**: Jessica Seiders  
 **Last Updated**: March 12, 2026
