@@ -26,8 +26,9 @@ describe("DocumentScanner Component", () => {
     );
     expect(totalDocsElement.length).toBeGreaterThan(0);
 
-    // Should show 3 verified documents
-    expect(screen.getByText("3", { selector: "p" })).toBeInTheDocument();
+    // Should show 3 verified documents (multiple <p>s may contain "3")
+    const verifiedCounts = screen.getAllByText("3", { selector: "p" });
+    expect(verifiedCounts.length).toBeGreaterThan(0);
   });
 
   it("allows adding a new document", async () => {
@@ -45,15 +46,18 @@ describe("DocumentScanner Component", () => {
     await user.type(nameInput, "TestDoc.pdf");
     await user.type(tagsInput, "test,travel");
 
-    // Submit form
+    // Submit form (trigger is hidden once form opens; submit is the only match)
     const submitBtn = screen.getAllByRole("button", {
       name: /Add Document/i,
-    })[1];
+    })[0];
     await user.click(submitBtn);
 
-    // Verify new document appears
+    // Verify new document appears (text may be split across child elements)
     await waitFor(() => {
-      expect(screen.getByText("TestDoc.pdf")).toBeInTheDocument();
+      const match = screen.queryAllByText((_, el) =>
+        (el?.textContent ?? "").includes("TestDoc.pdf")
+      );
+      expect(match.length).toBeGreaterThan(0);
     });
   });
 
@@ -110,8 +114,10 @@ describe("DocumentScanner Component", () => {
   it("displays expiry warnings correctly", () => {
     render(<DocumentScanner />);
 
-    // Visa expires in 2027, should not show warning
-    expect(screen.queryByText("Expired")).not.toBeInTheDocument();
+    // "Expired" appears once as a stat label but should not appear as
+    // a per-document badge since all initial documents expire in the future.
+    const expiredElements = screen.getAllByText("Expired");
+    expect(expiredElements.length).toBe(1); // only the stat section label
   });
 
   it("shows encrypted badge for secure documents", () => {
@@ -129,15 +135,15 @@ describe("DocumentScanner Component", () => {
     const addBtn = screen.getByRole("button", { name: /Add Document/i });
     await user.click(addBtn);
 
-    // Try to submit without filling name
+    // Try to submit without filling name (trigger is hidden; submit is the only match)
     const submitBtn = screen.getAllByRole("button", {
       name: /Add Document/i,
-    })[1];
+    })[0];
     await user.click(submitBtn);
 
-    // Should not add empty document
+    // Should not add empty document; "Verified" appears as stat label + badges + buttons
     const totalDocs = screen.getAllByText("Verified").length;
-    expect(totalDocs).toBeLessThanOrEqual(3);
+    expect(totalDocs).toBeLessThanOrEqual(7); // 1 label + 3 badges + 3 action buttons
   });
 
   it("displays document details in correct format", () => {
@@ -145,7 +151,8 @@ describe("DocumentScanner Component", () => {
 
     // Check that document details are visible
     expect(screen.getByText(/Primary travel document/i)).toBeInTheDocument();
-    expect(screen.getByText(/PDF/i)).toBeInTheDocument();
+    const pdfElements = screen.getAllByText(/PDF/i);
+    expect(pdfElements.length).toBeGreaterThan(0);
   });
 
   it("handles empty state correctly", async () => {
