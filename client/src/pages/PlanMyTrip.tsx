@@ -128,15 +128,74 @@ export default function PlanMyTrip() {
         </div>
       </section>
 
+      {/* ── FAQ Section ── */}
+      <section
+        className="relative px-4 pb-16 sm:pb-24"
+        style={{ background: "oklch(0.14 0.04 240 / 0.88)" }}
+      >
+        <div className="max-w-3xl mx-auto pt-12 sm:pt-16">
+          <div className="text-center mb-8 sm:mb-10">
+            <h2 className="text-2xl sm:text-3xl font-serif font-bold text-white mb-2">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-white/60 font-sans text-sm sm:text-base">
+              Everything you need to know before we start planning.
+            </p>
+          </div>
+          <div className="space-y-3">
+            {[
+              {
+                q: "Is there a fee to work with Jessica?",
+                a: "No — Jessica's planning services are completely free to you. She is compensated by travel suppliers, which means you get expert, personalized service at no extra cost.",
+              },
+              {
+                q: "How long does it take to get a travel proposal?",
+                a: "Jessica typically responds within 24 hours of receiving your inquiry. Complex itineraries (multi-destination, group travel) may take 2–3 business days for a full proposal.",
+              },
+              {
+                q: "What types of trips does Jessica specialize in?",
+                a: "Jessica is certified in Disney vacations, Universal Studios, Royal Caribbean, Carnival, Norwegian Cruise Line, and all-inclusive resorts. She also books Europe, Hawaii, and custom adventure trips.",
+              },
+              {
+                q: "What is the client portal?",
+                a: "Once your trip is booked, you receive access to your personal portal with your day-by-day itinerary, all booking confirmations, a secure document vault, packing lists, destination guides, and a direct line to Jessica.",
+              },
+              {
+                q: "Can Jessica help with travel insurance?",
+                a: "Yes! Jessica highly recommends travel protection and can walk you through options that make sense for your trip, budget, and travel style.",
+              },
+            ].map((item, i) => (
+              <details
+                key={i}
+                className="group bg-white/5 border border-white/10 rounded-xl overflow-hidden"
+              >
+                <summary className="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer list-none text-white font-sans font-medium text-sm sm:text-base select-none hover:bg-white/5 transition-colors">
+                  {item.q}
+                  <span className="text-secondary flex-shrink-0 text-lg leading-none group-open:rotate-45 transition-transform duration-200">
+                    +
+                  </span>
+                </summary>
+                <div className="px-5 pb-5 text-white/70 font-sans text-sm leading-relaxed border-t border-white/10 pt-4">
+                  {item.a}
+                </div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── Footer note ── */}
       <footer
-        className="bg-primary text-primary-foreground py-6 text-center"
-        style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))" }}
+        className="bg-primary text-primary-foreground py-8 text-center border-t border-white/10"
+        style={{ paddingBottom: "max(2rem, env(safe-area-inset-bottom))" }}
       >
-        <p className="text-primary-foreground/40 text-xs font-sans">
+        <p className="text-secondary font-serif font-bold text-base mb-1">
+          Next Chapter Travel LLC
+        </p>
+        <p className="text-primary-foreground/40 text-xs font-sans mb-1">
           © 2026 Next Chapter Travel LLC — Jessica Seiders. All rights reserved.
         </p>
-        <p className="text-primary-foreground/30 text-xs font-sans mt-1">
+        <p className="text-primary-foreground/30 text-xs font-sans">
           Your information is kept private and never shared with third parties.
         </p>
       </footer>

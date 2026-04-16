@@ -14,7 +14,6 @@ import {
   Plane,
   Shield,
   Star,
-  ArrowRight,
   BookOpen,
   Globe,
   Users,
@@ -740,25 +739,33 @@ export default function Home() {
 
       {/* ── CTA Section ── */}
       <section className="py-20 sm:py-32 relative overflow-hidden">
-        <div className="absolute inset-0 bg-secondary/10 backdrop-blur-sm" />
+        {/* Background layers */}
+        <div className="absolute inset-0 bg-gradient-to-b from-secondary/5 via-secondary/10 to-secondary/5 backdrop-blur-sm" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,oklch(0.72_0.09_65/0.12)_0%,transparent_70%)]" />
         <div className="container relative z-10 text-center">
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-serif font-bold mb-6 sm:mb-8">
-              Ready to Start Your Next Chapter?
+            <Badge className="mb-6 bg-secondary/10 text-secondary border-secondary/30 font-sans text-xs tracking-widest uppercase">
+              Your Dream Vacation Awaits
+            </Badge>
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-serif font-bold mb-6 sm:mb-8 leading-tight">
+              Ready to Start Your{" "}
+              <span className="gold-shimmer">Next Chapter?</span>
             </h2>
-            <p className="text-lg sm:text-xl text-muted-foreground mb-10 sm:mb-12 font-sans leading-relaxed">
+            <p className="text-lg sm:text-xl text-muted-foreground mb-4 font-sans leading-relaxed">
               Certified in Disney, Universal, Norwegian Cruise Line, Royal
               Caribbean, Carnival, and more — Jessica Seiders at Next Chapter
-              Travel LLC has the expertise to plan any adventure you can
-              imagine.
+              Travel LLC has the expertise to plan any adventure you can imagine.
+            </p>
+            <p className="text-sm text-muted-foreground/70 font-sans mb-10 sm:mb-12">
+              Free consultation. No hidden fees. Just unforgettable memories.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
               <Link href="/plan-my-trip">
                 <Button
                   size="lg"
-                  className="w-full sm:w-auto bg-secondary text-secondary-foreground hover:bg-secondary/90 px-12 py-8 text-xl font-sans font-bold rounded-2xl shadow-xl shadow-secondary/20 active:scale-95 transition-all"
+                  className="w-full sm:w-auto bg-secondary text-secondary-foreground hover:bg-secondary/90 px-12 py-8 text-xl font-sans font-bold rounded-2xl shadow-xl shadow-secondary/20 active:scale-95 transition-all glow-secondary"
                 >
-                  Plan My Trip
+                  Plan My Trip — Free
                 </Button>
               </Link>
               <a href={getLoginUrl()} className="w-full sm:w-auto">
@@ -771,136 +778,179 @@ export default function Home() {
                 </Button>
               </a>
             </div>
+            {/* Certification strip */}
+            <div className="mt-10 flex flex-wrap justify-center gap-2 sm:gap-3">
+              {["Disney Specialist", "Royal Caribbean Expert", "Universal Studios", "Carnival Certified", "Norwegian Cruise Line"].map(cert => (
+                <span key={cert} className="text-xs font-sans text-muted-foreground/60 px-3 py-1 rounded-full border border-border/40 bg-card/30">
+                  {cert}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* ── Footer ── */}
-      <footer className="py-12 sm:py-16 bg-primary text-primary-foreground border-t border-white/5">
+      <footer className="py-12 sm:py-16 bg-primary text-primary-foreground border-t border-white/10">
         <div className="container">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 sm:gap-12 mb-12 sm:mb-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 sm:gap-12 mb-10 sm:mb-14">
+            {/* Brand column */}
             <div>
-              <h3 className="font-serif font-bold text-lg mb-4">
-                Next Chapter Travel
-              </h3>
-              <p className="text-primary-foreground/60 text-sm font-sans leading-relaxed">
+              <div className="flex items-center gap-2 mb-4">
+                <BookOpen className="w-5 h-5 text-secondary" />
+                <h3 className="font-serif font-bold text-lg text-secondary">
+                  Next Chapter Travel
+                </h3>
+              </div>
+              <p className="text-primary-foreground/60 text-sm font-sans leading-relaxed mb-4">
                 Your personal travel concierge, crafting unforgettable journeys
-                with expert planning and care.
+                with expert planning and genuine care.
               </p>
+              <div className="flex gap-3">
+                <a
+                  href="https://www.facebook.com/nextchaptertravel"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Facebook"
+                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-secondary/20 border border-white/10 hover:border-secondary/40 flex items-center justify-center transition-all"
+                >
+                  <Facebook className="w-4 h-4 text-primary-foreground/70" />
+                </a>
+                <a
+                  href="https://www.instagram.com/nextchaptertravelllc"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Instagram"
+                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-secondary/20 border border-white/10 hover:border-secondary/40 flex items-center justify-center transition-all"
+                >
+                  <Instagram className="w-4 h-4 text-primary-foreground/70" />
+                </a>
+              </div>
             </div>
+
+            {/* Quick Links */}
             <div>
-              <h4 className="font-bold mb-4 font-sans text-sm uppercase tracking-widest">
+              <h4 className="font-bold mb-4 font-sans text-sm uppercase tracking-widest text-secondary/80">
                 Quick Links
+              </h4>
+              <ul className="space-y-2 font-sans text-sm">
+                {[
+                  { label: "Features", href: "#features", internal: false },
+                  { label: "How It Works", href: "#how-it-works", internal: false },
+                  { label: "About Jessica", href: "#about-jessica", internal: false },
+                  { label: "Plan My Trip", href: "/plan-my-trip", internal: true },
+                  { label: "Client Portal", href: null, external: true },
+                ].map(link =>
+                  link.href === null ? (
+                    <li key={link.label}>
+                      <a
+                        href={getLoginUrl()}
+                        className="text-primary-foreground/60 hover:text-secondary transition-colors py-0.5 inline-block"
+                      >
+                        {link.label}
+                      </a>
+                    </li>
+                  ) : link.internal ? (
+                    <li key={link.label}>
+                      <Link
+                        href={link.href}
+                        className="text-primary-foreground/60 hover:text-secondary transition-colors py-0.5 inline-block"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ) : (
+                    <li key={link.label}>
+                      <a
+                        href={link.href}
+                        className="text-primary-foreground/60 hover:text-secondary transition-colors py-0.5 inline-block"
+                      >
+                        {link.label}
+                      </a>
+                    </li>
+                  )
+                )}
+              </ul>
+            </div>
+
+            {/* Destinations */}
+            <div>
+              <h4 className="font-bold mb-4 font-sans text-sm uppercase tracking-widest text-secondary/80">
+                Specialties
+              </h4>
+              <ul className="space-y-2 font-sans text-sm text-primary-foreground/60">
+                {[
+                  "Disney World & Disneyland",
+                  "Caribbean Cruises",
+                  "Universal Studios",
+                  "All-Inclusive Resorts",
+                  "Hawaiian Getaways",
+                  "European River Cruises",
+                ].map(dest => (
+                  <li key={dest} className="flex items-center gap-2">
+                    <Compass className="w-3 h-3 text-secondary/50 flex-shrink-0" />
+                    {dest}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Contact */}
+            <div>
+              <h4 className="font-bold mb-4 font-sans text-sm uppercase tracking-widest text-secondary/80">
+                Contact
               </h4>
               <ul className="space-y-3 font-sans text-sm">
                 <li>
+                  <p className="text-primary-foreground/40 text-xs uppercase tracking-wider mb-0.5">
+                    Email
+                  </p>
                   <a
-                    href="#features"
-                    className="text-primary-foreground/60 hover:text-primary-foreground transition-colors py-1 inline-block"
+                    href="mailto:jessica@nextchaptertravel.com"
+                    className="text-primary-foreground/70 hover:text-secondary transition-colors"
                   >
-                    Features
+                    jessica@nextchaptertravel.com
                   </a>
                 </li>
                 <li>
-                  <a
-                    href="#how-it-works"
-                    className="text-primary-foreground/60 hover:text-primary-foreground transition-colors py-1 inline-block"
-                  >
-                    How It Works
-                  </a>
+                  <p className="text-primary-foreground/40 text-xs uppercase tracking-wider mb-0.5">
+                    Company
+                  </p>
+                  <p className="text-primary-foreground/60">
+                    Next Chapter Travel LLC
+                  </p>
                 </li>
-                <li>
-                  <a
-                    href="#about-jessica"
-                    className="text-primary-foreground/60 hover:text-primary-foreground transition-colors py-1 inline-block"
-                  >
-                    About Jessica
-                  </a>
-                </li>
-                <li>
-                  <Link
-                    href="/plan-my-trip"
-                    className="text-primary-foreground/60 hover:text-primary-foreground transition-colors py-1 inline-block"
-                  >
-                    Plan My Trip
+                <li className="pt-2">
+                  <Link href="/plan-my-trip">
+                    <Button
+                      size="sm"
+                      className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-sans font-bold text-xs rounded-lg"
+                    >
+                      Start Planning — Free
+                    </Button>
                   </Link>
                 </li>
               </ul>
             </div>
-            <div>
-              <h4 className="font-bold mb-4 font-sans text-sm uppercase tracking-widest">
-                Company
-              </h4>
-              <ul className="space-y-3 font-sans text-sm">
-                <li>
-                  <a
-                    href="https://www.facebook.com/nextchaptertravel/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary-foreground/60 hover:text-primary-foreground transition-colors py-1 inline-block"
-                  >
-                    Facebook
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://www.instagram.com/nextchaptertravelllc"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary-foreground/60 hover:text-primary-foreground transition-colors py-1 inline-block"
-                  >
-                    Instagram
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4 font-sans text-sm uppercase tracking-widest">
-                Team
-              </h4>
-              <ul className="space-y-3 font-sans text-sm">
-                <li className="text-primary-foreground/60">
-                  <span className="font-semibold">Jessica Seiders</span>
-                  <div className="text-xs text-primary-foreground/50">
-                    Chief Financial Officer (CFO)
-                  </div>
-                </li>
-                <li className="text-primary-foreground/60">
-                  <span className="font-semibold">Wendy</span>
-                  <div className="text-xs text-primary-foreground/50">
-                    Chief Operating Officer (COO)
-                  </div>
-                  <div className="text-xs text-primary-foreground/50 mt-1">
-                    Based in North Carolina. Craft business owner (wood crafts,
-                    candles, wax melts). Travel enthusiast, dog lover, motocross
-                    fan.
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4 font-sans text-sm uppercase tracking-widest">
-                Contact
-              </h4>
-              <p className="text-primary-foreground/60 text-sm font-sans mb-2">
-                <a
-                  href="mailto:jessica@nextchaptertravel.com"
-                  className="hover:text-primary-foreground transition-colors"
-                >
-                  jessica@nextchaptertravel.com
-                </a>
-              </p>
-              <p className="text-primary-foreground/60 text-sm font-sans">
-                Next Chapter Travel LLC
-              </p>
-            </div>
           </div>
-          <div className="border-t border-white/10 pt-8 sm:pt-10 text-center text-primary-foreground/60 text-sm font-sans">
+
+          {/* Bottom bar */}
+          <div className="border-t border-white/10 pt-6 sm:pt-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-primary-foreground/40 text-xs font-sans">
             <p>&copy; 2026 Next Chapter Travel LLC. All rights reserved.</p>
+            <p>
+              <a href="/sitemap.xml" className="hover:text-primary-foreground/60 transition-colors">
+                Sitemap
+              </a>
+              <span className="mx-2">·</span>
+              <a href="mailto:jessica@nextchaptertravel.com" className="hover:text-primary-foreground/60 transition-colors">
+                Privacy
+              </a>
+            </p>
           </div>
         </div>
       </footer>
 
+      {/* ── Scroll to Top Button (Mobile) ── */}
       {/* ── Scroll to Top Button (Mobile) ── */}
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
