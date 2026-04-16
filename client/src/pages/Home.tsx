@@ -951,7 +951,6 @@ export default function Home() {
       </footer>
 
       {/* ── Scroll to Top Button (Mobile) ── */}
-      {/* ── Scroll to Top Button (Mobile) ── */}
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         className={cn(
