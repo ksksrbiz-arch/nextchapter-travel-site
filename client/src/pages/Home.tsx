@@ -3,7 +3,8 @@ import { getLoginUrl } from "@/const";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { SEOHead } from "@/components/SEOHead";
 import {
   MapPin,
   MessageSquare,
@@ -145,6 +146,10 @@ export default function Home() {
 
   return (
     <div className="min-h-screen font-serif selection:bg-secondary/30">
+      <SEOHead
+        canonical="/"
+        includeLocalBusiness
+      />
       {/* ── Navigation ── */}
       <nav
         className={cn(
@@ -308,28 +313,26 @@ export default function Home() {
                 </Button>
               </a>
             </div>
-            <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 text-left max-w-3xl mx-auto">
-              <div className="bg-secondary/10 border border-secondary/20 rounded-2xl px-4 py-3 sm:px-5 sm:py-4 flex items-center gap-3 w-full sm:w-auto">
-                <Star className="w-6 h-6 text-secondary" />
-                <div>
-                  <p className="font-bold font-sans text-secondary">
-                    Trusted by 50+ families
+            <div className="mt-10 sm:mt-12 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-3xl mx-auto w-full">
+              {[
+                { value: "50+", label: "Families Served", icon: Users },
+                { value: "100+", label: "Trips Planned", icon: Plane },
+                { value: "5★", label: "Average Rating", icon: Star },
+                { value: "Free", label: "Consultation", icon: Shield },
+              ].map(stat => (
+                <div
+                  key={stat.label}
+                  className="bg-card/40 backdrop-blur-md border border-border/60 rounded-2xl px-3 py-4 sm:px-4 sm:py-5 flex flex-col items-center gap-1 text-center hover:border-secondary/40 hover:bg-card/60 transition-all group"
+                >
+                  <stat.icon className="w-5 h-5 text-secondary mb-1 group-hover:scale-110 transition-transform" />
+                  <p className="text-xl sm:text-2xl font-serif font-bold text-secondary">
+                    {stat.value}
                   </p>
-                  <p className="text-sm text-muted-foreground font-sans">
-                    “Jessica handled every detail so we could just enjoy the
-                    trip.”
-                  </p>
-                </div>
-              </div>
-              <div className="bg-card/60 border border-border rounded-2xl px-4 py-3 sm:px-5 sm:py-4 flex items-center gap-3 w-full sm:w-auto">
-                <Shield className="w-6 h-6 text-secondary" />
-                <div>
-                  <p className="font-bold font-sans">Concierge support</p>
-                  <p className="text-sm text-muted-foreground font-sans">
-                    Real humans, real-time help while you travel.
+                  <p className="text-xs text-muted-foreground font-sans leading-tight">
+                    {stat.label}
                   </p>
                 </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
@@ -395,14 +398,28 @@ export default function Home() {
             {TESTIMONIALS.map(t => (
               <div
                 key={t.name}
-                className="bg-card/60 backdrop-blur-sm border border-border rounded-2xl p-6 sm:p-7 shadow-lg shadow-black/10 flex flex-col gap-4"
+                className="bg-card/60 backdrop-blur-sm border border-border rounded-2xl p-6 sm:p-7 shadow-lg shadow-black/10 flex flex-col gap-4 hover:border-secondary/30 transition-all"
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-secondary/15 border border-secondary/30 flex items-center justify-center">
-                    <Star className="w-5 h-5 text-secondary" />
+                {/* 5-star rating */}
+                <div className="flex gap-1">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star
+                      key={i}
+                      className="w-4 h-4 text-secondary fill-secondary"
+                    />
+                  ))}
+                </div>
+                <p className="text-sm sm:text-base text-muted-foreground font-sans leading-relaxed flex-1">
+                  &ldquo;{t.quote}&rdquo;
+                </p>
+                <div className="flex items-center gap-3 pt-2 border-t border-border/50">
+                  <div className="w-9 h-9 rounded-full bg-secondary/15 border border-secondary/30 flex items-center justify-center flex-shrink-0">
+                    <span className="text-xs font-bold text-secondary font-sans">
+                      {t.name.charAt(0)}
+                    </span>
                   </div>
                   <div>
-                    <p className="font-semibold font-sans text-foreground">
+                    <p className="font-semibold font-sans text-foreground text-sm">
                       {t.name}
                     </p>
                     <p className="text-xs text-muted-foreground font-sans">
@@ -410,9 +427,6 @@ export default function Home() {
                     </p>
                   </div>
                 </div>
-                <p className="text-sm sm:text-base text-muted-foreground font-sans leading-relaxed">
-                  “{t.quote}”
-                </p>
               </div>
             ))}
           </div>

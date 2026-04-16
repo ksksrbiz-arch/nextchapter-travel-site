@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useVideoHero } from "@/contexts/VideoHeroContext";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
+import { SEOHead } from "@/components/SEOHead";
 import {
   ArrowLeft,
   BookOpen,
@@ -28,6 +29,11 @@ export default function PlanMyTrip() {
 
   return (
     <div className="min-h-screen bg-transparent text-foreground">
+      <SEOHead
+        title="Plan My Trip — Start Your Dream Vacation"
+        description="Tell Jessica about your dream vacation. Disney, cruises, all-inclusive resorts, and more — get a free personalized travel plan within 24 hours."
+        canonical="/plan-my-trip"
+      />
       {/* ── Sticky top nav bar ── */}
       <nav
         className="fixed top-0 left-0 right-0 z-50 bg-primary/95 backdrop-blur-md shadow-lg"

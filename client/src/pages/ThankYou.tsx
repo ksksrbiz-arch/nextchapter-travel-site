@@ -3,6 +3,7 @@ import { useVideoHero } from "@/contexts/VideoHeroContext";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { CheckCircle, Clock, Mail, Calendar, ArrowRight } from "lucide-react";
+import { SEOHead } from "@/components/SEOHead";
 
 export function ThankYou() {
   const { setVideoContext } = useVideoHero();
@@ -19,6 +20,11 @@ export function ThankYou() {
           "linear-gradient(to bottom, rgba(10,22,40,0.75) 0%, rgba(10,22,40,0.85) 100%)",
       }}
     >
+      <SEOHead
+        title="Thank You — Your Trip Inquiry Was Received"
+        description="Thank you for reaching out! Jessica at Next Chapter Travel will review your trip request and respond within 24 hours."
+        canonical="/thank-you"
+      />
       <div className="max-w-2xl w-full">
         {/* Success icon */}
         <div className="flex justify-center mb-8">
