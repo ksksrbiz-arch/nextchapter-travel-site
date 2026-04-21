@@ -298,7 +298,7 @@ class MemoryArchivesService {
       similarity: [alternative.emotion, ...alternative.activities.slice(0, 2)],
       estimatedBudget: profile.budget,
       duration: profile.duration + Math.floor(Math.random() * 3) - 1,
-      bestSeason: "Year-round" || this.guessSeason(memory),
+      bestSeason: this.guessSeason(memory) || "Year-round",
       activities: alternative.activities,
       accommodationType:
         profile.travelStyle === "luxury" ? "Luxury Resort" : "Boutique Hotel",
