@@ -17,6 +17,13 @@ interface ChatMessage {
 //   title: string;
 //   description: string;
 //   impact: "low" | "medium" | "high";
+// Unused interfaces - kept for future use
+// interface CopiloitInsight {
+//   id: string;
+//   type: "opportunity" | "risk" | "recommendation" | "alert";
+//   title: string;
+//   description: string;
+//   impact: "low" | "medium" | "high";
 //   confidence: number;
 //   suggestedAction?: string;
 // }
@@ -29,8 +36,8 @@ interface ChatMessage {
 //   estimatedImpact: string;
 //   confidence: number;
 //   targetClient?: string;
-  targetTrip?: string;
-}
+//   targetTrip?: string;
+// }
 
 export const AICopilot: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
