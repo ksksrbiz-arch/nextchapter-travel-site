@@ -18,7 +18,7 @@ import PortalDashboard from "./pages/portal/Dashboard";
 import PortalItinerary from "./pages/portal/Itinerary";
 import PortalDocuments from "./pages/portal/Documents";
 import PortalMessages from "./pages/portal/Messages";
-import PortalPackingList from "./pages/portal/PackingList";
+// Removed unused import - PortalPackingList
 import PortalBookings from "./pages/portal/Bookings";
 import PortalGuides from "./pages/portal/Guides";
 import PortalAlerts from "./pages/portal/Alerts";

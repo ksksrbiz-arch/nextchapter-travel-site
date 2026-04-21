@@ -5,14 +5,10 @@ import {
   CheckCircle2,
   Phone,
   MessageSquare,
-  MapPin,
   Clock,
-  ArrowRight,
   Shield,
   Zap,
   X,
-  ChevronDown,
-  Users,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -44,12 +40,13 @@ interface CrisisEvent {
   escalationLevel: number;
 }
 
-interface EscalationAction {
-  label: string;
-  icon: React.ReactNode;
-  action: () => void;
-  severity: "low" | "medium" | "high" | "critical";
-}
+// Unused interface - kept for future use
+// interface EscalationAction {
+//   label: string;
+//   icon: React.ReactNode;
+//   action: () => void;
+//   severity: "low" | "medium" | "high" | "critical";
+// }
 
 const CrisisManagement: React.FC<{ tripId: string }> = ({ tripId }) => {
   const [crisisEvents, setCrisisEvents] = useState<CrisisEvent[]>([]);
@@ -58,8 +55,8 @@ const CrisisManagement: React.FC<{ tripId: string }> = ({ tripId }) => {
     EmergencyContact[]
   >([]);
   const [protocols, setProtocols] = useState<CrisisProtocol[]>([]);
-  const [escalationMode, setEscalationMode] = useState(false);
-  const [expandedEvent, setExpandedEvent] = useState<string | null>(null);
+  const [_escalationMode, _setEscalationMode] = useState(false);
+  const [_expandedEvent, _setExpandedEvent] = useState<string | null>(null);
 
   const flightDisruptionService = useRef(getFlightDisruptionService());
   const realtimeSync = useRef(getRealtimeSyncService());

@@ -172,7 +172,7 @@ class AICoPilotService {
    */
   generateAutomationSuggestions(
     businessData: any,
-    focusArea?: string
+    _focusArea?: string
   ): AutomationSuggestion[] {
     const suggestions: AutomationSuggestion[] = [];
 

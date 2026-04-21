@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Send, Lightbulb, Zap, MoreVertical, ChevronDown } from "lucide-react";
+import { Send, Lightbulb, Zap } from "lucide-react";
 import { aiCopilot } from "../_core/services/aiCopilot";
 import { businessOpsService } from "../_core/services/businessOperations";
 
@@ -10,24 +10,25 @@ interface ChatMessage {
   timestamp: Date;
 }
 
-interface CopiloitInsight {
-  id: string;
-  type: "opportunity" | "risk" | "recommendation" | "alert";
-  title: string;
-  description: string;
-  impact: "low" | "medium" | "high";
-  confidence: number;
-  suggestedAction?: string;
-}
+// Unused interfaces - kept for future use
+// interface CopiloitInsight {
+//   id: string;
+//   type: "opportunity" | "risk" | "recommendation" | "alert";
+//   title: string;
+//   description: string;
+//   impact: "low" | "medium" | "high";
+//   confidence: number;
+//   suggestedAction?: string;
+// }
 
-interface AutomationSuggestion {
-  id: string;
-  type: "email" | "booking" | "followup" | "upsell" | "retention";
-  description: string;
-  priority: "low" | "medium" | "high";
-  estimatedImpact: string;
-  confidence: number;
-  targetClient?: string;
+// interface AutomationSuggestion {
+//   id: string;
+//   type: "email" | "booking" | "followup" | "upsell" | "retention";
+//   description: string;
+//   priority: "low" | "medium" | "high";
+//   estimatedImpact: string;
+//   confidence: number;
+//   targetClient?: string;
   targetTrip?: string;
 }
 

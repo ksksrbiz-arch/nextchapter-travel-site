@@ -12,9 +12,7 @@ import {
   Phone,
   Mail,
   MoreVertical,
-  Filter,
   Plus,
-  Eye,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -29,7 +27,7 @@ interface CRMDashboardProps {
 }
 
 export default function CRMDashboard({
-  userId = "user-123",
+  userId: _userId = "user-123",
 }: CRMDashboardProps) {
   const [clients, setClients] = React.useState<Client[]>([]);
   const [trips, setTrips] = React.useState<OperationalTrip[]>([]);
@@ -260,7 +258,7 @@ export default function CRMDashboard({
   const activeTrips = trips.filter(
     t => t.status !== "completed" && t.status !== "cancelled"
   ).length;
-  const completedTrips = trips.filter(t => t.status === "completed").length;
+  const _completedTrips = trips.filter(t => t.status === "completed").length;
 
   return (
     <div className="space-y-6">

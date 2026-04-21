@@ -13,7 +13,8 @@ import {
   Loader2,
   Camera,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+// Button not used in exports, only internally
+// import { Button } from "@/components/ui/button";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
