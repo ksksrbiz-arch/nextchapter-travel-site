@@ -8,6 +8,9 @@ interface SEOHeadProps {
   ogType?: string;
   /** Pass false to suppress the LocalBusiness JSON-LD block */
   includeLocalBusiness?: boolean;
+  /** When true, emits `<meta name="robots" content="noindex, nofollow">` —
+   * use for transactional pages like /thank-you, /join, and /404. */
+  noIndex?: boolean;
 }
 
 const SITE_NAME = "Next Chapter Travel — Jessica Seiders";
@@ -78,6 +81,17 @@ function setLinkRel(rel: string, href: string) {
 }
 
 function injectJsonLd(id: string, data: object) {
+  let serialized: string;
+  try {
+    serialized = JSON.stringify(data);
+  } catch (err) {
+    // Fail open — don't inject malformed structured data, but keep the page
+    // rendering normally.
+    if (process.env.NODE_ENV !== "production") {
+      console.warn(`[SEOHead] failed to serialize JSON-LD '${id}':`, err);
+    }
+    return;
+  }
   let el = document.getElementById(id);
   if (!el) {
     el = document.createElement("script");
@@ -85,7 +99,7 @@ function injectJsonLd(id: string, data: object) {
     (el as HTMLScriptElement).type = "application/ld+json";
     document.head.appendChild(el);
   }
-  el.textContent = JSON.stringify(data);
+  el.textContent = serialized;
 }
 
 function removeJsonLd(id: string) {
@@ -110,9 +124,11 @@ export function SEOHead({
   ogImage = DEFAULT_OG_IMAGE,
   ogType = "website",
   includeLocalBusiness = false,
+  noIndex = false,
 }: SEOHeadProps) {
   const fullTitle = title ? `${title} | ${SITE_NAME}` : SITE_NAME;
   const canonicalUrl = canonical ? `${BASE_URL}${canonical}` : BASE_URL;
+  const fullOgImage = ogImage.startsWith("http") ? ogImage : `${BASE_URL}${ogImage}`;
 
   useEffect(() => {
     // Title
@@ -120,21 +136,24 @@ export function SEOHead({
 
     // Standard meta
     setMeta("description", description);
-    setMeta("robots", "index, follow");
+    setMeta(
+      "robots",
+      noIndex ? "noindex, nofollow" : "index, follow"
+    );
 
     // Open Graph
     setMeta("og:title", fullTitle, true);
     setMeta("og:description", description, true);
     setMeta("og:type", ogType, true);
     setMeta("og:url", canonicalUrl, true);
-    setMeta("og:image", ogImage, true);
+    setMeta("og:image", fullOgImage, true);
     setMeta("og:site_name", SITE_NAME, true);
 
     // Twitter Card
     setMeta("twitter:card", "summary_large_image");
     setMeta("twitter:title", fullTitle);
     setMeta("twitter:description", description);
-    setMeta("twitter:image", ogImage);
+    setMeta("twitter:image", fullOgImage);
 
     // Canonical link
     setLinkRel("canonical", canonicalUrl);
@@ -145,7 +164,7 @@ export function SEOHead({
     } else {
       removeJsonLd("json-ld-local-business");
     }
-  }, [fullTitle, description, canonicalUrl, ogImage, ogType, includeLocalBusiness]);
+  }, [fullTitle, description, canonicalUrl, fullOgImage, ogType, includeLocalBusiness, noIndex]);
 
   return null;
 }

@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useVideoHero } from "@/contexts/VideoHeroContext";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { SEOHead } from "@/components/SEOHead";
 import {
@@ -10,7 +11,17 @@ import {
   Shield,
   Clock,
   CheckCircle,
+  Mail,
+  ExternalLink,
+  AlertCircle,
 } from "lucide-react";
+
+// If the embedded TravelJoy form hasn't loaded by this point, assume it's
+// being blocked (ad-blocker, network, CSP) and surface a fallback path so
+// the user is never stranded on an infinite spinner.
+const IFRAME_LOAD_TIMEOUT_MS = 12_000;
+const TRAVELJOY_FORM_URL =
+  "https://traveljoy.com/webforms/omtyxcxwds2mzw21lnthlkrk/forms/dbaww6cshuxeiaac8kanrn9w";
 
 const TRUST_BADGES = [
   { icon: Star, label: "Disney Certified Specialist" },
@@ -22,10 +33,35 @@ const TRUST_BADGES = [
 export default function PlanMyTrip() {
   const { setVideoContext } = useVideoHero();
   const [iframeLoaded, setIframeLoaded] = useState(false);
+  const [iframeFailed, setIframeFailed] = useState(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     setVideoContext("landing");
   }, [setVideoContext]);
+
+  // Start a load watchdog; if onLoad doesn't fire in time, surface the
+  // fallback contact paths.
+  useEffect(() => {
+    if (iframeLoaded) return;
+    timeoutRef.current = setTimeout(() => {
+      setIframeFailed(true);
+    }, IFRAME_LOAD_TIMEOUT_MS);
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, [iframeLoaded]);
+
+  const handleIframeLoad = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setIframeFailed(false);
+    setIframeLoaded(true);
+  };
+
+  const handleIframeError = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setIframeFailed(true);
+  };
 
   return (
     <div className="min-h-screen bg-transparent text-foreground">
@@ -100,23 +136,78 @@ export default function PlanMyTrip() {
         style={{ background: "oklch(0.18 0.05 240 / 0.60)" }}
       >
         <div className="max-w-4xl mx-auto">
-          {/* Loading skeleton */}
-          {!iframeLoaded && (
-            <div className="flex flex-col items-center justify-center py-24 gap-4">
+          {/* Loading skeleton — shown until either onLoad or the watchdog fires */}
+          {!iframeLoaded && !iframeFailed && (
+            <div
+              className="flex flex-col items-center justify-center py-20 sm:py-24 gap-4 px-4 text-center"
+              role="status"
+              aria-live="polite"
+            >
               <div className="w-10 h-10 rounded-full border-2 border-secondary border-t-transparent animate-spin" />
-              <p className="text-white/50 font-sans text-sm">
+              <p className="text-white/60 font-sans text-sm">
                 Loading your trip planner…
+              </p>
+              <p className="text-white/40 font-sans text-xs max-w-sm">
+                If this takes more than a few seconds, an ad-blocker or network
+                policy may be blocking the form.
               </p>
             </div>
           )}
 
+          {/* Fallback path — shown if the iframe fails or stalls past the watchdog */}
+          {iframeFailed && !iframeLoaded && (
+            <div className="px-4 py-12 sm:py-16">
+              <div className="max-w-xl mx-auto bg-white/5 border border-white/15 rounded-2xl p-6 sm:p-8 text-center">
+                <div className="w-12 h-12 rounded-full bg-secondary/15 border border-secondary/30 flex items-center justify-center mx-auto mb-4">
+                  <AlertCircle className="w-6 h-6 text-secondary" />
+                </div>
+                <h2 className="text-xl sm:text-2xl font-serif font-bold text-white mb-2">
+                  Form having trouble loading?
+                </h2>
+                <p className="text-white/70 font-sans text-sm sm:text-base mb-6 leading-relaxed">
+                  No problem — Jessica will still get your details. Pick the
+                  option that's easiest for you and we'll be in touch within
+                  24&nbsp;hours.
+                </p>
+                <div className="flex flex-col gap-3">
+                  <Button
+                    asChild
+                    className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 font-sans font-bold min-h-[52px] rounded-xl active:scale-[0.99] transition-transform"
+                  >
+                    <a
+                      href="mailto:jessica@nextchaptertravel.com?subject=Plan%20My%20Trip&body=Hi%20Jessica%2C%0A%0AI%27d%20like%20to%20start%20planning%20a%20trip.%20Here%27s%20a%20bit%20about%20what%20we%27re%20looking%20for%3A%0A%0A%E2%80%A2%20Travelers%3A%0A%E2%80%A2%20Travel%20dates%3A%0A%E2%80%A2%20Destination(s)%3A%0A%E2%80%A2%20Approximate%20budget%3A%0A%E2%80%A2%20Anything%20else%3A%0A%0AThanks%21"
+                    >
+                      <Mail className="w-4 h-4 mr-2" />
+                      Email Jessica directly
+                    </a>
+                  </Button>
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="w-full border-white/30 text-white hover:bg-white/10 font-sans font-bold min-h-[52px] rounded-xl active:scale-[0.99] transition-transform"
+                  >
+                    <a href={TRAVELJOY_FORM_URL} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className="w-4 h-4 mr-2" />
+                      Open the form in a new tab
+                    </a>
+                  </Button>
+                </div>
+                <p className="text-white/40 font-sans text-xs mt-5">
+                  Tip: try disabling your ad-blocker for this page and refreshing.
+                </p>
+              </div>
+            </div>
+          )}
+
           <iframe
-            src="https://traveljoy.com/webforms/omtyxcxwds2mzw21lnthlkrk/forms/dbaww6cshuxeiaac8kanrn9w"
+            src={TRAVELJOY_FORM_URL}
             title="Plan My Trip — Next Chapter Travel"
-            onLoad={() => setIframeLoaded(true)}
+            onLoad={handleIframeLoad}
+            onError={handleIframeError}
             className={`w-full transition-opacity duration-500 ${iframeLoaded ? "opacity-100" : "opacity-0 h-0"}`}
             style={{
-              height: iframeLoaded ? "calc(100vh - 120px)" : "0",
+              // 100dvh handles iOS Safari address-bar collapse; 100vh is fallback
+              height: iframeLoaded ? "calc(100dvh - 120px)" : "0",
               minHeight: iframeLoaded ? "700px" : "0",
               border: "none",
               borderRadius: "0 0 1rem 1rem",
@@ -169,13 +260,13 @@ export default function PlanMyTrip() {
                 key={i}
                 className="group bg-white/5 border border-white/10 rounded-xl overflow-hidden"
               >
-                <summary className="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer list-none text-white font-sans font-medium text-sm sm:text-base select-none hover:bg-white/5 transition-colors">
-                  {item.q}
-                  <span className="text-secondary flex-shrink-0 text-lg leading-none group-open:rotate-45 transition-transform duration-200">
+                <summary className="flex items-center justify-between gap-4 px-4 sm:px-5 py-4 min-h-[56px] cursor-pointer list-none text-white font-sans font-medium text-[15px] sm:text-base leading-snug select-none hover:bg-white/5 active:bg-white/10 transition-colors">
+                  <span className="flex-1">{item.q}</span>
+                  <span className="text-secondary flex-shrink-0 text-2xl leading-none group-open:rotate-45 transition-transform duration-200">
                     +
                   </span>
                 </summary>
-                <div className="px-5 pb-5 text-white/70 font-sans text-sm leading-relaxed border-t border-white/10 pt-4">
+                <div className="px-4 sm:px-5 pb-5 text-white/70 font-sans text-sm leading-relaxed border-t border-white/10 pt-4">
                   {item.a}
                 </div>
               </details>

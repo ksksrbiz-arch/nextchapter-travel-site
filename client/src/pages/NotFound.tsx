@@ -11,8 +11,13 @@ export default function NotFound() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center px-4 py-12 bg-transparent">
-      <SEOHead title="Page Not Found" canonical="/404" />
+    <div
+      className="min-h-dvh w-full flex items-center justify-center px-4 py-12 bg-transparent"
+      style={{
+        paddingBottom: "max(3rem, calc(2rem + env(safe-area-inset-bottom, 0px)))",
+      }}
+    >
+      <SEOHead title="Page Not Found" canonical="/404" noIndex />
       <div className="max-w-lg w-full text-center">
         {/* Icon */}
         <div className="flex justify-center mb-8">
@@ -43,7 +48,7 @@ export default function NotFound() {
         >
           <Button
             onClick={handleGoHome}
-            className="bg-secondary text-secondary-foreground hover:bg-secondary/90 px-8 py-3 rounded-xl font-sans font-bold"
+            className="w-full sm:w-auto bg-secondary text-secondary-foreground hover:bg-secondary/90 px-8 py-3 min-h-[52px] rounded-xl font-sans font-bold active:scale-[0.99] transition-transform"
           >
             <Home className="w-4 h-4 mr-2" />
             Back to Home

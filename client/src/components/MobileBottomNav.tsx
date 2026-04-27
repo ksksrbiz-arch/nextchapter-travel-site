@@ -112,7 +112,7 @@ export default function MobileBottomNav() {
                 >
                   <div
                     className={cn(
-                      "relative flex items-center justify-center w-10 h-7 rounded-xl transition-all duration-200",
+                      "relative flex items-center justify-center w-11 h-8 rounded-xl transition-all duration-200",
                       active ? "bg-secondary/15" : ""
                     )}
                   >
@@ -123,7 +123,7 @@ export default function MobileBottomNav() {
                       )}
                     />
                     {isMessages && unreadCount > 0 && (
-                      <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center px-1">
+                      <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1 shadow-md ring-2 ring-card">
                         {unreadCount > 9 ? "9+" : unreadCount}
                       </span>
                     )}
@@ -147,11 +147,12 @@ export default function MobileBottomNav() {
           {/* More button */}
           <button
             onClick={() => setMoreOpen(true)}
+            aria-label="More portal options"
             className="flex-1 flex flex-col items-center justify-center h-full gap-0.5 relative transition-all duration-200 active:scale-95"
           >
             <div
               className={cn(
-                "flex items-center justify-center w-10 h-7 rounded-xl transition-all duration-200",
+                "flex items-center justify-center w-11 h-8 rounded-xl transition-all duration-200",
                 isMoreActive ? "bg-secondary/15" : ""
               )}
             >
@@ -183,7 +184,10 @@ export default function MobileBottomNav() {
 
       {/* "More" bottom sheet */}
       <Sheet open={moreOpen} onOpenChange={setMoreOpen}>
-        <SheetContent side="bottom" className="rounded-t-3xl pb-safe">
+        <SheetContent
+          side="bottom"
+          className="rounded-t-3xl pb-safe max-h-[85dvh] overflow-y-auto"
+        >
           <SheetHeader className="pb-4">
             <SheetTitle className="font-serif text-foreground text-left">
               More Options

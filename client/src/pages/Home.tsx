@@ -221,11 +221,16 @@ export default function Home() {
         {/* Mobile Menu */}
         <div
           className={cn(
-            "md:hidden bg-primary/98 backdrop-blur-lg border-t border-border overflow-hidden transition-all duration-300 ease-out",
-            mobileMenuOpen ? "max-h-[400px] opacity-100" : "max-h-0 opacity-0"
+            "md:hidden bg-primary/98 backdrop-blur-lg border-t border-border overflow-y-auto transition-all duration-300 ease-out",
+            mobileMenuOpen
+              ? "max-h-[calc(100dvh-4rem)] opacity-100"
+              : "max-h-0 opacity-0"
           )}
         >
-          <div className="container py-6 flex flex-col gap-3">
+          <div
+            className="container py-6 flex flex-col gap-3"
+            style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom, 0px))" }}
+          >
             <a
               href="#features"
               onClick={() => setMobileMenuOpen(false)}
@@ -270,25 +275,25 @@ export default function Home() {
       </nav>
 
       {/* ── Hero Section ── */}
-      <section className="pt-32 sm:pt-40 md:pt-48 pb-16 sm:pb-24 md:pb-32 relative">
+      <section className="pt-24 sm:pt-32 md:pt-44 pb-14 sm:pb-24 md:pb-32 relative">
         <div className="container">
           <div className="max-w-4xl mx-auto text-center">
-            <Badge className="mb-4 sm:mb-6 bg-secondary/10 text-secondary border-secondary/20 font-sans text-xs tracking-widest uppercase inline-block">
+            <Badge className="mb-4 sm:mb-6 bg-secondary/10 text-secondary border-secondary/20 font-sans text-[10px] sm:text-xs tracking-widest uppercase inline-block">
               Your Personal Travel Concierge
             </Badge>
-            <h1 className="text-4xl sm:text-5xl md:text-7xl font-serif font-bold mb-6 sm:mb-8 leading-tight">
+            <h1 className="text-[2.25rem] leading-[1.1] sm:text-5xl md:text-7xl font-serif font-bold mb-5 sm:mb-8 sm:leading-tight tracking-tight">
               Every Trip, Perfectly Planned
             </h1>
-            <p className="text-lg sm:text-xl text-muted-foreground mb-10 sm:mb-12 font-sans leading-relaxed max-w-2xl mx-auto">
+            <p className="text-base sm:text-xl text-muted-foreground mb-8 sm:mb-12 font-sans leading-relaxed max-w-2xl mx-auto">
               From Disney magic to Caribbean cruises, Jessica Seiders at Next
               Chapter Travel LLC creates unforgettable journeys with every
               detail handled.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
-              <Link href="/plan-my-trip">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-6">
+              <Link href="/plan-my-trip" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="w-full sm:w-auto bg-secondary text-secondary-foreground hover:bg-secondary/90 px-12 py-8 text-xl font-sans font-bold rounded-2xl shadow-xl shadow-secondary/20 active:scale-95 transition-all"
+                  className="w-full sm:w-auto bg-secondary text-secondary-foreground hover:bg-secondary/90 px-6 sm:px-12 py-6 sm:py-8 text-base sm:text-xl font-sans font-bold rounded-2xl shadow-xl shadow-secondary/20 min-h-[56px] active:scale-95 transition-all"
                 >
                   Plan My Trip
                 </Button>
@@ -297,7 +302,7 @@ export default function Home() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="w-full sm:w-auto bg-background/40 backdrop-blur-md border-border hover:bg-background/60 px-12 py-8 text-xl font-sans font-bold rounded-2xl active:scale-95 transition-all"
+                  className="w-full sm:w-auto bg-background/40 backdrop-blur-md border-border hover:bg-background/60 px-6 sm:px-12 py-6 sm:py-8 text-base sm:text-xl font-sans font-bold rounded-2xl min-h-[56px] active:scale-95 transition-all"
                 >
                   Client Portal
                 </Button>
@@ -306,13 +311,13 @@ export default function Home() {
                 <Button
                   size="lg"
                   variant="ghost"
-                  className="w-full sm:w-auto text-secondary hover:text-secondary/80 px-10 py-8 text-xl font-sans font-bold rounded-2xl active:scale-95 transition-all"
+                  className="w-full sm:w-auto text-secondary hover:text-secondary/80 px-6 sm:px-10 py-5 sm:py-8 text-sm sm:text-xl font-sans font-bold rounded-2xl min-h-[48px] sm:min-h-[56px] active:scale-95 transition-all"
                 >
                   See How It Works
                 </Button>
               </a>
             </div>
-            <div className="mt-10 sm:mt-12 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-3xl mx-auto w-full">
+            <div className="mt-8 sm:mt-12 grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4 max-w-3xl mx-auto w-full">
               {[
                 { value: "50+", label: "Families Served", icon: Users },
                 { value: "100+", label: "Trips Planned", icon: Plane },
@@ -321,13 +326,13 @@ export default function Home() {
               ].map(stat => (
                 <div
                   key={stat.label}
-                  className="bg-card/40 backdrop-blur-md border border-border/60 rounded-2xl px-3 py-4 sm:px-4 sm:py-5 flex flex-col items-center gap-1 text-center hover:border-secondary/40 hover:bg-card/60 transition-all group"
+                  className="bg-card/40 backdrop-blur-md border border-border/60 rounded-2xl px-3 py-3.5 sm:px-4 sm:py-5 flex flex-col items-center gap-1 text-center hover:border-secondary/40 hover:bg-card/60 transition-all group"
                 >
-                  <stat.icon className="w-5 h-5 text-secondary mb-1 group-hover:scale-110 transition-transform" />
-                  <p className="text-xl sm:text-2xl font-serif font-bold text-secondary">
+                  <stat.icon className="w-5 h-5 sm:w-5 sm:h-5 text-secondary mb-0.5 sm:mb-1 group-hover:scale-110 transition-transform" />
+                  <p className="text-lg sm:text-2xl font-serif font-bold text-secondary leading-none">
                     {stat.value}
                   </p>
-                  <p className="text-xs text-muted-foreground font-sans leading-tight">
+                  <p className="text-[11px] sm:text-xs text-muted-foreground font-sans leading-tight">
                     {stat.label}
                   </p>
                 </div>
@@ -582,6 +587,7 @@ export default function Home() {
                   <img
                     src={JESSICA_PHOTOS[activePhotoIndex].src}
                     alt={JESSICA_PHOTOS[activePhotoIndex].alt}
+                    loading="lazy"
                     className="w-full h-auto object-contain transition-opacity duration-300"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent" />
@@ -608,6 +614,7 @@ export default function Home() {
                       <img
                         src={photo.src}
                         alt={photo.alt}
+                        loading="lazy"
                         className="w-full h-full object-cover"
                       />
                     </button>
@@ -702,19 +709,23 @@ export default function Home() {
                 key={trip.id}
                 className="group bg-card/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-border hover:border-secondary/50 transition-all hover:shadow-2xl"
               >
-                <div className="relative h-48 sm:h-64 overflow-hidden">
+                <div className="relative h-44 sm:h-64 overflow-hidden">
                   <img
                     src={trip.image}
                     alt={trip.title}
+                    loading="lazy"
+                    decoding="async"
+                    width="800"
+                    height="500"
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
-                  <div className="absolute top-4 right-4">
-                    <Badge className="bg-secondary text-secondary-foreground border-0 font-sans text-xs">
+                  <div className="absolute top-3 right-3 sm:top-4 sm:right-4">
+                    <Badge className="bg-secondary text-secondary-foreground border-0 font-sans text-[10px] sm:text-xs">
                       {trip.date}
                     </Badge>
                   </div>
                 </div>
-                <div className="p-6 sm:p-8">
+                <div className="p-5 sm:p-8">
                   <div className="flex items-center gap-2 text-secondary/80 font-sans text-xs mb-2">
                     <MapPin className="w-3 h-3" />
                     {trip.destination}
@@ -759,11 +770,11 @@ export default function Home() {
             <p className="text-sm text-muted-foreground/70 font-sans mb-10 sm:mb-12">
               Free consultation. No hidden fees. Just unforgettable memories.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
-              <Link href="/plan-my-trip">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-6">
+              <Link href="/plan-my-trip" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="w-full sm:w-auto bg-secondary text-secondary-foreground hover:bg-secondary/90 px-12 py-8 text-xl font-sans font-bold rounded-2xl shadow-xl shadow-secondary/20 active:scale-95 transition-all glow-secondary"
+                  className="w-full sm:w-auto bg-secondary text-secondary-foreground hover:bg-secondary/90 px-6 sm:px-12 py-6 sm:py-8 text-base sm:text-xl font-sans font-bold rounded-2xl shadow-xl shadow-secondary/20 min-h-[56px] active:scale-95 transition-all glow-secondary"
                 >
                   Plan My Trip — Free
                 </Button>
@@ -772,7 +783,7 @@ export default function Home() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="w-full sm:w-auto bg-background/40 backdrop-blur-md border-border hover:bg-background/60 px-12 py-8 text-xl font-sans font-bold rounded-2xl active:scale-95 transition-all"
+                  className="w-full sm:w-auto bg-background/40 backdrop-blur-md border-border hover:bg-background/60 px-6 sm:px-12 py-6 sm:py-8 text-base sm:text-xl font-sans font-bold rounded-2xl min-h-[56px] active:scale-95 transition-all"
                 >
                   Client Portal
                 </Button>
@@ -791,7 +802,10 @@ export default function Home() {
       </section>
 
       {/* ── Footer ── */}
-      <footer className="py-12 sm:py-16 bg-primary text-primary-foreground border-t border-white/10">
+      <footer
+        className="py-12 sm:py-16 bg-primary text-primary-foreground border-t border-white/10"
+        style={{ paddingBottom: "max(3rem, calc(2rem + env(safe-area-inset-bottom, 0px)))" }}
+      >
         <div className="container">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 sm:gap-12 mb-10 sm:mb-14">
             {/* Brand column */}
@@ -954,7 +968,7 @@ export default function Home() {
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         className={cn(
-          "fixed bottom-20 right-4 z-40 w-12 h-12 sm:w-14 sm:h-14 bg-secondary text-secondary-foreground rounded-full shadow-lg flex items-center justify-center transition-all duration-300 active:scale-90",
+          "fixed right-4 sm:right-6 bottom-safe-offset z-40 w-12 h-12 sm:w-14 sm:h-14 bg-secondary text-secondary-foreground rounded-full shadow-lg flex items-center justify-center transition-all duration-300 active:scale-90",
           showScrollTop
             ? "opacity-100 translate-y-0"
             : "opacity-0 translate-y-4 pointer-events-none"

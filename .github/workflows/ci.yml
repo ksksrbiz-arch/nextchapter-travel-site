@@ -20,16 +20,16 @@ jobs:
         with:
           node-version: '22'
       
+      # Version is read from `packageManager` in package.json; specifying it
+      # here too triggers ERR_PNPM_BAD_PM_VERSION.
       - name: Install pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 10.4.1
-      
+
       - name: Get pnpm store directory
         shell: bash
         run: |
           echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-      
+
       - name: Setup pnpm cache
         uses: actions/cache@v4
         with:
@@ -37,8 +37,10 @@ jobs:
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
-      
+
       - name: Install dependencies
+        env:
+          CI: "true"
         run: pnpm install --frozen-lockfile
       
       - name: Run linter
@@ -75,15 +77,15 @@ jobs:
         with:
           node-version: '22'
       
+      # Version is read from `packageManager` in package.json; specifying it
+      # here too triggers ERR_PNPM_BAD_PM_VERSION.
       - name: Install pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 10.4.1
-      
+
       - name: Run security audit
         run: pnpm audit --audit-level=moderate
         continue-on-error: true
-      
+
       - name: Check for outdated dependencies
         run: pnpm outdated
         continue-on-error: true
