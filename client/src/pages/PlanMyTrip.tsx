@@ -37,7 +37,7 @@ export default function PlanMyTrip() {
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    setVideoContext("landing");
+    setVideoContext("plan-my-trip");
   }, [setVideoContext]);
 
   // Start a load watchdog; if onLoad doesn't fire in time, surface the

@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React, { lazy, Suspense, useState } from "react";
 import PortalLayout from "@/components/PortalLayout";
-import MemoryArchives from "@/components/MemoryArchives";
-import RebookingRecommendations from "@/components/RebookingRecommendations";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Archive, Compass } from "lucide-react";
+import { MemoryArchivesSkeleton } from "@/components/ui/skeletons";
+
+const MemoryArchives = lazy(() => import("@/components/MemoryArchives"));
+const RebookingRecommendations = lazy(
+  () => import("@/components/RebookingRecommendations")
+);
 
 export default function MemoryArchivesPage() {
   const [activeTab, setActiveTab] = useState("archives");
@@ -29,11 +33,15 @@ export default function MemoryArchivesPage() {
         </TabsList>
 
         <TabsContent value="archives" className="mt-6">
-          <MemoryArchives userId="user-123" />
+          <Suspense fallback={<MemoryArchivesSkeleton />}>
+            <MemoryArchives userId="user-123" />
+          </Suspense>
         </TabsContent>
 
         <TabsContent value="recommendations" className="mt-6">
-          <RebookingRecommendations baseMemoryId="mem-orlando-2024" />
+          <Suspense fallback={<MemoryArchivesSkeleton />}>
+            <RebookingRecommendations baseMemoryId="mem-orlando-2024" />
+          </Suspense>
         </TabsContent>
       </Tabs>
     </PortalLayout>

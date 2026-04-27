@@ -1,10 +1,11 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
+import { useVideoHero } from "@/contexts/VideoHeroContext";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
   Users,
@@ -48,6 +49,11 @@ function AdminLayout({
   const { user, logout } = useAuth();
   const [location] = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { setVideoContext } = useVideoHero();
+
+  useEffect(() => {
+    setVideoContext("admin");
+  }, [location, setVideoContext]);
 
   const logoutMutation = trpc.auth.logout.useMutation({
     onSuccess: () => {

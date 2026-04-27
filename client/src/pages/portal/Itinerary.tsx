@@ -14,9 +14,9 @@ import {
   MapPin,
   Hash,
   Calendar,
-  Loader2,
   Compass,
 } from "lucide-react";
+import { ItinerarySkeleton } from "@/components/ui/skeletons";
 
 const CATEGORY_CONFIG: Record<
   string,
@@ -145,9 +145,7 @@ export default function Itinerary() {
 
       {/* Loading */}
       {(tripsLoading || itemsLoading) && (
-        <div className="flex items-center justify-center py-16">
-          <Loader2 className="w-8 h-8 animate-spin text-secondary" />
-        </div>
+        <ItinerarySkeleton />
       )}
 
       {/* Empty state */}

@@ -1,74 +1,237 @@
+import { lazy, Suspense, type ComponentType, type LazyExoticComponent } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { VideoHeroProvider } from "./contexts/VideoHeroContext";
 import GlobalVideoBackground from "./components/GlobalVideoBackground";
+import RouteLoadingScreen from "./components/RouteLoadingScreen";
+
+const lazyWithRetry = <T extends ComponentType<unknown>>(
+  importer: () => Promise<{ default: T }>,
+  key: string
+): LazyExoticComponent<T> =>
+  lazy(async () => {
+    try {
+      return await importer();
+    } catch (error) {
+      // Retry once without forcing a full page reload so local app state is preserved.
+      try {
+        return await importer();
+      } catch {
+        throw error;
+      }
+    }
+  });
 
 // Public pages
-import Home from "./pages/Home";
-import JoinPage from "./pages/JoinPage";
-import PlanMyTrip from "./pages/PlanMyTrip";
-import { ThankYou } from "./pages/ThankYou";
+const Home = lazyWithRetry(() => import("./pages/Home"), "home");
+const JoinPage = lazyWithRetry(() => import("./pages/JoinPage"), "join");
+const PlanMyTrip = lazyWithRetry(
+  () => import("./pages/PlanMyTrip"),
+  "plan-my-trip"
+);
+const ThankYou = lazyWithRetry(
+  () =>
+    import("./pages/ThankYou").then(module => ({ default: module.ThankYou })),
+  "thank-you"
+);
+const NotFound = lazyWithRetry(() => import("./pages/NotFound"), "not-found");
 
 // Client portal pages
-import PortalDashboard from "./pages/portal/Dashboard";
-import PortalItinerary from "./pages/portal/Itinerary";
-import PortalDocuments from "./pages/portal/Documents";
-import PortalMessages from "./pages/portal/Messages";
-// Removed unused import - PortalPackingList
-import PortalBookings from "./pages/portal/Bookings";
-import PortalGuides from "./pages/portal/Guides";
-import PortalAlerts from "./pages/portal/Alerts";
-import TravelTimelinePage from "./pages/portal/TimelinePage";
-import BudgetPage from "./pages/portal/BudgetPage";
-import VisaPage from "./pages/portal/VisaPage";
-import WeatherPage from "./pages/portal/WeatherPage";
-import InsurancePage from "./pages/portal/InsurancePage";
-import CurrencyPage from "./pages/portal/CurrencyPage";
-import EmergencyPage from "./pages/portal/EmergencyPage";
-import TravelDocumentsPage from "./pages/portal/TravelDocumentsPage";
-import GroupTravelPage from "./pages/portal/GroupTravelPage";
-import RecommendationsPage from "./pages/portal/RecommendationsPage";
-import FlightTrackerPage from "./pages/portal/FlightTrackerPage";
-import HotelPage from "./pages/portal/HotelPage";
-import PackingPage from "./pages/portal/PackingPage";
-import LoyaltyPage from "./pages/portal/LoyaltyPage";
-import VaccinationPage from "./pages/portal/VaccinationPage";
-import TranslationPage from "./pages/portal/TranslationPage";
-import DocumentScannerPage from "./pages/portal/DocumentScannerPage";
-import TravelInsurancePage from "./pages/portal/TravelInsurancePage";
-import LocalCurrencyPage from "./pages/portal/LocalCurrencyPage";
-
-// Phase 4: In-Trip Mobile Experience
-import LiveItineraryPage from "./pages/portal/LiveItineraryPage";
-import FamilyCheckInPage from "./pages/portal/FamilyCheckInPage";
-import LocationAwareGuidesPage from "./pages/portal/LocationAwareGuidesPage";
-import CrisisManagementPage from "./pages/portal/CrisisManagementPage";
-import FlightAlternativesPage from "./pages/portal/FlightAlternativesPage";
-import ExpenseTrackerPage from "./pages/portal/ExpenseTrackerPage";
-import MemoryCurationPage from "./pages/portal/MemoryCurationPage";
+const PortalDashboard = lazyWithRetry(
+  () => import("./pages/portal/Dashboard"),
+  "portal-dashboard"
+);
+const PortalItinerary = lazyWithRetry(
+  () => import("./pages/portal/Itinerary"),
+  "portal-itinerary"
+);
+const PortalDocuments = lazyWithRetry(
+  () => import("./pages/portal/Documents"),
+  "portal-documents"
+);
+const PortalMessages = lazyWithRetry(
+  () => import("./pages/portal/Messages"),
+  "portal-messages"
+);
+const PortalBookings = lazyWithRetry(
+  () => import("./pages/portal/Bookings"),
+  "portal-bookings"
+);
+const PortalGuides = lazyWithRetry(
+  () => import("./pages/portal/Guides"),
+  "portal-guides"
+);
+const PortalAlerts = lazyWithRetry(
+  () => import("./pages/portal/Alerts"),
+  "portal-alerts"
+);
+const TravelTimelinePage = lazyWithRetry(
+  () => import("./pages/portal/TimelinePage"),
+  "portal-timeline"
+);
+const BudgetPage = lazyWithRetry(
+  () => import("./pages/portal/BudgetPage"),
+  "portal-budget"
+);
+const VisaPage = lazyWithRetry(() => import("./pages/portal/VisaPage"), "portal-visa");
+const WeatherPage = lazyWithRetry(
+  () => import("./pages/portal/WeatherPage"),
+  "portal-weather"
+);
+const InsurancePage = lazyWithRetry(
+  () => import("./pages/portal/InsurancePage"),
+  "portal-insurance"
+);
+const CurrencyPage = lazyWithRetry(
+  () => import("./pages/portal/CurrencyPage"),
+  "portal-currency"
+);
+const EmergencyPage = lazyWithRetry(
+  () => import("./pages/portal/EmergencyPage"),
+  "portal-emergency"
+);
+const TravelDocumentsPage = lazyWithRetry(
+  () => import("./pages/portal/TravelDocumentsPage"),
+  "portal-travel-documents"
+);
+const GroupTravelPage = lazyWithRetry(
+  () => import("./pages/portal/GroupTravelPage"),
+  "portal-group-travel"
+);
+const RecommendationsPage = lazyWithRetry(
+  () => import("./pages/portal/RecommendationsPage"),
+  "portal-recommendations"
+);
+const FlightTrackerPage = lazyWithRetry(
+  () => import("./pages/portal/FlightTrackerPage"),
+  "portal-flights"
+);
+const HotelPage = lazyWithRetry(() => import("./pages/portal/HotelPage"), "portal-hotel");
+const PackingPage = lazyWithRetry(
+  () => import("./pages/portal/PackingPage"),
+  "portal-packing"
+);
+const LoyaltyPage = lazyWithRetry(
+  () => import("./pages/portal/LoyaltyPage"),
+  "portal-loyalty"
+);
+const VaccinationPage = lazyWithRetry(
+  () => import("./pages/portal/VaccinationPage"),
+  "portal-vaccination"
+);
+const TranslationPage = lazyWithRetry(
+  () => import("./pages/portal/TranslationPage"),
+  "portal-translation"
+);
+const DocumentScannerPage = lazyWithRetry(
+  () => import("./pages/portal/DocumentScannerPage"),
+  "portal-document-scanner"
+);
+const TravelInsurancePage = lazyWithRetry(
+  () => import("./pages/portal/TravelInsurancePage"),
+  "portal-insurance-tracker"
+);
+const LocalCurrencyPage = lazyWithRetry(
+  () => import("./pages/portal/LocalCurrencyPage"),
+  "portal-currency-converter"
+);
 
 // Phase 5: Memory Archives & Rebooking
-import MemoryArchivesPage from "./pages/portal/MemoryArchivesPage";
+const LiveItineraryPage = lazyWithRetry(
+  () => import("./pages/portal/LiveItineraryPage"),
+  "portal-live-itinerary"
+);
+const FamilyCheckInPage = lazyWithRetry(
+  () => import("./pages/portal/FamilyCheckInPage"),
+  "portal-family-checkin"
+);
+const LocationAwareGuidesPage = lazyWithRetry(
+  () => import("./pages/portal/LocationAwareGuidesPage"),
+  "portal-location-guides"
+);
+const CrisisManagementPage = lazyWithRetry(
+  () => import("./pages/portal/CrisisManagementPage"),
+  "portal-crisis-management"
+);
+const FlightAlternativesPage = lazyWithRetry(
+  () => import("./pages/portal/FlightAlternativesPage"),
+  "portal-flight-alternatives"
+);
+const ExpenseTrackerPage = lazyWithRetry(
+  () => import("./pages/portal/ExpenseTrackerPage"),
+  "portal-expense-tracker"
+);
+const MemoryCurationPage = lazyWithRetry(
+  () => import("./pages/portal/MemoryCurationPage"),
+  "portal-memory-curation"
+);
+const MemoryArchivesPage = lazyWithRetry(
+  () => import("./pages/portal/MemoryArchivesPage"),
+  "portal-memory-archives"
+);
 
 // Phase 6: Business Operations & AI Co-pilot
-import BusinessOperationsPage from "./pages/portal/BusinessOperationsPage";
+const BusinessOperationsPage = lazyWithRetry(
+  () => import("./pages/portal/BusinessOperationsPage"),
+  "portal-business-operations"
+);
 
 // Admin pages
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import {
-  AdminClientsList,
-  AdminClientDetail,
-} from "./pages/admin/AdminClients";
-import { AdminTripsList, AdminTripDetail } from "./pages/admin/AdminTrips";
-import AdminMessages from "./pages/admin/AdminMessages";
-import AdminGuides from "./pages/admin/AdminGuides";
-import AdminAlerts from "./pages/admin/AdminAlerts";
-import AdminNotifications from "./pages/admin/AdminNotifications";
-import TripBuilderWizard from "./pages/admin/TripBuilderWizard";
+const AdminDashboard = lazyWithRetry(
+  () => import("./pages/admin/AdminDashboard"),
+  "admin-dashboard"
+);
+const AdminClientsList = lazyWithRetry(
+  () =>
+    import("./pages/admin/AdminClients").then(module => ({
+      default: module.AdminClientsList,
+    })),
+  "admin-clients-list"
+);
+const AdminClientDetail = lazyWithRetry(
+  () =>
+    import("./pages/admin/AdminClients").then(module => ({
+      default: module.AdminClientDetail,
+    })),
+  "admin-client-detail"
+);
+const AdminTripsList = lazyWithRetry(
+  () =>
+    import("./pages/admin/AdminTrips").then(module => ({
+      default: module.AdminTripsList,
+    })),
+  "admin-trips-list"
+);
+const AdminTripDetail = lazyWithRetry(
+  () =>
+    import("./pages/admin/AdminTrips").then(module => ({
+      default: module.AdminTripDetail,
+    })),
+  "admin-trip-detail"
+);
+const AdminMessages = lazyWithRetry(
+  () => import("./pages/admin/AdminMessages"),
+  "admin-messages"
+);
+const AdminGuides = lazyWithRetry(
+  () => import("./pages/admin/AdminGuides"),
+  "admin-guides"
+);
+const AdminAlerts = lazyWithRetry(
+  () => import("./pages/admin/AdminAlerts"),
+  "admin-alerts"
+);
+const AdminNotifications = lazyWithRetry(
+  () => import("./pages/admin/AdminNotifications"),
+  "admin-notifications"
+);
+const TripBuilderWizard = lazyWithRetry(
+  () => import("./pages/admin/TripBuilderWizard"),
+  "admin-trip-builder"
+);
 
 function Router() {
   return (
@@ -165,7 +328,9 @@ function App() {
             <Toaster />
             {/* Global cinematic video background — sits behind everything */}
             <GlobalVideoBackground />
-            <Router />
+            <Suspense fallback={<RouteLoadingScreen />}>
+              <Router />
+            </Suspense>
           </TooltipProvider>
         </VideoHeroProvider>
       </ThemeProvider>

@@ -169,6 +169,8 @@ export default function MemoryGallery({ tripId }: MemoryGalleryProps) {
               <img
                 src={selectedPhoto.url}
                 alt={selectedPhoto.caption}
+                loading="lazy"
+                decoding="async"
                 className="max-w-4xl max-h-[70vh] rounded-lg object-contain"
               />
             ) : (
@@ -320,6 +322,8 @@ export default function MemoryGallery({ tripId }: MemoryGalleryProps) {
                     <img
                       src={photo.url}
                       alt={photo.caption}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full aspect-square object-cover group-hover:scale-110 transition duration-300"
                     />
                   ) : (
@@ -327,6 +331,8 @@ export default function MemoryGallery({ tripId }: MemoryGalleryProps) {
                       <img
                         src={photo.url}
                         alt={photo.caption}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover"
                       />
                       <Video className="w-8 h-8 text-white absolute" />

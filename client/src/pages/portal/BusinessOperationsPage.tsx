@@ -1,6 +1,17 @@
-import React, { useState } from "react";
-import { CrmDashboard } from "../../components/CrmDashboard";
-import { AICopilot } from "../../components/AICopilot";
+import React, { lazy, Suspense, useState } from "react";
+import PortalLayout from "@/components/PortalLayout";
+import { BusinessOperationsSkeleton } from "@/components/ui/skeletons";
+
+const CrmDashboard = lazy(() =>
+  import("../../components/CrmDashboard").then(module => ({
+    default: module.CrmDashboard,
+  }))
+);
+const AICopilot = lazy(() =>
+  import("../../components/AICopilot").then(module => ({
+    default: module.AICopilot,
+  }))
+);
 
 export default function BusinessOperationsPage() {
   const [activeTab, setActiveTab] = useState<"dashboard" | "copilot">(
@@ -8,7 +19,11 @@ export default function BusinessOperationsPage() {
   );
 
   return (
-    <div className="space-y-6">
+    <PortalLayout
+      title="Business Operations"
+      subtitle="Manage clients, operations, and get AI insights"
+    >
+      <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -47,9 +62,12 @@ export default function BusinessOperationsPage() {
 
       {/* Content */}
       <div className="min-h-[600px]">
-        {activeTab === "dashboard" && <CrmDashboard />}
-        {activeTab === "copilot" && <AICopilot />}
+        <Suspense fallback={<BusinessOperationsSkeleton />}>
+          {activeTab === "dashboard" && <CrmDashboard />}
+          {activeTab === "copilot" && <AICopilot />}
+        </Suspense>
       </div>
-    </div>
+      </div>
+    </PortalLayout>
   );
 }

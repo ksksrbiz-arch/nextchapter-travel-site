@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useVideoHero, VideoEntry } from "@/contexts/VideoHeroContext";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { useReducedData } from "@/hooks/useReducedData";
 
 /**
  * GlobalVideoBackground
@@ -60,10 +62,8 @@ type VideoSlot = {
 
 export default function GlobalVideoBackground() {
   const { currentKey, currentVideo } = useVideoHero();
-  const prefersReducedMotion =
-    typeof window !== "undefined"
-      ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
-      : false;
+  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedData = useReducedData();
 
   // Two video refs for A/B crossfade
   const videoARef = useRef<HTMLVideoElement>(null);
@@ -303,6 +303,27 @@ export default function GlobalVideoBackground() {
     WebkitTransform: "translate3d(0, 0, 0)",
     willChange: "opacity",
   });
+
+  if (prefersReducedData) {
+    return (
+      <div ref={containerRef} style={containerStyle}>
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-700"
+          style={{ backgroundImage: `url("${currentVideo.poster}")` }}
+          aria-hidden="true"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/80" />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.6) 100%)",
+          }}
+        />
+        <ContextLabel label={currentVideo.label} videoKey={currentKey} />
+      </div>
+    );
+  }
 
   return (
     <div ref={containerRef} style={containerStyle}>

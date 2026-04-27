@@ -2,6 +2,7 @@ import { useVideoHero } from "@/contexts/VideoHeroContext";
 import { getLoginUrl } from "@/const";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import LazyImage from "@/components/LazyImage";
 import { Link } from "wouter";
 import { useEffect, useState } from "react";
 import { SEOHead } from "@/components/SEOHead";
@@ -126,7 +127,7 @@ const JESSICA_PHOTOS = [
 ];
 
 export default function Home() {
-  const { setVideoContext } = useVideoHero();
+  const { setVideoContext, preloadContext } = useVideoHero();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -185,14 +186,16 @@ export default function Home() {
             >
               About Jessica
             </a>
-            <Link href="/plan-my-trip">
-              <Button
-                size="sm"
-                className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-sans font-bold"
-              >
-                Plan My Trip
-              </Button>
-            </Link>
+              <Link href="/plan-my-trip">
+                <Button
+                  size="sm"
+                  className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-sans font-bold"
+                  onMouseEnter={() => preloadContext("plan-my-trip")}
+                  onFocus={() => preloadContext("plan-my-trip")}
+                >
+                  Plan My Trip
+                </Button>
+              </Link>
             <a href={getLoginUrl()}>
               <Button
                 size="sm"
@@ -256,6 +259,8 @@ export default function Home() {
               <Link
                 href="/plan-my-trip"
                 onClick={() => setMobileMenuOpen(false)}
+                onMouseEnter={() => preloadContext("plan-my-trip")}
+                onFocus={() => preloadContext("plan-my-trip")}
               >
                 <Button className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 font-sans font-bold min-h-[52px] text-base rounded-xl active:scale-98 transition-transform">
                   Plan My Trip
@@ -294,6 +299,8 @@ export default function Home() {
                 <Button
                   size="lg"
                   className="w-full sm:w-auto bg-secondary text-secondary-foreground hover:bg-secondary/90 px-6 sm:px-12 py-6 sm:py-8 text-base sm:text-xl font-sans font-bold rounded-2xl shadow-xl shadow-secondary/20 min-h-[56px] active:scale-95 transition-all"
+                  onMouseEnter={() => preloadContext("plan-my-trip")}
+                  onFocus={() => preloadContext("plan-my-trip")}
                 >
                   Plan My Trip
                 </Button>
@@ -584,10 +591,9 @@ export default function Home() {
 
                 {/* Main featured photo */}
                 <div className="relative rounded-2xl overflow-hidden border-2 border-secondary/30 shadow-2xl mb-4">
-                  <img
+                  <LazyImage
                     src={JESSICA_PHOTOS[activePhotoIndex].src}
                     alt={JESSICA_PHOTOS[activePhotoIndex].alt}
-                    loading="lazy"
                     className="w-full h-auto object-contain transition-opacity duration-300"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent" />
@@ -611,10 +617,9 @@ export default function Home() {
                           : "border-border/50 hover:border-secondary/50 opacity-70 hover:opacity-100"
                       )}
                     >
-                      <img
+                      <LazyImage
                         src={photo.src}
                         alt={photo.alt}
-                        loading="lazy"
                         className="w-full h-full object-cover"
                       />
                     </button>
@@ -710,11 +715,9 @@ export default function Home() {
                 className="group bg-card/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-border hover:border-secondary/50 transition-all hover:shadow-2xl"
               >
                 <div className="relative h-44 sm:h-64 overflow-hidden">
-                  <img
+                  <LazyImage
                     src={trip.image}
                     alt={trip.title}
-                    loading="lazy"
-                    decoding="async"
                     width="800"
                     height="500"
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"

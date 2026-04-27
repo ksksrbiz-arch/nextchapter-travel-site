@@ -9,7 +9,7 @@ export function ThankYou() {
   const { setVideoContext } = useVideoHero();
 
   useEffect(() => {
-    setVideoContext("landing");
+    setVideoContext("thank-you");
   }, [setVideoContext]);
 
   return (

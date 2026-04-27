@@ -258,6 +258,8 @@ export default function PortalDashboard() {
                 "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1200&q=80"
               }
               alt={activeTrip.destination}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover"
             />
           </div>
