@@ -2,9 +2,16 @@ import { Button } from "@/components/ui/button";
 import { Compass, Home } from "lucide-react";
 import { useLocation } from "wouter";
 import { SEOHead } from "@/components/SEOHead";
+import { useEffect } from "react";
+import { useVideoHero } from "@/contexts/VideoHeroContext";
 
 export default function NotFound() {
   const [, setLocation] = useLocation();
+  const { setVideoContext } = useVideoHero();
+
+  useEffect(() => {
+    setVideoContext("not-found");
+  }, [setVideoContext]);
 
   const handleGoHome = () => {
     setLocation("/");

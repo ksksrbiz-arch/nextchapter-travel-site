@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { lazy, Suspense, useState } from "react";
 import PortalLayout from "@/components/PortalLayout";
-import MemoryGallery from "@/components/MemoryGallery";
 import MemoryAlbums from "@/components/MemoryAlbums";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Images, BookOpen } from "lucide-react";
+import { GenericSkeleton } from "@/components/ui/skeletons";
+
+const MemoryGallery = lazy(() => import("@/components/MemoryGallery"));
 
 export default function MemoryCurationPage() {
   const tripId = "trip-123"; // In production, get from context
@@ -27,7 +29,9 @@ export default function MemoryCurationPage() {
         </TabsList>
 
         <TabsContent value="gallery" className="mt-6">
-          <MemoryGallery tripId={tripId} />
+          <Suspense fallback={<GenericSkeleton lines={8} className="pt-4" />}>
+            <MemoryGallery tripId={tripId} />
+          </Suspense>
         </TabsContent>
 
         <TabsContent value="albums" className="mt-6">

@@ -292,7 +292,7 @@ export default function PortalLayout({
   const { user, logout } = useAuth();
   const [location, navigate] = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { setVideoContext } = useVideoHero();
+  const { setVideoContext, preloadContext } = useVideoHero();
 
   // Command palette and keyboard shortcuts
   const commandPalette = useCommandPalette();
@@ -401,7 +401,12 @@ export default function PortalLayout({
         {NAV_ITEMS.map(item => {
           const active = isActive(item.href, item.exact);
           return (
-            <Link key={item.href} href={item.href}>
+            <Link
+              key={item.href}
+              href={item.href}
+              onMouseEnter={() => preloadContext(item.videoKey)}
+              onFocus={() => preloadContext(item.videoKey)}
+            >
               <div
                 className={cn(
                   "flex items-center gap-3 px-3 py-3 rounded-xl transition-all cursor-pointer group",
@@ -412,11 +417,6 @@ export default function PortalLayout({
                 onClick={() => {
                   setSidebarOpen(false);
                   setVideoContext(item.videoKey);
-                }}
-                onMouseEnter={() => {
-                  // Preload next video in pool on hover for instant crossfade
-                  const pool = VIDEO_CATALOG[item.videoKey];
-                  if (pool && pool.length > 1) preloadVideo(pool[1].src);
                 }}
               >
                 <item.icon className="w-4.5 h-4.5 flex-shrink-0" />
@@ -530,7 +530,7 @@ export default function PortalLayout({
 
           {/* Page content — extra bottom padding on mobile for bottom nav + home indicator */}
           <div
-            className="flex-1 overflow-y-auto p-4 md:p-6 portal-content-pad"
+            className="flex-1 overflow-y-auto p-4 md:p-6 portal-content-pad page-enter motion-safe-lift"
             style={{ backgroundColor: "transparent" }}
           >
             {children}

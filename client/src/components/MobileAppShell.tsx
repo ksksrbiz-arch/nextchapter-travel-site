@@ -155,7 +155,7 @@ export function MobileAppShell({
         <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:hidden">
           <div className="max-w-md mx-auto flex items-center justify-around h-16">
             <a
-              href="/portal/dashboard"
+              href="/portal"
               className="flex-1 flex flex-col items-center justify-center gap-1 text-xs hover:text-primary transition-colors"
             >
               <div className="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -175,7 +175,7 @@ export function MobileAppShell({
             </a>
 
             <a
-              href="/portal/expenses"
+              href="/portal/budget"
               className="flex-1 flex flex-col items-center justify-center gap-1 text-xs hover:text-primary transition-colors"
             >
               <div className="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -195,7 +195,7 @@ export function MobileAppShell({
             </a>
 
             <a
-              href="/portal/profile"
+              href="/portal/messages"
               className="flex-1 flex flex-col items-center justify-center gap-1 text-xs hover:text-primary transition-colors"
             >
               <div className="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center">

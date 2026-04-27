@@ -21,7 +21,7 @@ const CDN =
 // 4-5 diverse videos per context. On each navigation the context randomly
 // picks one, so every visit feels different.
 // Source: Mixkit free stock video (mixkit.co) — commercial use permitted.
-export const VIDEO_CATALOG: Record<string, VideoEntry[]> = {
+const CORE_VIDEO_CATALOG: Record<string, VideoEntry[]> = {
   // ── Landing page ─────────────────────────────────────────────────────────
   landing: [
     {
@@ -363,6 +363,51 @@ export const VIDEO_CATALOG: Record<string, VideoEntry[]> = {
       label: "Travel Alerts",
     },
   ],
+};
+
+const ALIAS_VIDEO_CATALOG: Record<string, VideoEntry[]> = {
+  // Public pages
+  join: CORE_VIDEO_CATALOG.landing,
+  "plan-my-trip": CORE_VIDEO_CATALOG.itinerary,
+  "thank-you": CORE_VIDEO_CATALOG.dashboard,
+  "not-found": CORE_VIDEO_CATALOG.alerts,
+
+  // Admin surfaces
+  admin: CORE_VIDEO_CATALOG.documents,
+
+  // Portal keys
+  timeline: CORE_VIDEO_CATALOG.itinerary,
+  flights: CORE_VIDEO_CATALOG.bookings,
+  hotel: CORE_VIDEO_CATALOG.bookings,
+  budget: CORE_VIDEO_CATALOG.bookings,
+  visa: CORE_VIDEO_CATALOG.documents,
+  weather: CORE_VIDEO_CATALOG.alerts,
+  insurance: CORE_VIDEO_CATALOG.documents,
+  currency: CORE_VIDEO_CATALOG.guides,
+  emergency: CORE_VIDEO_CATALOG.alerts,
+  "travel-documents": CORE_VIDEO_CATALOG.documents,
+  "group-travel": CORE_VIDEO_CATALOG.messages,
+  recommendations: CORE_VIDEO_CATALOG.guides,
+  loyalty: CORE_VIDEO_CATALOG.bookings,
+  vaccination: CORE_VIDEO_CATALOG.documents,
+  translation: CORE_VIDEO_CATALOG.guides,
+  "documents-vault": CORE_VIDEO_CATALOG.documents,
+  "insurance-tracker": CORE_VIDEO_CATALOG.documents,
+  "currency-converter": CORE_VIDEO_CATALOG.guides,
+  "live-itinerary": CORE_VIDEO_CATALOG.itinerary,
+  "family-checkin": CORE_VIDEO_CATALOG.messages,
+  "location-guides": CORE_VIDEO_CATALOG.guides,
+  "crisis-management": CORE_VIDEO_CATALOG.alerts,
+  "flight-alternatives": CORE_VIDEO_CATALOG.bookings,
+  "expense-tracker": CORE_VIDEO_CATALOG.bookings,
+  "memory-curation": CORE_VIDEO_CATALOG.guides,
+  "memory-archives": CORE_VIDEO_CATALOG.guides,
+  "business-operations": CORE_VIDEO_CATALOG.dashboard,
+};
+
+export const VIDEO_CATALOG: Record<string, VideoEntry[]> = {
+  ...CORE_VIDEO_CATALOG,
+  ...ALIAS_VIDEO_CATALOG,
 };
 
 // ─── Helper: pick a random entry from an array ───────────────────────────────

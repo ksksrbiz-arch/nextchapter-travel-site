@@ -201,6 +201,8 @@ export function AttachmentPreview({
           <img
             src={attachment.url}
             alt={attachment.fileName}
+            loading="lazy"
+            decoding="async"
             className="w-10 h-10 rounded-lg object-cover border border-border"
           />
         ) : isPDF(attachment.mimeType) ? (
@@ -266,6 +268,7 @@ export function AttachmentBubble({
             alt={fileName ?? "Image"}
             className="w-full max-h-48 object-cover"
             loading="lazy"
+            decoding="async"
           />
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
             <ZoomIn className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-lg" />
@@ -292,6 +295,8 @@ export function AttachmentBubble({
             <img
               src={url}
               alt={fileName ?? "Image"}
+              loading="lazy"
+              decoding="async"
               className="max-w-full max-h-[90dvh] rounded-xl object-contain"
               onClick={e => e.stopPropagation()}
             />

@@ -285,6 +285,8 @@ export default function AdminGuides() {
                 <img
                   src={guide.heroImageUrl}
                   alt={guide.destination}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover"
                 />
               ) : (

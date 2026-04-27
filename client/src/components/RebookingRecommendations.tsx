@@ -307,6 +307,8 @@ export default function RebookingRecommendations({
               <img
                 src={rec.images[0]}
                 alt={rec.destination}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
               />
               <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition" />
@@ -451,6 +453,8 @@ export default function RebookingRecommendations({
               <img
                 src={selectedRecommendation.images[0]}
                 alt={selectedRecommendation.destination}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-80 object-cover rounded-lg"
               />
 

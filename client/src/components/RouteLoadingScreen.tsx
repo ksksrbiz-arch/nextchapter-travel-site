@@ -1,0 +1,35 @@
+import { Loader2 } from "lucide-react";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
+
+export default function RouteLoadingScreen() {
+  const reducedMotion = useReducedMotion();
+
+  return (
+    <div
+      className="fixed inset-0 z-[70] flex items-center justify-center bg-gradient-to-br from-slate-950/65 via-slate-900/35 to-slate-950/70 backdrop-blur-sm"
+      role="status"
+      aria-live="polite"
+      aria-label="Loading page"
+    >
+      <div className="absolute top-0 left-0 right-0 h-1 overflow-hidden bg-white/10">
+        <div
+          className={reducedMotion ? "h-full w-full bg-amber-400/70" : "route-progress-bar"}
+        />
+      </div>
+      <div className="flex flex-col items-center gap-4 rounded-2xl border border-white/10 bg-black/25 px-8 py-7 backdrop-blur-md">
+        <div className="w-14 h-14 rounded-full border border-amber-300/30 bg-amber-400/10 flex items-center justify-center">
+          <Loader2
+            className={
+              reducedMotion
+                ? "w-6 h-6 text-amber-300"
+                : "w-6 h-6 text-amber-300 animate-spin"
+            }
+          />
+        </div>
+        <p className="text-[11px] tracking-[0.22em] uppercase text-white/70 font-sans">
+          Loading your journey...
+        </p>
+      </div>
+    </div>
+  );
+}

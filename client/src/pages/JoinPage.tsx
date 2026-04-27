@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
+import { useVideoHero } from "@/contexts/VideoHeroContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { SEOHead } from "@/components/SEOHead";
@@ -19,6 +20,7 @@ const JOIN_SEO = (
 
 export default function JoinPage() {
   const [, navigate] = useLocation();
+  const { setVideoContext } = useVideoHero();
   const { user, isAuthenticated, loading: authLoading } = useAuth();
   const [token, setToken] = useState<string | null>(null);
   const [accepted, setAccepted] = useState(false);
@@ -29,6 +31,10 @@ export default function JoinPage() {
     const t = params.get("token");
     setToken(t && t.trim().length > 0 ? t : null);
   }, []);
+
+  useEffect(() => {
+    setVideoContext("join");
+  }, [setVideoContext]);
 
   // Validate the token. `enabled` ensures the query is skipped while token
   // is null, so the input value below is only consulted when defined.

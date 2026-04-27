@@ -70,7 +70,7 @@ const MORE_ITEMS = [
 export default function MobileBottomNav() {
   const [location] = useLocation();
   const [moreOpen, setMoreOpen] = useState(false);
-  const { setVideoContext } = useVideoHero();
+  const { setVideoContext, preloadContext } = useVideoHero();
 
   const { data: unreadCount = 0 } = trpc.notifications.unreadCount.useQuery(
     undefined,
@@ -103,6 +103,8 @@ export default function MobileBottomNav() {
                 href={tab.href}
                 className="flex-1"
                 onClick={() => setVideoContext(tab.videoKey)}
+                onMouseEnter={() => preloadContext(tab.videoKey)}
+                onFocus={() => preloadContext(tab.videoKey)}
               >
                 <div
                   className={cn(
@@ -137,7 +139,7 @@ export default function MobileBottomNav() {
                     {tab.label}
                   </span>
                   {active && (
-                    <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-secondary rounded-full" />
+                    <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-secondary rounded-full nav-dot-enter" />
                   )}
                 </div>
               </Link>
@@ -176,7 +178,7 @@ export default function MobileBottomNav() {
               More
             </span>
             {isMoreActive && (
-              <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-secondary rounded-full" />
+              <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-secondary rounded-full nav-dot-enter" />
             )}
           </button>
         </div>
@@ -201,6 +203,8 @@ export default function MobileBottomNav() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setVideoContext(item.videoKey)}
+                  onMouseEnter={() => preloadContext(item.videoKey)}
+                  onFocus={() => preloadContext(item.videoKey)}
                 >
                   <div
                     onClick={() => setMoreOpen(false)}
