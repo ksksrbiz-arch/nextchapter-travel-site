@@ -714,6 +714,9 @@ export default function Home() {
                     src={trip.image}
                     alt={trip.title}
                     loading="lazy"
+                    decoding="async"
+                    width="800"
+                    height="500"
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                   <div className="absolute top-3 right-3 sm:top-4 sm:right-4">
@@ -964,9 +967,8 @@ export default function Home() {
       {/* ── Scroll to Top Button (Mobile) ── */}
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        style={{ bottom: "calc(1rem + env(safe-area-inset-bottom, 0px))" }}
         className={cn(
-          "fixed right-4 sm:right-6 z-40 w-12 h-12 sm:w-14 sm:h-14 bg-secondary text-secondary-foreground rounded-full shadow-lg flex items-center justify-center transition-all duration-300 active:scale-90",
+          "fixed right-4 sm:right-6 bottom-safe-offset z-40 w-12 h-12 sm:w-14 sm:h-14 bg-secondary text-secondary-foreground rounded-full shadow-lg flex items-center justify-center transition-all duration-300 active:scale-90",
           showScrollTop
             ? "opacity-100 translate-y-0"
             : "opacity-0 translate-y-4 pointer-events-none"

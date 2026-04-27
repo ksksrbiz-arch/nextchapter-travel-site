@@ -17,7 +17,7 @@ export default function NotFound() {
         paddingBottom: "max(3rem, calc(2rem + env(safe-area-inset-bottom, 0px)))",
       }}
     >
-      <SEOHead title="Page Not Found" canonical="/404" />
+      <SEOHead title="Page Not Found" canonical="/404" noIndex />
       <div className="max-w-lg w-full text-center">
         {/* Icon */}
         <div className="flex justify-center mb-8">

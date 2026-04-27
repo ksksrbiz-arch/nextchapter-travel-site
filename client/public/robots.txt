@@ -3,5 +3,9 @@ Allow: /
 Disallow: /portal/
 Disallow: /admin/
 Disallow: /api/
+# /join requires an invite token; thank-you is a transactional confirmation
+# page. Blocking both prevents wasted crawl budget on token-less 404 paths.
+Disallow: /join
+Disallow: /thank-you
 
 Sitemap: https://nextchaptertravel.com/sitemap.xml

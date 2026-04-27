@@ -26,6 +26,7 @@ export function ThankYou() {
         title="Thank You — Your Trip Inquiry Was Received"
         description="Thank you for reaching out! Jessica at Next Chapter Travel will review your trip request and respond within 24 hours."
         canonical="/thank-you"
+        noIndex
       />
       <div className="max-w-2xl w-full">
         {/* Success icon */}

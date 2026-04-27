@@ -711,3 +711,41 @@ a, button, [role="button"] {
 .glow-secondary:hover {
   box-shadow: 0 0 30px oklch(0.72 0.09 65 / 0.5);
 }
+
+/* ── Reduced-motion overrides ───────────────────────────────────────────────
+   Anyone with `prefers-reduced-motion: reduce` should not see continuous
+   animations or large transitional movement. We keep tap-feedback (active
+   scale, opacity changes) intact since those are <250ms and improve
+   feedback rather than impose movement. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Animations whose entire purpose is decorative motion — kill them. */
+  .gold-shimmer,
+  .animate-pulse,
+  .animate-pulse-glow,
+  .animate-confetti-fall,
+  .animate-confetti-spin,
+  .animate-bell-shake,
+  .animate-float,
+  .animate-heartbeat,
+  .animate-shake,
+  .video-fade-in {
+    animation: none !important;
+  }
+
+  /* Shimmer text falls back to a static gold so it remains legible. */
+  .gold-shimmer {
+    background: oklch(0.82 0.07 65);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}

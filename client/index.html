@@ -9,7 +9,7 @@
     <!-- App identity -->
     <title>Next Chapter Travel — Jessica Seiders</title>
     <meta name="description" content="Your personal travel portal — manage your trip itinerary, documents, packing list, and stay connected with Jessica Seiders, your certified travel advisor." />
-    <!-- Theme color: navy at all times (we use a dark video background) -->
+    <!-- Theme color: navy `#1a2744` for light schemes; deeper navy `#0d1729` for dark schemes -->
     <meta name="theme-color" content="#1a2744" />
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0d1729" />
 
@@ -56,14 +56,24 @@
     <!-- Cache-busting: forces fresh load of all assets from latest build -->
     <script type="module" src="/src/main.tsx?v=2026031316"></script>
     <script type="module">
+      // Only inject the analytics tag if the endpoint is a well-formed
+      // https URL — guards against a misconfigured env value silently
+      // becoming a third-party JS load.
       const endpoint = import.meta.env.VITE_ANALYTICS_ENDPOINT;
       const siteId = import.meta.env.VITE_ANALYTICS_WEBSITE_ID;
       if (endpoint && siteId) {
-        const s = document.createElement('script');
-        s.src = `${endpoint}/umami`;
-        s.defer = true;
-        s.setAttribute('data-website-id', siteId);
-        document.head.appendChild(s);
+        try {
+          const url = new URL(endpoint);
+          if (url.protocol === 'https:') {
+            const s = document.createElement('script');
+            s.src = `${url.toString().replace(/\/$/, '')}/umami`;
+            s.defer = true;
+            s.setAttribute('data-website-id', siteId);
+            document.head.appendChild(s);
+          }
+        } catch {
+          /* invalid URL — silently skip analytics */
+        }
       }
     </script>
   </body>

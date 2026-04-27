@@ -1,5 +1,4 @@
-import { cn } from "@/lib/utils";
-import { AlertTriangle, RotateCcw, Home } from "lucide-react";
+import { AlertTriangle, RotateCcw, Home, RefreshCw } from "lucide-react";
 import { Component, ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -46,37 +45,54 @@ class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="min-h-[400px] flex items-center justify-center p-4 sm:p-6">
+        <div
+          className="min-h-dvh flex items-center justify-center p-4 sm:p-6 bg-background/80"
+          style={{
+            paddingTop: "max(1.5rem, env(safe-area-inset-top, 0px))",
+            paddingBottom: "max(1.5rem, env(safe-area-inset-bottom, 0px))",
+          }}
+          role="alert"
+        >
           <div className="max-w-md w-full">
             {/* Error icon */}
             <div className="flex justify-center mb-4">
-              <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
-                <AlertTriangle className="w-6 h-6 text-red-600" />
+              <div className="w-14 h-14 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+                <AlertTriangle className="w-7 h-7 text-red-500" />
               </div>
             </div>
 
             {/* Error message */}
-            <h2 className="text-lg sm:text-xl font-serif font-semibold text-center mb-2">
+            <h2 className="text-xl sm:text-2xl font-serif font-semibold text-center text-foreground mb-2">
               Something went wrong
             </h2>
-            <p className="text-muted-foreground font-sans text-sm text-center mb-6">
+            <p className="text-muted-foreground font-sans text-sm sm:text-base text-center mb-6 leading-relaxed">
               {this.state.error.message ||
-                "An unexpected error occurred. Please try again."}
+                "An unexpected error occurred. Try again, or reload the page if the issue persists."}
             </p>
 
             {/* Actions */}
-            <div className="space-y-2 sm:space-y-3">
+            <div className="flex flex-col gap-2.5 sm:gap-3">
               <Button
                 onClick={this.handleReset}
-                className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 font-sans active:scale-98 transition-transform"
+                className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 font-sans font-bold min-h-[48px] rounded-xl active:scale-[0.99] transition-transform"
               >
                 <RotateCcw className="w-4 h-4 mr-2" />
                 Try Again
               </Button>
               <Button
-                onClick={() => (window.location.href = "/")}
+                onClick={() => window.location.reload()}
                 variant="outline"
-                className="w-full font-sans active:scale-98 transition-transform"
+                className="w-full font-sans min-h-[48px] rounded-xl active:scale-[0.99] transition-transform"
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Reload Page
+              </Button>
+              <Button
+                onClick={() => {
+                  window.location.href = "/";
+                }}
+                variant="ghost"
+                className="w-full font-sans min-h-[48px] rounded-xl active:scale-[0.99] transition-transform"
               >
                 <Home className="w-4 h-4 mr-2" />
                 Go Home
@@ -87,9 +103,9 @@ class ErrorBoundary extends Component<Props, State> {
             {process.env.NODE_ENV === "development" && (
               <details className="mt-4 text-left">
                 <summary className="text-xs text-muted-foreground cursor-pointer font-mono hover:text-foreground transition-colors">
-                  🔧 Error details (dev only)
+                  Error details (dev only)
                 </summary>
-                <pre className="text-[10px] bg-muted p-3 mt-2 rounded overflow-auto max-h-48 text-foreground/70 font-mono border border-border">
+                <pre className="text-[10px] bg-muted p-3 mt-2 rounded overflow-auto max-h-48 text-foreground/70 font-mono border border-border whitespace-pre-wrap break-all">
                   {this.state.error.stack}
                 </pre>
               </details>
