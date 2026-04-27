@@ -181,7 +181,7 @@ export type BookingResult = {
 
 /** Mock booking — generates a confirmation number; never charges. */
 export async function bookOffer(req: BookingRequest): Promise<BookingResult> {
-  const id = req.kind === "flight" ? req.offerId : req.offerId;
+  const id = req.offerId;
   const conf = `${id.slice(0, 4).toUpperCase()}-${(hash(id) % 999999)
     .toString()
     .padStart(6, "0")}`;
