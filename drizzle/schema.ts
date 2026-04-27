@@ -41,6 +41,8 @@ export const trips = mysqlTable("trips", {
   status: mysqlEnum("status", ["planning", "confirmed", "active", "completed", "cancelled"]).default("planning").notNull(),
   notes: text("notes"),
   confirmationCode: varchar("confirmationCode", { length: 64 }),
+  // AI Trip Genius preferences (travel style, budget tier, group size, model hints)
+  aiPreferences: json("aiPreferences"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -152,6 +154,10 @@ export const destinationGuides = mysqlTable("destination_guides", {
   weatherInfo: text("weatherInfo"),
   tipsJson: json("tipsJson"),
   emergencyNumbers: json("emergencyNumbers"),
+  // Social-inspired trending tags (Instagram reel ids, TikTok trends, etc.)
+  trendingTags: json("trendingTags"),
+  // Optional 360 / Matterport tour URL for VR previews
+  vrTourUrl: text("vrTourUrl"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -219,3 +225,76 @@ export const inviteTokens = mysqlTable("invite_tokens", {
 });
 export type InviteToken = typeof inviteTokens.$inferSelect;
 export type InsertInviteToken = typeof inviteTokens.$inferInsert;
+
+// Identity wallet — verified credentials & payment-method tokens (never raw PANs)
+export const identityWallet = mysqlTable("identity_wallet", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  documentType: mysqlEnum("documentType", [
+    "passport",
+    "id_card",
+    "drivers_license",
+    "tsa_precheck",
+    "global_entry",
+    "loyalty_number",
+    "payment_token",
+    "other",
+  ]).default("other").notNull(),
+  label: varchar("label", { length: 255 }).notNull(),
+  // Token / encrypted reference; we never store raw card numbers
+  tokenRef: text("tokenRef"),
+  // Last 4 digits / public-safe hint (e.g. "•••• 4242", "P 1234")
+  maskedHint: varchar("maskedHint", { length: 64 }),
+  expiryDate: timestamp("expiryDate"),
+  verifiedAt: timestamp("verifiedAt"),
+  metadata: json("metadata"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type IdentityWalletEntry = typeof identityWallet.$inferSelect;
+export type InsertIdentityWalletEntry = typeof identityWallet.$inferInsert;
+
+// Accessibility profiles — mobility, neurodivergent, medical needs per traveler
+export const accessibilityProfiles = mysqlTable("accessibility_profiles", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().unique(),
+  mobilityNeeds: json("mobilityNeeds"),
+  neurodivergentNeeds: json("neurodivergentNeeds"),
+  medicalNeeds: json("medicalNeeds"),
+  dietaryRestrictions: json("dietaryRestrictions"),
+  serviceAnimal: boolean("serviceAnimal").default(false).notNull(),
+  notes: text("notes"),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type AccessibilityProfile = typeof accessibilityProfiles.$inferSelect;
+export type InsertAccessibilityProfile = typeof accessibilityProfiles.$inferInsert;
+
+// Client events — behavior-driven recommendation telemetry
+export const clientEvents = mysqlTable("client_events", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  eventType: varchar("eventType", { length: 64 }).notNull(),
+  // Free-form payload: route visited, search terms, filters, etc.
+  payload: json("payload"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type ClientEvent = typeof clientEvents.$inferSelect;
+export type InsertClientEvent = typeof clientEvents.$inferInsert;
+
+// Collaborators — tour operators / DMCs invited to co-edit a trip
+export const collaborators = mysqlTable("collaborators", {
+  id: int("id").autoincrement().primaryKey(),
+  tripId: int("tripId").notNull(),
+  email: varchar("email", { length: 320 }).notNull(),
+  name: varchar("name", { length: 255 }),
+  role: mysqlEnum("role", ["viewer", "editor"]).default("viewer").notNull(),
+  token: varchar("token", { length: 128 }).notNull().unique(),
+  acceptedAt: timestamp("acceptedAt"),
+  acceptedByUserId: int("acceptedByUserId"),
+  expiresAt: timestamp("expiresAt").notNull(),
+  invitedByUserId: int("invitedByUserId").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type Collaborator = typeof collaborators.$inferSelect;
+export type InsertCollaborator = typeof collaborators.$inferInsert;

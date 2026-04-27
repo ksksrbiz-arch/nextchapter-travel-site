@@ -15,6 +15,10 @@ import {
   notifications,
   pushSubscriptions,
   inviteTokens,
+  identityWallet,
+  accessibilityProfiles,
+  clientEvents,
+  collaborators,
   InsertUser,
   Trip,
   ItineraryItem,
@@ -28,6 +32,14 @@ import {
   InsertNotification,
   PushSubscription,
   InviteToken,
+  IdentityWalletEntry,
+  InsertIdentityWalletEntry,
+  AccessibilityProfile,
+  InsertAccessibilityProfile,
+  ClientEvent,
+  InsertClientEvent,
+  Collaborator,
+  InsertCollaborator,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -580,6 +592,19 @@ export async function markAlertRead(id: number) {
   return { success: true };
 }
 
+export async function createTravelAlert(data: {
+  tripId: number | null;
+  userId: number | null;
+  title: string;
+  content: string;
+  severity: "info" | "warning" | "urgent";
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("DB unavailable");
+  const result = await db.insert(travelAlerts).values(data);
+  return { id: Number((result as any)[0]?.insertId ?? 0), ...data };
+}
+
 // ─── Notifications ───────────────────────────────────────────────────────────
 
 export async function createNotification(data: InsertNotification) {
@@ -796,4 +821,142 @@ export async function getInviteTokensCreatedBy(
     .from(inviteTokens)
     .where(eq(inviteTokens.createdByUserId, adminId))
     .orderBy(desc(inviteTokens.createdAt));
+}
+
+// ─── Identity Wallet ─────────────────────────────────────────────────────────
+
+export async function getIdentityWalletEntries(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db
+    .select()
+    .from(identityWallet)
+    .where(eq(identityWallet.userId, userId))
+    .orderBy(desc(identityWallet.createdAt));
+}
+
+export async function createIdentityWalletEntry(data: InsertIdentityWalletEntry) {
+  const db = await getDb();
+  if (!db) throw new Error("DB unavailable");
+  const result = await db.insert(identityWallet).values(data);
+  return { id: Number((result as any)[0]?.insertId ?? 0), ...data };
+}
+
+export async function deleteIdentityWalletEntry(id: number, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("DB unavailable");
+  await db
+    .delete(identityWallet)
+    .where(and(eq(identityWallet.id, id), eq(identityWallet.userId, userId)));
+  return { success: true };
+}
+
+export async function markIdentityWalletEntryVerified(id: number, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("DB unavailable");
+  await db
+    .update(identityWallet)
+    .set({ verifiedAt: new Date() })
+    .where(and(eq(identityWallet.id, id), eq(identityWallet.userId, userId)));
+  return { success: true };
+}
+
+// ─── Accessibility Profiles ──────────────────────────────────────────────────
+
+export async function getAccessibilityProfile(userId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const [row] = await db
+    .select()
+    .from(accessibilityProfiles)
+    .where(eq(accessibilityProfiles.userId, userId))
+    .limit(1);
+  return row ?? null;
+}
+
+export async function upsertAccessibilityProfile(
+  data: InsertAccessibilityProfile
+) {
+  const db = await getDb();
+  if (!db) throw new Error("DB unavailable");
+  const existing = await getAccessibilityProfile(data.userId);
+  if (existing) {
+    await db
+      .update(accessibilityProfiles)
+      .set(data)
+      .where(eq(accessibilityProfiles.userId, data.userId));
+    return { success: true, id: existing.id };
+  }
+  const result = await db.insert(accessibilityProfiles).values(data);
+  return {
+    success: true,
+    id: Number((result as any)[0]?.insertId ?? 0),
+  };
+}
+
+// ─── Client Events (behavior tracking) ───────────────────────────────────────
+
+export async function recordClientEvent(data: InsertClientEvent) {
+  const db = await getDb();
+  if (!db) return { success: false };
+  await db.insert(clientEvents).values(data);
+  return { success: true };
+}
+
+export async function getRecentClientEvents(userId: number, limit = 50) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db
+    .select()
+    .from(clientEvents)
+    .where(eq(clientEvents.userId, userId))
+    .orderBy(desc(clientEvents.createdAt))
+    .limit(limit);
+}
+
+// ─── Collaborators ───────────────────────────────────────────────────────────
+
+export async function createCollaborator(data: InsertCollaborator) {
+  const db = await getDb();
+  if (!db) throw new Error("DB unavailable");
+  const result = await db.insert(collaborators).values(data);
+  return { id: Number((result as any)[0]?.insertId ?? 0), ...data };
+}
+
+export async function listCollaboratorsForTrip(tripId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db
+    .select()
+    .from(collaborators)
+    .where(eq(collaborators.tripId, tripId))
+    .orderBy(desc(collaborators.createdAt));
+}
+
+export async function getCollaboratorByToken(token: string) {
+  const db = await getDb();
+  if (!db) return null;
+  const [row] = await db
+    .select()
+    .from(collaborators)
+    .where(eq(collaborators.token, token))
+    .limit(1);
+  return row ?? null;
+}
+
+export async function acceptCollaboratorInvite(token: string, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("DB unavailable");
+  await db
+    .update(collaborators)
+    .set({ acceptedAt: new Date(), acceptedByUserId: userId })
+    .where(eq(collaborators.token, token));
+  return { success: true };
+}
+
+export async function revokeCollaborator(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("DB unavailable");
+  await db.delete(collaborators).where(eq(collaborators.id, id));
+  return { success: true };
 }

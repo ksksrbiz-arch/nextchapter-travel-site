@@ -10,6 +10,7 @@ export type SSEEvent =
   | { type: "message"; data: MessageEvent }
   | { type: "typing"; data: TypingEvent }
   | { type: "read"; data: ReadEvent }
+  | { type: "flight_alert"; data: FlightAlertEvent }
   | { type: "ping" };
 
 export type MessageEvent = {
@@ -35,6 +36,20 @@ export type TypingEvent = {
 export type ReadEvent = {
   byUserId: number;
   fromUserId: number;
+};
+
+export type FlightAlertEvent = {
+  alertId: number;
+  userId: number;
+  tripId: number | null;
+  flightNumber: string;
+  status: "on_time" | "delayed" | "cancelled" | "boarding" | "departed" | "arrived" | "gate_change";
+  newDepartureIso?: string | null;
+  newArrivalIso?: string | null;
+  newGate?: string | null;
+  message: string;
+  severity: "info" | "warning" | "urgent";
+  createdAt: Date;
 };
 
 // Map<userId, Set<SSEClient>>
@@ -104,6 +119,13 @@ export function broadcastTyping(event: TypingEvent): void {
  */
 export function broadcastRead(event: ReadEvent): void {
   pushToUser(event.fromUserId, { type: "read", data: event });
+}
+
+/**
+ * Push a flight-status alert to the affected client.
+ */
+export function broadcastFlightAlert(event: FlightAlertEvent): void {
+  pushToUser(event.userId, { type: "flight_alert", data: event });
 }
 
 function sendToClient(res: Response, event: SSEEvent): void {
