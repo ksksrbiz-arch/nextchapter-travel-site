@@ -29,10 +29,14 @@ import {
   Heart,
   Ship,
   Castle,
+  ArrowRight,
+  Quote,
+  Clock,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { jessicaTrips } from "@/data/jessica-trips";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 const FEATURES = [
   {
@@ -126,12 +130,30 @@ const JESSICA_PHOTOS = [
   { src: "/jesshero_01.jpeg", alt: "Jessica at a destination" },
 ];
 
+// Brand strip — looped marquee under the hero. These are partner brands
+// Jessica is certified to book; rendered as text chips in a continuous
+// scroll for an "as featured / certified by" effect.
+const BRAND_STRIP = [
+  "Disney Specialist",
+  "Royal Caribbean Expert",
+  "Universal Studios Certified",
+  "Norwegian Cruise Line",
+  "Carnival Cruise Line",
+  "All-Inclusive Resort Pro",
+  "Hawaiian Islands",
+  "European River Cruises",
+];
+
 export default function Home() {
   const { setVideoContext, preloadContext } = useVideoHero();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
+
+  // Apply scroll-triggered reveal animations to every element flagged
+  // with `data-reveal`. Cheap, one-shot IntersectionObserver — see hook.
+  useScrollReveal();
 
   useEffect(() => {
     setVideoContext("landing");
@@ -280,29 +302,58 @@ export default function Home() {
       </nav>
 
       {/* ── Hero Section ── */}
-      <section className="pt-24 sm:pt-32 md:pt-44 pb-14 sm:pb-24 md:pb-32 relative">
+      <section className="pt-24 sm:pt-32 md:pt-44 pb-14 sm:pb-24 md:pb-32 relative overflow-hidden">
+        {/* Aurora gradient mesh — purely decorative, behind hero copy */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+          <span className="aurora-blob gold" style={{ width: "44rem", height: "44rem", top: "-12rem", left: "-10rem" }} />
+          <span className="aurora-blob navy" style={{ width: "40rem", height: "40rem", top: "-6rem", right: "-12rem" }} />
+          <span className="aurora-blob cream" style={{ width: "32rem", height: "32rem", bottom: "-10rem", left: "30%" }} />
+        </div>
         <div className="container">
           <div className="max-w-4xl mx-auto text-center">
-            <Badge className="mb-4 sm:mb-6 bg-secondary/10 text-secondary border-secondary/20 font-sans text-[10px] sm:text-xs tracking-widest uppercase inline-block">
+            <Badge
+              data-reveal
+              className="mb-4 sm:mb-6 bg-secondary/15 text-secondary border-secondary/30 font-sans text-[10px] sm:text-xs tracking-[0.18em] uppercase inline-flex items-center gap-2 px-3 py-1.5 backdrop-blur-md"
+            >
+              <Sparkles className="w-3 h-3" />
               Your Personal Travel Concierge
             </Badge>
-            <h1 className="text-[2.25rem] leading-[1.1] sm:text-5xl md:text-7xl font-serif font-bold mb-5 sm:mb-8 sm:leading-tight tracking-tight">
-              Every Trip, Perfectly Planned
+            <h1
+              data-reveal
+              data-reveal-delay="100"
+              className="text-[2.5rem] leading-[1.05] sm:text-6xl md:text-7xl lg:text-[5.25rem] font-serif font-bold mb-5 sm:mb-8 sm:leading-[1.05] tracking-tight hero-text-shadow"
+            >
+              Every Trip,{" "}
+              <span className="text-gradient-gold italic">
+                Perfectly Planned
+              </span>
             </h1>
-            <p className="text-base sm:text-xl text-muted-foreground mb-8 sm:mb-12 font-sans leading-relaxed max-w-2xl mx-auto">
-              From Disney magic to Caribbean cruises, Jessica Seiders at Next
-              Chapter Travel LLC creates unforgettable journeys with every
-              detail handled.
+            <p
+              data-reveal
+              data-reveal-delay="200"
+              className="text-base sm:text-xl md:text-2xl text-muted-foreground/90 mb-8 sm:mb-12 font-sans font-light leading-relaxed max-w-2xl mx-auto"
+            >
+              From Disney magic to Caribbean cruises, Jessica Seiders crafts
+              unforgettable journeys with{" "}
+              <span className="underline-gold text-foreground font-medium">
+                every detail handled
+              </span>
+              .
             </p>
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-6">
+            <div
+              data-reveal
+              data-reveal-delay="300"
+              className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-5"
+            >
               <Link href="/plan-my-trip" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="w-full sm:w-auto bg-secondary text-secondary-foreground hover:bg-secondary/90 px-6 sm:px-12 py-6 sm:py-8 text-base sm:text-xl font-sans font-bold rounded-2xl shadow-xl shadow-secondary/20 min-h-[56px] active:scale-95 transition-all"
+                  className="group w-full sm:w-auto bg-secondary text-secondary-foreground hover:bg-secondary/90 px-7 sm:px-12 py-6 sm:py-8 text-base sm:text-xl font-sans font-bold rounded-2xl min-h-[56px] cta-glow active:scale-95 transition-all"
                   onMouseEnter={() => preloadContext("plan-my-trip")}
                   onFocus={() => preloadContext("plan-my-trip")}
                 >
-                  Plan My Trip
+                  <span>Get My Free Proposal</span>
+                  <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
               <a href={getLoginUrl()} className="w-full sm:w-auto">
@@ -324,7 +375,26 @@ export default function Home() {
                 </Button>
               </a>
             </div>
-            <div className="mt-8 sm:mt-12 grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4 max-w-3xl mx-auto w-full">
+            {/* Free / 24-hour promise micro-line */}
+            <p
+              data-reveal
+              data-reveal-delay="400"
+              className="mt-5 sm:mt-7 text-xs sm:text-sm font-sans text-muted-foreground/80 inline-flex items-center justify-center gap-2 flex-wrap"
+            >
+              <Shield className="w-4 h-4 text-secondary" />
+              <span>100% free planning</span>
+              <span className="opacity-40">·</span>
+              <Clock className="w-4 h-4 text-secondary" />
+              <span>Personal proposal within 24 hours</span>
+              <span className="opacity-40">·</span>
+              <Star className="w-4 h-4 text-secondary fill-secondary" />
+              <span>Zero obligation</span>
+            </p>
+            <div
+              data-reveal
+              data-reveal-delay="500"
+              className="mt-10 sm:mt-14 grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4 max-w-3xl mx-auto w-full"
+            >
               {[
                 { value: "50+", label: "Families Served", icon: Users },
                 { value: "100+", label: "Trips Planned", icon: Plane },
@@ -333,13 +403,13 @@ export default function Home() {
               ].map(stat => (
                 <div
                   key={stat.label}
-                  className="bg-card/40 backdrop-blur-md border border-border/60 rounded-2xl px-3 py-3.5 sm:px-4 sm:py-5 flex flex-col items-center gap-1 text-center hover:border-secondary/40 hover:bg-card/60 transition-all group"
+                  className="gradient-border-gold bg-card/45 backdrop-blur-md rounded-2xl px-3 py-4 sm:px-4 sm:py-6 flex flex-col items-center gap-1.5 text-center hover:bg-card/65 transition-all group lift-on-hover"
                 >
-                  <stat.icon className="w-5 h-5 sm:w-5 sm:h-5 text-secondary mb-0.5 sm:mb-1 group-hover:scale-110 transition-transform" />
-                  <p className="text-lg sm:text-2xl font-serif font-bold text-secondary leading-none">
+                  <stat.icon className="w-5 h-5 sm:w-6 sm:h-6 text-secondary mb-0.5 sm:mb-1 group-hover:scale-110 transition-transform" />
+                  <p className="text-xl sm:text-3xl font-serif font-bold text-gradient-gold leading-none">
                     {stat.value}
                   </p>
-                  <p className="text-[11px] sm:text-xs text-muted-foreground font-sans leading-tight">
+                  <p className="text-[11px] sm:text-xs text-muted-foreground font-sans leading-tight tracking-wide">
                     {stat.label}
                   </p>
                 </div>
@@ -349,15 +419,50 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── Brand / Trust Marquee ── */}
+      <section
+        aria-label="Certifications and partners"
+        className="py-7 sm:py-9 border-y border-border/40 bg-black/30 backdrop-blur-sm relative"
+      >
+        <div className="container">
+          <p className="text-center text-[10px] sm:text-xs uppercase tracking-[0.28em] text-muted-foreground/70 font-sans mb-4">
+            Certified Specialist · Trusted Partners
+          </p>
+          <div className="marquee" aria-hidden>
+            {[0, 1].map(loop => (
+              <ul
+                key={loop}
+                className="marquee-track list-none m-0 p-0"
+              >
+                {BRAND_STRIP.map(brand => (
+                  <li
+                    key={`${loop}-${brand}`}
+                    className="flex items-center gap-2 text-secondary/85 font-sans text-sm sm:text-base font-semibold whitespace-nowrap"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 opacity-60" />
+                    {brand}
+                  </li>
+                ))}
+              </ul>
+            ))}
+          </div>
+          {/* Screen-reader equivalent of the marquee */}
+          <p className="sr-only">
+            Certified in {BRAND_STRIP.join(", ")}.
+          </p>
+        </div>
+      </section>
+
       {/* ── Portal Value Recap ── */}
       <section className="py-16 sm:py-24">
         <div className="container">
-          <div className="text-center mb-10 sm:mb-14">
+          <div className="text-center mb-10 sm:mb-14" data-reveal>
             <Badge className="mb-3 sm:mb-4 bg-secondary/10 text-secondary border-secondary/20 font-sans text-xs tracking-widest uppercase">
               What's in your portal
             </Badge>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-foreground mb-3 sm:mb-4">
-              Everything arrives together once you book
+              Everything arrives together{" "}
+              <span className="text-gradient-gold italic">once you book</span>
             </h2>
             <p className="text-muted-foreground text-base sm:text-lg max-w-2xl mx-auto font-sans">
               Your portal ties booking to delivery: itinerary, documents,
@@ -366,13 +471,15 @@ export default function Home() {
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-            {FEATURES.map(feature => (
+            {FEATURES.map((feature, idx) => (
               <div
                 key={`portal-${feature.title}`}
-                className="bg-card/50 backdrop-blur-sm p-5 sm:p-6 rounded-2xl border border-border flex items-start gap-4"
+                data-reveal
+                data-reveal-delay={String(((idx % 3) + 1) * 100)}
+                className="gradient-border-gold bg-card/55 backdrop-blur-md p-5 sm:p-6 rounded-2xl flex items-start gap-4 lift-on-hover"
               >
                 <div
-                  className={`w-11 h-11 sm:w-12 sm:h-12 rounded-xl ${feature.color} flex items-center justify-center shrink-0`}
+                  className={`w-11 h-11 sm:w-12 sm:h-12 rounded-xl ${feature.color} flex items-center justify-center shrink-0 shadow-lg`}
                 >
                   <feature.icon className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
@@ -391,14 +498,18 @@ export default function Home() {
       </section>
 
       {/* ── Testimonials ── */}
-      <section className="py-16 sm:py-24 bg-black/40 backdrop-blur-sm">
-        <div className="container">
-          <div className="text-center mb-10 sm:mb-14">
+      <section className="py-16 sm:py-24 bg-black/40 backdrop-blur-sm relative overflow-hidden">
+        <div aria-hidden className="pointer-events-none absolute inset-0 -z-0">
+          <span className="aurora-blob gold" style={{ width: "30rem", height: "30rem", top: "-6rem", right: "-6rem", opacity: 0.35 }} />
+        </div>
+        <div className="container relative">
+          <div className="text-center mb-10 sm:mb-14" data-reveal>
             <Badge className="mb-3 sm:mb-4 bg-secondary/10 text-secondary border-secondary/20 font-sans text-xs tracking-widest uppercase">
               Client Voices
             </Badge>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-foreground mb-3 sm:mb-4">
-              Trusted trips, happy travelers
+              Trusted trips,{" "}
+              <span className="text-gradient-gold italic">happy travelers</span>
             </h2>
             <p className="text-muted-foreground text-base sm:text-lg max-w-2xl mx-auto font-sans">
               Real feedback from families and cruisers who planned with Jessica.
@@ -406,13 +517,20 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-            {TESTIMONIALS.map(t => (
+            {TESTIMONIALS.map((t, idx) => (
               <div
                 key={t.name}
-                className="bg-card/60 backdrop-blur-sm border border-border rounded-2xl p-6 sm:p-7 shadow-lg shadow-black/10 flex flex-col gap-4 hover:border-secondary/30 transition-all"
+                data-reveal
+                data-reveal-delay={String((idx + 1) * 100)}
+                className="gradient-border-gold relative bg-card/65 backdrop-blur-md rounded-2xl p-6 sm:p-7 shadow-xl shadow-black/20 flex flex-col gap-4 lift-on-hover"
               >
+                {/* Decorative giant quote mark */}
+                <Quote
+                  className="absolute -top-3 -left-1 w-12 h-12 text-secondary/25 fill-secondary/15 rotate-180"
+                  aria-hidden
+                />
                 {/* 5-star rating */}
-                <div className="flex gap-1">
+                <div className="flex gap-1 relative">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <Star
                       key={i}
@@ -420,12 +538,12 @@ export default function Home() {
                     />
                   ))}
                 </div>
-                <p className="text-sm sm:text-base text-muted-foreground font-sans leading-relaxed flex-1">
+                <p className="text-sm sm:text-base text-foreground/85 font-sans leading-relaxed flex-1 relative">
                   &ldquo;{t.quote}&rdquo;
                 </p>
-                <div className="flex items-center gap-3 pt-2 border-t border-border/50">
-                  <div className="w-9 h-9 rounded-full bg-secondary/15 border border-secondary/30 flex items-center justify-center flex-shrink-0">
-                    <span className="text-xs font-bold text-secondary font-sans">
+                <div className="flex items-center gap-3 pt-2 border-t border-border/50 relative">
+                  <div className="w-10 h-10 rounded-full bg-secondary/15 ring-2 ring-secondary/40 ring-offset-2 ring-offset-card flex items-center justify-center flex-shrink-0">
+                    <span className="text-sm font-bold text-secondary font-sans">
                       {t.name.charAt(0)}
                     </span>
                   </div>
@@ -464,13 +582,15 @@ export default function Home() {
           </div>
           {/* 1-col mobile → 2-col tablet → 3-col desktop */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-            {FEATURES.map(feature => (
+            {FEATURES.map((feature, idx) => (
               <div
                 key={feature.title}
-                className="group bg-card/50 backdrop-blur-sm p-6 sm:p-8 rounded-2xl border border-border hover:border-secondary/50 hover:shadow-lg transition-all"
+                data-reveal
+                data-reveal-delay={String(((idx % 3) + 1) * 100)}
+                className="group gradient-border-gold bg-card/55 backdrop-blur-md p-6 sm:p-8 rounded-2xl lift-on-hover"
               >
                 <div
-                  className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl ${feature.color} flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform`}
+                  className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl ${feature.color} flex items-center justify-center mb-4 sm:mb-6 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-transform`}
                 >
                   <feature.icon className="w-6 h-6 sm:w-7 sm:h-7" />
                 </div>
@@ -480,8 +600,8 @@ export default function Home() {
                 <p className="text-muted-foreground text-sm sm:text-base font-sans leading-relaxed mb-3">
                   {feature.desc}
                 </p>
-                <div className="text-xs sm:text-sm text-secondary font-sans inline-flex items-center gap-2 bg-secondary/10 px-3 py-2 rounded-full border border-secondary/20">
-                  <Sparkles className="w-4 h-4" />
+                <div className="text-xs sm:text-sm text-secondary font-sans inline-flex items-start gap-2 bg-secondary/10 px-3 py-2 rounded-xl border border-secondary/20">
+                  <Sparkles className="w-4 h-4 mt-0.5 flex-shrink-0" />
                   <span>Example: {feature.example}</span>
                 </div>
               </div>
@@ -586,17 +706,14 @@ export default function Home() {
             {/* Jessica's Interactive Photo Gallery */}
             <div className="flex flex-col items-center py-4 sm:py-8 order-first md:order-last">
               <div className="relative w-full max-w-[420px] md:max-w-[500px] mx-auto">
-                {/* Decorative glow */}
-                <div className="absolute inset-0 bg-secondary/10 blur-3xl rounded-3xl animate-pulse" />
-
-                {/* Main featured photo */}
-                <div className="relative rounded-2xl overflow-hidden border-2 border-secondary/30 shadow-2xl mb-4">
+                {/* Main featured photo with layered conic glow ring */}
+                <div className="ring-glow relative rounded-2xl overflow-hidden border-2 border-secondary/40 shadow-2xl mb-4">
                   <LazyImage
                     src={JESSICA_PHOTOS[activePhotoIndex].src}
                     alt={JESSICA_PHOTOS[activePhotoIndex].alt}
                     className="w-full h-auto object-contain transition-opacity duration-300"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary/55 via-primary/10 to-transparent" />
 
                   {/* Floating name badge */}
                   <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-secondary text-secondary-foreground px-5 py-2 rounded-xl shadow-xl font-serif font-bold text-sm sm:text-base whitespace-nowrap">
@@ -634,20 +751,28 @@ export default function Home() {
       {/* ── How It Works ── */}
       <section
         id="how-it-works"
-        className="py-16 sm:py-24 bg-primary text-primary-foreground"
+        className="py-16 sm:py-24 bg-primary text-primary-foreground relative overflow-hidden"
       >
-        <div className="container">
-          <div className="text-center mb-12 sm:mb-20">
+        <div aria-hidden className="pointer-events-none absolute inset-0">
+          <span className="aurora-blob gold" style={{ width: "30rem", height: "30rem", top: "-8rem", left: "10%", opacity: 0.25 }} />
+          <span className="aurora-blob navy" style={{ width: "30rem", height: "30rem", bottom: "-10rem", right: "5%", opacity: 0.4 }} />
+        </div>
+        <div className="container relative">
+          <div className="text-center mb-12 sm:mb-20" data-reveal>
+            <Badge className="mb-3 sm:mb-4 bg-secondary/15 text-secondary border-secondary/30 font-sans text-xs tracking-widest uppercase">
+              The Process
+            </Badge>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold mb-4 sm:mb-6">
-              How It Works
+              How It{" "}
+              <span className="text-gradient-gold italic">Works</span>
             </h2>
-            <p className="text-primary-foreground/60 text-base sm:text-lg font-sans">
+            <p className="text-primary-foreground/65 text-base sm:text-lg font-sans">
               Three simple steps to your perfect vacation
             </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8 sm:gap-12 relative">
+          <div className="grid md:grid-cols-3 gap-10 sm:gap-12 relative">
             {/* Connector line for desktop */}
-            <div className="hidden md:block absolute top-1/4 left-0 right-0 h-px bg-gradient-to-r from-transparent via-secondary/30 to-transparent" />
+            <div className="hidden md:block absolute top-10 left-[16%] right-[16%] h-px bg-gradient-to-r from-transparent via-secondary/40 to-transparent" />
 
             {[
               {
@@ -666,14 +791,22 @@ export default function Home() {
                 desc: "Use your portal on the go. Get real-time help for delays, changes, and on-the-ground recommendations.",
               },
             ].map((item, i) => (
-              <div key={i} className="relative text-center group">
-                <div className="text-6xl sm:text-8xl font-serif font-black text-secondary/10 mb-[-30px] sm:mb-[-40px] group-hover:text-secondary/20 transition-colors">
-                  {item.step}
+              <div
+                key={i}
+                data-reveal
+                data-reveal-delay={String((i + 1) * 150)}
+                className="relative text-center group"
+              >
+                {/* Gradient step circle */}
+                <div className="relative mx-auto mb-5 sm:mb-6 w-20 h-20 rounded-full flex items-center justify-center bg-gradient-to-br from-secondary via-secondary/90 to-secondary/70 text-secondary-foreground shadow-[0_0_30px_-4px_oklch(0.72_0.09_65/0.6)] group-hover:scale-110 transition-transform">
+                  <span className="text-2xl font-serif font-black">
+                    {item.step}
+                  </span>
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 relative z-10">
                   {item.title}
                 </h3>
-                <p className="text-primary-foreground/70 text-sm sm:text-base leading-relaxed font-sans max-w-[280px] mx-auto">
+                <p className="text-primary-foreground/75 text-sm sm:text-base leading-relaxed font-sans max-w-[280px] mx-auto">
                   {item.desc}
                 </p>
               </div>
@@ -709,10 +842,12 @@ export default function Home() {
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {jessicaTrips.map(trip => (
+            {jessicaTrips.map((trip, idx) => (
               <div
                 key={trip.id}
-                className="group bg-card/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-border hover:border-secondary/50 transition-all hover:shadow-2xl"
+                data-reveal
+                data-reveal-delay={String(((idx % 3) + 1) * 100)}
+                className="group gradient-border-gold bg-card/55 backdrop-blur-md rounded-2xl overflow-hidden lift-on-hover"
               >
                 <div className="relative h-44 sm:h-64 overflow-hidden">
                   <LazyImage
@@ -720,16 +855,17 @@ export default function Home() {
                     alt={trip.title}
                     width="800"
                     height="500"
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary/70 via-primary/10 to-transparent" />
                   <div className="absolute top-3 right-3 sm:top-4 sm:right-4">
-                    <Badge className="bg-secondary text-secondary-foreground border-0 font-sans text-[10px] sm:text-xs">
+                    <Badge className="bg-secondary text-secondary-foreground border-0 font-sans text-[10px] sm:text-xs shadow-lg">
                       {trip.date}
                     </Badge>
                   </div>
                 </div>
                 <div className="p-5 sm:p-8">
-                  <div className="flex items-center gap-2 text-secondary/80 font-sans text-xs mb-2">
+                  <div className="flex items-center gap-2 text-secondary/85 font-sans text-xs mb-2 tracking-wide uppercase">
                     <MapPin className="w-3 h-3" />
                     {trip.destination}
                   </div>
@@ -740,8 +876,9 @@ export default function Home() {
                     {trip.description}
                   </p>
                   <Link href="/plan-my-trip">
-                    <Button className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 font-sans font-bold rounded-xl">
+                    <Button className="group/btn w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 font-sans font-bold rounded-xl">
                       Book This Trip
+                      <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover/btn:translate-x-1" />
                     </Button>
                   </Link>
                 </div>
@@ -755,31 +892,41 @@ export default function Home() {
       <section className="py-20 sm:py-32 relative overflow-hidden">
         {/* Background layers */}
         <div className="absolute inset-0 bg-gradient-to-b from-secondary/5 via-secondary/10 to-secondary/5 backdrop-blur-sm" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,oklch(0.72_0.09_65/0.12)_0%,transparent_70%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,oklch(0.72_0.09_65/0.18)_0%,transparent_70%)]" />
+        <div aria-hidden className="pointer-events-none absolute inset-0">
+          <span className="aurora-blob gold" style={{ width: "36rem", height: "36rem", top: "-8rem", left: "10%" }} />
+          <span className="aurora-blob navy" style={{ width: "32rem", height: "32rem", bottom: "-10rem", right: "10%", opacity: 0.4 }} />
+        </div>
         <div className="container relative z-10 text-center">
-          <div className="max-w-3xl mx-auto">
-            <Badge className="mb-6 bg-secondary/10 text-secondary border-secondary/30 font-sans text-xs tracking-widest uppercase">
+          <div className="max-w-3xl mx-auto" data-reveal>
+            <Badge className="mb-6 bg-secondary/15 text-secondary border-secondary/30 font-sans text-xs tracking-[0.2em] uppercase px-3 py-1.5">
+              <Sparkles className="w-3 h-3 mr-1.5 inline" />
               Your Dream Vacation Awaits
             </Badge>
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-serif font-bold mb-6 sm:mb-8 leading-tight">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-bold mb-6 sm:mb-8 leading-[1.05]">
               Ready to Start Your{" "}
-              <span className="gold-shimmer">Next Chapter?</span>
+              <span className="text-gradient-gold italic">Next Chapter?</span>
             </h2>
             <p className="text-lg sm:text-xl text-muted-foreground mb-4 font-sans leading-relaxed">
-              Certified in Disney, Universal, Norwegian Cruise Line, Royal
-              Caribbean, Carnival, and more — Jessica Seiders at Next Chapter
-              Travel LLC has the expertise to plan any adventure you can imagine.
+              Certified in Disney, Universal, Norwegian, Royal Caribbean,
+              Carnival, and more — Jessica handles every detail so you can
+              focus on the memories.
             </p>
-            <p className="text-sm text-muted-foreground/70 font-sans mb-10 sm:mb-12">
-              Free consultation. No hidden fees. Just unforgettable memories.
+            <p className="text-sm sm:text-base text-secondary/90 font-sans font-semibold mb-10 sm:mb-12 inline-flex items-center justify-center gap-2 flex-wrap">
+              <Clock className="w-4 h-4" />
+              Free personalized proposal in 24 hours
+              <span className="opacity-40">·</span>
+              <Shield className="w-4 h-4" />
+              No fees, no obligation
             </p>
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-6">
               <Link href="/plan-my-trip" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="w-full sm:w-auto bg-secondary text-secondary-foreground hover:bg-secondary/90 px-6 sm:px-12 py-6 sm:py-8 text-base sm:text-xl font-sans font-bold rounded-2xl shadow-xl shadow-secondary/20 min-h-[56px] active:scale-95 transition-all glow-secondary"
+                  className="group w-full sm:w-auto bg-secondary text-secondary-foreground hover:bg-secondary/90 px-7 sm:px-14 py-6 sm:py-8 text-base sm:text-xl font-sans font-bold rounded-2xl min-h-[56px] cta-glow active:scale-95 transition-all"
                 >
-                  Plan My Trip — Free
+                  <span>Get My Free Proposal</span>
+                  <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
               <a href={getLoginUrl()} className="w-full sm:w-auto">
@@ -795,7 +942,7 @@ export default function Home() {
             {/* Certification strip */}
             <div className="mt-10 flex flex-wrap justify-center gap-2 sm:gap-3">
               {["Disney Specialist", "Royal Caribbean Expert", "Universal Studios", "Carnival Certified", "Norwegian Cruise Line"].map(cert => (
-                <span key={cert} className="text-xs font-sans text-muted-foreground/60 px-3 py-1 rounded-full border border-border/40 bg-card/30">
+                <span key={cert} className="text-xs font-sans text-muted-foreground/70 px-3 py-1 rounded-full border border-secondary/20 bg-card/30 backdrop-blur-sm">
                   {cert}
                 </span>
               ))}

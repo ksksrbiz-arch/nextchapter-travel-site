@@ -749,6 +749,255 @@ a, button, [role="button"] {
   box-shadow: 0 0 30px oklch(0.72 0.09 65 / 0.5);
 }
 
+/* ── Premium Visual Layer ─────────────────────────────────────────────────
+   Added to elevate the marketing surface (landing + plan-my-trip):
+   - aurora gradient blobs for depth behind hero/CTA
+   - gold-gradient borders for premium-feeling cards
+   - scroll-reveal entrance animation
+   - animated marquee for trust strip
+   - text gradient + dramatic shimmer accents
+   ──────────────────────────────────────────────────────────────────────── */
+
+/* Aurora floating blobs — soft animated gold/navy blooms used as section
+   backdrops. Pure decoration: pointer-events: none, aria-hidden in markup. */
+@keyframes auroraDrift1 {
+  0%, 100% { transform: translate3d(-10%, -8%, 0) scale(1); }
+  50%      { transform: translate3d(8%, 6%, 0)   scale(1.18); }
+}
+@keyframes auroraDrift2 {
+  0%, 100% { transform: translate3d(12%, 10%, 0) scale(1.05); }
+  50%      { transform: translate3d(-6%, -4%, 0) scale(0.9); }
+}
+.aurora-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(70px);
+  opacity: 0.55;
+  pointer-events: none;
+  will-change: transform;
+}
+.aurora-blob.gold {
+  background: radial-gradient(
+    closest-side,
+    oklch(0.82 0.12 75 / 0.7),
+    oklch(0.72 0.09 65 / 0.2) 60%,
+    transparent 80%
+  );
+  animation: auroraDrift1 18s ease-in-out infinite;
+}
+.aurora-blob.navy {
+  background: radial-gradient(
+    closest-side,
+    oklch(0.45 0.18 240 / 0.55),
+    oklch(0.22 0.06 240 / 0.25) 55%,
+    transparent 80%
+  );
+  animation: auroraDrift2 22s ease-in-out infinite;
+}
+.aurora-blob.cream {
+  background: radial-gradient(
+    closest-side,
+    oklch(0.92 0.06 75 / 0.45),
+    transparent 70%
+  );
+  animation: auroraDrift2 26s ease-in-out infinite;
+}
+
+/* Gold gradient text — used on hero accents */
+.text-gradient-gold {
+  background: linear-gradient(
+    100deg,
+    oklch(0.82 0.1 80) 0%,
+    oklch(0.92 0.09 90) 35%,
+    oklch(0.72 0.09 65) 70%,
+    oklch(0.86 0.1 80) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 6s linear infinite;
+}
+
+/* Gradient border around cards — gold + cream sweep, used for "premium"
+   feeling on testimonials, hero stats, feature cards on hover. The trick:
+   put .gradient-border-gold on a wrapper, child has its own background. */
+.gradient-border-gold {
+  position: relative;
+  border-radius: 1rem;
+  background-clip: padding-box;
+}
+.gradient-border-gold::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    oklch(0.82 0.1 80 / 0.85),
+    oklch(0.45 0.05 240 / 0.15) 40%,
+    oklch(0.82 0.1 80 / 0.85) 100%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+.gradient-border-gold:hover::before {
+  opacity: 1;
+}
+
+/* Stronger glow used on the primary CTA — pulsing, attention-grabbing */
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 0 oklch(0.72 0.09 65 / 0.55),
+      0 12px 32px -10px oklch(0.72 0.09 65 / 0.55);
+  }
+  50% {
+    box-shadow:
+      0 0 0 14px oklch(0.72 0.09 65 / 0),
+      0 18px 44px -10px oklch(0.72 0.09 65 / 0.65);
+  }
+}
+.cta-glow {
+  animation: glowPulse 2.4s ease-in-out infinite;
+}
+
+/* Scroll reveal — applied via useScrollReveal hook (data-reveal attr) */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.8s cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: opacity, transform;
+}
+[data-reveal][data-revealed="true"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+[data-reveal-delay="100"] { transition-delay: 0.1s; }
+[data-reveal-delay="150"] { transition-delay: 0.15s; }
+[data-reveal-delay="200"] { transition-delay: 0.2s; }
+[data-reveal-delay="300"] { transition-delay: 0.3s; }
+[data-reveal-delay="400"] { transition-delay: 0.4s; }
+[data-reveal-delay="450"] { transition-delay: 0.45s; }
+[data-reveal-delay="500"] { transition-delay: 0.5s; }
+
+/* Marquee — auto-scrolling brand strip ("As certified specialists in...") */
+@keyframes marqueeScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.marquee {
+  display: flex;
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
+}
+.marquee-track {
+  display: flex;
+  flex-shrink: 0;
+  gap: 2.5rem;
+  padding-right: 2.5rem;
+  animation: marqueeScroll 40s linear infinite;
+  will-change: transform;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* Layered glow ring (for Jessica's photo & step circles) */
+.ring-glow {
+  position: relative;
+}
+.ring-glow::before,
+.ring-glow::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from 90deg,
+    oklch(0.82 0.1 80 / 0.55),
+    oklch(0.45 0.18 240 / 0.25),
+    oklch(0.92 0.09 90 / 0.45),
+    oklch(0.82 0.1 80 / 0.55)
+  );
+  filter: blur(14px);
+  opacity: 0.7;
+  z-index: -1;
+  animation: ringSpin 16s linear infinite;
+}
+.ring-glow::after {
+  inset: -2px;
+  filter: blur(2px);
+  opacity: 0.9;
+}
+@keyframes ringSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* "Floating chips" — subtle hover lift used on cards globally */
+.lift-on-hover {
+  transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1),
+              box-shadow 0.35s cubic-bezier(0.22, 0.61, 0.36, 1),
+              border-color 0.35s ease;
+}
+.lift-on-hover:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 24px 48px -20px oklch(0 0 0 / 0.45),
+    0 0 0 1px oklch(0.72 0.09 65 / 0.25);
+}
+
+/* Subtle gold underline accent for inline emphasis text */
+.underline-gold {
+  background-image: linear-gradient(
+    transparent 60%,
+    oklch(0.82 0.1 80 / 0.45) 60%,
+    oklch(0.82 0.1 80 / 0.45) 90%,
+    transparent 90%
+  );
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+/* ── Reduced-motion overrides for new utilities ── */
+@media (prefers-reduced-motion: reduce) {
+  .aurora-blob,
+  .marquee-track,
+  .ring-glow::before,
+  .ring-glow::after,
+  .cta-glow,
+  .text-gradient-gold {
+    animation: none !important;
+  }
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
 /* ── Reduced-motion overrides ───────────────────────────────────────────────
    Anyone with `prefers-reduced-motion: reduce` should not see continuous
    animations or large transitional movement. We keep tap-feedback (active

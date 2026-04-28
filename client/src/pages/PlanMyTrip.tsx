@@ -6,6 +6,7 @@ import { Link } from "wouter";
 import { SEOHead } from "@/components/SEOHead";
 import {
   ArrowLeft,
+  ArrowRight,
   BookOpen,
   Star,
   Shield,
@@ -14,7 +15,11 @@ import {
   Mail,
   ExternalLink,
   AlertCircle,
+  Sparkles,
+  MessageSquare,
+  Send,
 } from "lucide-react";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 // If the embedded TravelJoy form hasn't loaded by this point, assume it's
 // being blocked (ad-blocker, network, CSP) and surface a fallback path so
@@ -35,6 +40,8 @@ export default function PlanMyTrip() {
   const [iframeLoaded, setIframeLoaded] = useState(false);
   const [iframeFailed, setIframeFailed] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useScrollReveal();
 
   useEffect(() => {
     setVideoContext("plan-my-trip");
@@ -95,38 +102,114 @@ export default function PlanMyTrip() {
 
       {/* ── Hero header ── */}
       <section
-        className="relative pt-24 sm:pt-28 pb-8 sm:pb-12 px-4 text-center"
+        className="relative pt-24 sm:pt-28 pb-10 sm:pb-14 px-4 text-center overflow-hidden"
         style={{
           background:
-            "linear-gradient(to bottom, oklch(0.18 0.05 240 / 0.85), oklch(0.18 0.05 240 / 0.65))",
+            "linear-gradient(to bottom, oklch(0.18 0.05 240 / 0.88), oklch(0.18 0.05 240 / 0.65))",
         }}
       >
-        <div className="max-w-3xl mx-auto">
-          <Badge className="mb-3 sm:mb-4 bg-secondary/90 text-secondary-foreground border-0 font-sans text-[10px] sm:text-xs tracking-widest uppercase px-3 sm:px-4 py-1 sm:py-1.5">
-            Let's Start Planning
+        {/* Aurora backdrop */}
+        <div aria-hidden className="pointer-events-none absolute inset-0">
+          <span className="aurora-blob gold" style={{ width: "32rem", height: "32rem", top: "-10rem", left: "-6rem", opacity: 0.4 }} />
+          <span className="aurora-blob navy" style={{ width: "30rem", height: "30rem", top: "-6rem", right: "-6rem", opacity: 0.5 }} />
+        </div>
+        <div className="max-w-3xl mx-auto relative">
+          <Badge
+            data-reveal
+            className="mb-3 sm:mb-4 bg-secondary/90 text-secondary-foreground border-0 font-sans text-[10px] sm:text-xs tracking-[0.2em] uppercase px-3 sm:px-4 py-1.5 inline-flex items-center gap-1.5 shadow-lg"
+          >
+            <Sparkles className="w-3 h-3" />
+            Free · 24-Hour Personal Proposal
           </Badge>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-white mb-3 sm:mb-4 leading-tight">
-            Tell Me About Your
-            <span className="italic text-secondary"> Dream Trip</span>
+          <h1
+            data-reveal
+            data-reveal-delay="100"
+            className="text-3xl sm:text-5xl md:text-6xl font-serif font-bold text-white mb-3 sm:mb-5 leading-[1.05] tracking-tight"
+          >
+            Tell Me About Your{" "}
+            <span className="text-gradient-gold italic">Dream Trip</span>
           </h1>
-          <p className="text-white/70 text-base sm:text-lg font-sans font-light leading-relaxed max-w-2xl mx-auto mb-6 sm:mb-8">
-            Fill out the form below and Jessica will personally review your
-            request and reach out within 24 hours with a customized travel plan
-            — completely free.
+          <p
+            data-reveal
+            data-reveal-delay="200"
+            className="text-white/75 text-base sm:text-lg md:text-xl font-sans font-light leading-relaxed max-w-2xl mx-auto mb-6 sm:mb-8"
+          >
+            Share a few details and Jessica will personally craft a custom
+            travel plan with itinerary, pricing, and recommendations —{" "}
+            <span className="underline-gold text-white font-medium">
+              completely free
+            </span>
+            , delivered within 24 hours.
           </p>
 
           {/* Trust badges */}
-          <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
+          <div
+            data-reveal
+            data-reveal-delay="300"
+            className="flex flex-wrap justify-center gap-2 sm:gap-3"
+          >
             {TRUST_BADGES.map(badge => (
               <div
                 key={badge.label}
-                className="flex items-center gap-1.5 bg-white/10 border border-white/20 rounded-full px-3 py-1.5 text-white/80 text-xs font-sans"
+                className="flex items-center gap-1.5 bg-white/10 border border-white/20 backdrop-blur-md rounded-full px-3 py-1.5 text-white/90 text-xs font-sans"
               >
-                <badge.icon className="w-3 h-3 text-secondary flex-shrink-0" />
+                <badge.icon className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
                 {badge.label}
               </div>
             ))}
           </div>
+
+          {/* What happens next — visual 3-step promise */}
+          <div
+            data-reveal
+            data-reveal-delay="400"
+            className="mt-10 sm:mt-12 grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-left max-w-3xl mx-auto"
+          >
+            {[
+              {
+                step: "01",
+                icon: Send,
+                title: "You share your trip",
+                desc: "Tell us travelers, dates, destination ideas, and budget — takes about 3 minutes.",
+              },
+              {
+                step: "02",
+                icon: MessageSquare,
+                title: "Jessica crafts a plan",
+                desc: "Within 24 hours she sends a custom proposal with options, pricing, and ideas.",
+              },
+              {
+                step: "03",
+                icon: CheckCircle,
+                title: "You travel, she handles it",
+                desc: "Approve, get your portal, and let Jessica handle every booking and detail.",
+              },
+            ].map(item => (
+              <div
+                key={item.step}
+                className="gradient-border-gold relative bg-white/5 backdrop-blur-md rounded-2xl p-4 sm:p-5 lift-on-hover"
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-secondary to-secondary/70 text-secondary-foreground flex items-center justify-center font-serif font-bold text-sm shadow-lg shadow-secondary/40">
+                    {item.step}
+                  </div>
+                  <item.icon className="w-4 h-4 text-secondary" />
+                </div>
+                <h3 className="text-white font-sans font-bold text-sm sm:text-base mb-1">
+                  {item.title}
+                </h3>
+                <p className="text-white/70 text-xs sm:text-sm font-sans leading-relaxed">
+                  {item.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Down-arrow nudge to the form */}
+          <p className="mt-8 sm:mt-10 text-secondary/90 font-sans text-xs sm:text-sm uppercase tracking-[0.18em] inline-flex items-center justify-center gap-2">
+            Start below
+            <ArrowRight className="w-3.5 h-3.5 rotate-90 animate-bounce" />
+          </p>
         </div>
       </section>
 
