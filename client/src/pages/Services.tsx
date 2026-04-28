@@ -26,6 +26,7 @@ import {
   Umbrella,
   Phone,
   Zap,
+  Headphones,
 } from "lucide-react";
 
 const PORTAL_FEATURES = [
@@ -126,7 +127,7 @@ const SERVICES = [
     highlight: false,
   },
   {
-    icon: Phone,
+    icon: Headphones,
     title: "On-Trip Support",
     desc: "Something goes wrong? Jessica is reachable during your trip for real-time rebooking and problem-solving.",
     highlight: false,
