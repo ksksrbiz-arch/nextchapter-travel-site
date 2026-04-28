@@ -1,0 +1,51 @@
+name: Refresh Deals Data
+
+# Regenerates client/src/data/deals.json weekly so the public Deals page
+# always shows current supplier promotions.  When BUILT_IN_FORGE_API_KEY is
+# configured in repository secrets the LLM produces fresh copy; otherwise the
+# deterministic mock fallback is used (still resets expiry dates forward).
+
+on:
+  schedule:
+    # Every Monday at 10:00 UTC  — covers US weekend deal announcements
+    - cron: "0 10 * * 1"
+  workflow_dispatch:
+    # Allow Jessica / admins to trigger a manual refresh at any time
+
+jobs:
+  refresh:
+    name: Refresh deals.json
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # needed to commit the updated JSON
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        env:
+          CI: "true"
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate fresh deals
+        env:
+          BUILT_IN_FORGE_API_KEY: ${{ secrets.BUILT_IN_FORGE_API_KEY }}
+          BUILT_IN_FORGE_API_URL: ${{ secrets.BUILT_IN_FORGE_API_URL }}
+        run: pnpm run deals:refresh
+
+      - name: Commit updated deals.json (if changed)
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: refresh deals data [skip ci]"
+          file_pattern: client/src/data/deals.json
+          commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"

@@ -1,0 +1,176 @@
+{
+  "updatedAt": "2026-04-28T22:38:20Z",
+  "source": "mock",
+  "deals": [
+    {
+      "id": 1,
+      "title": "Royal Caribbean Summer Explorer Sale — 7-Night Caribbean",
+      "destination": "Eastern Caribbean · Royal Caribbean International",
+      "category": ["Cruises", "Bundles"],
+      "image": "https://images.unsplash.com/photo-1548574505-5e239809ee19?auto=format&fit=crop&w=1200&q=80",
+      "description": "Sail roundtrip from Miami aboard Wonder of the Seas. Royal Caribbean's Summer Explorer Sale stacks free drinks, unlimited Wi-Fi, and $200 onboard credit on top of already-reduced fares — one of the best value sailings of the year.",
+      "perks": [
+        "Free unlimited beverage package",
+        "$200 onboard credit per stateroom",
+        "Unlimited Wi-Fi (surf + stream)",
+        "Kids sail free (3rd & 4th guests)"
+      ],
+      "iconName": "Ship",
+      "priceFrom": "From $1,499/person",
+      "priceWas": "$1,999",
+      "bookBy": "Book by Jun 30, 2026",
+      "travelWindow": "Travel Jul – Dec 2026",
+      "badge": "Bonus Commission",
+      "featured": true,
+      "supplierName": "Royal Caribbean International"
+    },
+    {
+      "id": 2,
+      "title": "Walt Disney World Free Dining Fall Package",
+      "destination": "Orlando, FL · Walt Disney World Resort",
+      "category": ["Disney", "Bundles"],
+      "image": "https://images.unsplash.com/photo-1597466599360-3b9775841aec?auto=format&fit=crop&w=1200&q=80",
+      "description": "Disney's most popular promotion is back: book a Disney Resort hotel + Park Hopper tickets and receive a FREE standard dining plan for the entire stay. Coveted fall dates including Mickey's Not-So-Scary Halloween Party weekends are available.",
+      "perks": [
+        "Free standard dining plan (quick service + table service)",
+        "Park Hopper tickets included",
+        "Disney Early Theme Park Entry",
+        "Memory Maker photo package add-on available"
+      ],
+      "iconName": "Castle",
+      "priceFrom": "From $3,199/family of 4",
+      "priceWas": "$3,899",
+      "bookBy": "Book by Aug 25, 2026",
+      "travelWindow": "Travel Sep 1 – Nov 20, 2026",
+      "badge": "Exclusive Bundle",
+      "featured": true,
+      "supplierName": "Walt Disney Travel Company"
+    },
+    {
+      "id": 3,
+      "title": "Norwegian Cruise Line 'Free at Sea' — 10-Night Mediterranean",
+      "destination": "Rome · Athens · Santorini · Dubrovnik",
+      "category": ["Cruises", "Europe"],
+      "image": "https://images.unsplash.com/photo-1533104816931-20fa691ff6ca?auto=format&fit=crop&w=1200&q=80",
+      "description": "Norwegian's signature Free at Sea promotion lets you choose up to 5 free extras across a 10-night Mediterranean sailing — stack an open bar, specialty dining, shore excursions, unlimited Wi-Fi, and a cabin upgrade all in one booking.",
+      "perks": [
+        "Choose any 5: open bar, specialty dining, shore excursions, Wi-Fi, or cabin upgrade",
+        "Open bar for 2 guests ($2,000+ value)",
+        "3 specialty dining meals per person",
+        "Unlimited Wi-Fi for 2 devices"
+      ],
+      "iconName": "Ship",
+      "priceFrom": "From $1,999/person",
+      "priceWas": "$2,599",
+      "bookBy": "Book by Jul 15, 2026",
+      "travelWindow": "Travel Oct 2026 – Apr 2027",
+      "badge": "Bonus Commission",
+      "supplierName": "Norwegian Cruise Line"
+    },
+    {
+      "id": 4,
+      "title": "Sandals Royal Jamaica — 7-Night Caribbean Sale",
+      "destination": "Montego Bay, Jamaica · Sandals Resorts",
+      "category": ["All-Inclusive"],
+      "image": "https://images.unsplash.com/photo-1559494007-9f5847c49d94?auto=format&fit=crop&w=1200&q=80",
+      "description": "Sandals' Caribbean Sale brings their world-renowned unlimited-luxury® all-inclusive to its lowest price of the season. Every meal, top-shelf drink, land and water sport, and butler-level service is included — no hidden charges, ever.",
+      "perks": [
+        "Unlimited premium spirits & gourmet dining",
+        "5th night free on select room categories",
+        "$200 resort credit per booking",
+        "Complimentary scuba diving (certified divers)"
+      ],
+      "iconName": "TreePalm",
+      "priceFrom": "From $2,199/person",
+      "priceWas": "$2,799",
+      "bookBy": "Book by Sep 30, 2026",
+      "travelWindow": "Travel Nov 2026 – Apr 2027",
+      "badge": "Hot Deal",
+      "supplierName": "Sandals Resorts"
+    },
+    {
+      "id": 5,
+      "title": "ALG Vacations — Riviera Maya All-In (Air Included)",
+      "destination": "Playa del Carmen / Tulum, Mexico",
+      "category": ["All-Inclusive", "Bundles"],
+      "image": "https://images.unsplash.com/photo-1510097467424-192d713fd8b2?auto=format&fit=crop&w=1200&q=80",
+      "description": "Apple Vacations' early-booking bonus packages round-trip airfare, 7 nights at a 5-star beachfront resort, and private round-trip airport transfers into one locked rate — no juggling separate bookings or price creep.",
+      "perks": [
+        "Round-trip airfare included from most US cities",
+        "Private airport transfers",
+        "Early booking bonus: $100 resort credit",
+        "All-inclusive: meals, drinks, non-motorized watersports"
+      ],
+      "iconName": "Plane",
+      "priceFrom": "From $1,399/person",
+      "priceWas": "$1,799",
+      "bookBy": "Book by Jun 30, 2026",
+      "travelWindow": "Travel Aug – Dec 2026",
+      "badge": "Hot Deal",
+      "supplierName": "ALG Vacations (Apple Vacations)"
+    },
+    {
+      "id": 6,
+      "title": "Pleasant Holidays Multi-Island Hawaii Hopper",
+      "destination": "Oahu · Maui · Kauai",
+      "category": ["Hawaii", "Bundles"],
+      "image": "https://images.unsplash.com/photo-1505852679233-d9fd70aff56d?auto=format&fit=crop&w=1200&q=80",
+      "description": "Pleasant Holidays' preferred-partner packaging covers inter-island flights, 10 nights of oceanfront accommodations across three islands, and a private Luau experience — all at a rate Jessica's clients can't replicate booking individually.",
+      "perks": [
+        "Inter-island flights between all 3 islands",
+        "10 nights oceanfront (Waikiki, Wailea, Princeville)",
+        "Private luau experience for 2",
+        "Daily breakfast at each property"
+      ],
+      "iconName": "TreePalm",
+      "priceFrom": "From $3,699/person",
+      "priceWas": "$4,299",
+      "bookBy": "Book by Jul 31, 2026",
+      "travelWindow": "Travel Jan – May 2027",
+      "badge": "Bonus Commission",
+      "supplierName": "Pleasant Holidays"
+    },
+    {
+      "id": 7,
+      "title": "Celebrity Cruises 'Always Included' — 7-Night Alaska Glaciers",
+      "destination": "Seattle to Juneau, Skagway & Ketchikan",
+      "category": ["Cruises", "Bundles"],
+      "image": "https://images.unsplash.com/photo-1531253216-9f9a5d08d2b3?auto=format&fit=crop&w=1200&q=80",
+      "description": "Celebrity's Always Included® ships every stateroom with classic beverages, unlimited Wi-Fi, and pre-paid gratuities. Add on Celebrity's Double Up promotion for a premium drink upgrade + premium Wi-Fi at no extra cost.",
+      "perks": [
+        "Classic beverages included for 2 guests",
+        "Unlimited Wi-Fi for 2 devices",
+        "Gratuities pre-paid",
+        "Double Up: premium drinks + premium Wi-Fi upgrade free"
+      ],
+      "iconName": "Ship",
+      "priceFrom": "From $2,199/person",
+      "priceWas": "$2,799",
+      "bookBy": "Book by Aug 15, 2026",
+      "travelWindow": "Travel May – Sep 2027",
+      "badge": "Exclusive Bundle",
+      "supplierName": "Celebrity Cruises"
+    },
+    {
+      "id": 8,
+      "title": "Disney Cruise Line — 4-Night Bahamian Voyage",
+      "destination": "Port Canaveral, FL to Nassau & Castaway Cay",
+      "category": ["Cruises", "Disney"],
+      "image": "https://images.unsplash.com/photo-1527004013197-933b70f77462?auto=format&fit=crop&w=1200&q=80",
+      "description": "Disney Cruise Line's early-booking discount knocks 10% off regular fares on 4-night Bahamian sailings calling at Nassau and Disney's private island, Castaway Cay — with a $250 onboard credit to spend on excursions, spa, or specialty dining.",
+      "perks": [
+        "10% early booking discount",
+        "$250 onboard credit per stateroom",
+        "Private island stop: Castaway Cay",
+        "Broadway-caliber shows + character dinners"
+      ],
+      "iconName": "Ship",
+      "priceFrom": "From $2,499/family of 4",
+      "priceWas": "$2,999",
+      "bookBy": "Book by Jun 30, 2026",
+      "travelWindow": "Travel Nov 2026 – Mar 2027",
+      "badge": "Hot Deal",
+      "supplierName": "Disney Cruise Line"
+    }
+  ]
+}

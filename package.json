@@ -13,6 +13,7 @@
     "test": "vitest run",
     "db:push": "drizzle-kit generate && drizzle-kit migrate",
     "lint": "eslint . --ext .ts,.tsx",
+    "deals:refresh": "tsx scripts/refresh-deals.ts",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
     "prepare": "node -e \"process.env.CI ? process.exit(0) : require(\"child_process\").execSync(\"husky\")\""
   },

@@ -217,6 +217,7 @@ const Destinations = lazyWithRetry(
   "destinations"
 );
 const Services = lazyWithRetry(() => import("./pages/Services"), "services");
+const Deals = lazyWithRetry(() => import("./pages/Deals"), "deals");
 
 // Admin pages
 const AdminDashboard = lazyWithRetry(
@@ -280,6 +281,7 @@ function Router() {
       <Route path="/about" component={About} />
       <Route path="/destinations" component={Destinations} />
       <Route path="/services" component={Services} />
+      <Route path="/deals" component={Deals} />
       <Route path="/join" component={JoinPage} />
       <Route path="/plan-my-trip" component={PlanMyTrip} />
       <Route path="/plan" component={PlanMyTrip} />

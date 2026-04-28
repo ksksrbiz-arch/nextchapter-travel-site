@@ -5,6 +5,7 @@ import { BookOpen, Facebook, Instagram, Compass } from "lucide-react";
 
 const QUICK_LINKS = [
   { label: "Destinations", href: "/destinations", internal: true },
+  { label: "Deals & Bundles", href: "/deals", internal: true },
   { label: "Services", href: "/services", internal: true },
   { label: "About Jessica", href: "/about", internal: true },
   { label: "Plan My Trip", href: "/plan-my-trip", internal: true },
