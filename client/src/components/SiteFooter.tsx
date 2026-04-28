@@ -27,7 +27,7 @@ export default function SiteFooter() {
       style={{ paddingBottom: "max(3rem, calc(2rem + env(safe-area-inset-bottom, 0px)))" }}
     >
       {/* Wave SVG divider at top — bridges from dark section to navy footer */}
-      <div className="wave-divider overflow-hidden leading-[0]" aria-hidden>
+      <div className="wave-divider overflow-hidden leading-[0]" aria-hidden={true}>
         <svg
           viewBox="0 0 1440 60"
           fill="none"

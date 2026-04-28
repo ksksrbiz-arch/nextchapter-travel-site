@@ -439,15 +439,14 @@ export default function Home() {
                 {/* Decorative giant quote mark */}
                 <Quote
                   className="absolute top-4 right-5 w-14 h-14 text-secondary/10 fill-secondary/8"
-                  aria-hidden
+                  aria-hidden={true}
                 />
-                {/* 5-star rating with slight spread */}
+                {/* 5-star rating */}
                 <div className="flex gap-0.5 relative">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <Star
                       key={i}
                       className="w-4 h-4 text-secondary fill-secondary"
-                      style={{ animationDelay: `${i * 0.08}s` }}
                     />
                   ))}
                 </div>
@@ -690,7 +689,7 @@ export default function Home() {
             {/* Animated connector line for desktop */}
             <div
               className="hidden md:block absolute top-10 left-[16%] right-[16%] h-[2px] overflow-hidden"
-              aria-hidden
+              aria-hidden={true}
             >
               <div className="h-full bg-gradient-to-r from-secondary/20 via-secondary/60 to-secondary/20 connector-line-animated" data-connector />
             </div>

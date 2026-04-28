@@ -313,7 +313,7 @@ export default function Services() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 relative">
             {/* Connector line for large screens */}
-            <div className="hidden lg:block absolute top-10 left-[12%] right-[12%] h-[2px] overflow-hidden" aria-hidden>
+            <div className="hidden lg:block absolute top-10 left-[12%] right-[12%] h-[2px] overflow-hidden" aria-hidden={true}>
               <div className="h-full bg-gradient-to-r from-secondary/20 via-secondary/60 to-secondary/20 connector-line-animated" data-connector />
             </div>
 
