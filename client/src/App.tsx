@@ -179,6 +179,36 @@ const BusinessOperationsPage = lazyWithRetry(
   "portal-business-operations"
 );
 
+// Phase 7: AI Personalization & Advanced Tools
+const IdentityWalletPage = lazyWithRetry(
+  () => import("./pages/portal/IdentityWalletPage"),
+  "portal-identity-wallet"
+);
+const AccessibleTravelPage = lazyWithRetry(
+  () => import("./pages/portal/AccessibleTravelPage"),
+  "portal-accessible-travel"
+);
+const SustainabilityPage = lazyWithRetry(
+  () => import("./pages/portal/SustainabilityPage"),
+  "portal-sustainability"
+);
+const VRPreviewPage = lazyWithRetry(
+  () => import("./pages/portal/VRPreviewPage"),
+  "portal-vr-previews"
+);
+const AdminImportWizard = lazyWithRetry(
+  () => import("./pages/admin/AdminImportWizard"),
+  "admin-import-wizard"
+);
+const AdminCollaboratorsPage = lazyWithRetry(
+  () => import("./pages/admin/AdminCollaboratorsPage"),
+  "admin-collaborators"
+);
+const CollaboratorJoinPage = lazyWithRetry(
+  () => import("./pages/CollaboratorJoinPage"),
+  "collaborator-join"
+);
+
 // Admin pages
 const AdminDashboard = lazyWithRetry(
   () => import("./pages/admin/AdminDashboard"),
@@ -300,6 +330,18 @@ function Router() {
         component={BusinessOperationsPage}
       />
 
+      {/* Phase 7: AI Personalization & Advanced Tools */}
+      <Route path="/portal/identity-wallet" component={IdentityWalletPage} />
+      <Route
+        path="/portal/accessible-travel"
+        component={AccessibleTravelPage}
+      />
+      <Route path="/portal/sustainability" component={SustainabilityPage} />
+      <Route path="/portal/vr-previews" component={VRPreviewPage} />
+
+      {/* Collaborator (tour-operator) join via magic link */}
+      <Route path="/collaborate" component={CollaboratorJoinPage} />
+
       {/* Admin dashboard */}
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/admin/clients" component={AdminClientsList} />
@@ -311,6 +353,11 @@ function Router() {
       <Route path="/admin/guides" component={AdminGuides} />
       <Route path="/admin/alerts" component={AdminAlerts} />
       <Route path="/admin/notifications" component={AdminNotifications} />
+      <Route path="/admin/import" component={AdminImportWizard} />
+      <Route
+        path="/admin/trips/:id/collaborators"
+        component={AdminCollaboratorsPage}
+      />
 
       {/* 404 */}
       <Route path="/404" component={NotFound} />

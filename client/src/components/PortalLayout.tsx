@@ -35,6 +35,9 @@ import {
   Zap,
   Images,
   Archive,
+  Accessibility,
+  Leaf,
+  Eye,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
@@ -55,6 +58,7 @@ import {
   useKeyboardShortcutsHelp,
 } from "@/components/ui/keyboard-shortcuts-help";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import ChatbotWidget from "@/components/ChatbotWidget";
 
 const NAV_ITEMS = [
   {
@@ -269,6 +273,31 @@ const NAV_ITEMS = [
     label: "Business Operations",
     icon: Zap,
     videoKey: "business-operations",
+  },
+  // Phase 7: AI Personalization & Advanced Tools
+  {
+    href: "/portal/identity-wallet",
+    label: "Identity Wallet",
+    icon: Wallet,
+    videoKey: "documents",
+  },
+  {
+    href: "/portal/accessible-travel",
+    label: "Accessible Travel",
+    icon: Accessibility,
+    videoKey: "dashboard",
+  },
+  {
+    href: "/portal/sustainability",
+    label: "Sustainable Travel",
+    icon: Leaf,
+    videoKey: "guides",
+  },
+  {
+    href: "/portal/vr-previews",
+    label: "VR Previews",
+    icon: Eye,
+    videoKey: "guides",
   },
 ];
 
@@ -545,6 +574,9 @@ export default function PortalLayout({
           isOpen={shortcutsHelp.isOpen}
           onClose={shortcutsHelp.close}
         />
+
+        {/* 24/7 AI assistant (floating widget) */}
+        <ChatbotWidget />
       </div>
     </TripProvider>
   );

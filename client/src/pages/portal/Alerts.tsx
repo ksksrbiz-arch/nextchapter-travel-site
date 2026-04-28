@@ -3,16 +3,16 @@ import { trpc } from "@/lib/trpc";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-  Bell,
   Info,
   AlertTriangle,
   AlertOctagon,
   CheckCircle,
-  Loader2,
+  Plane,
 } from "lucide-react";
 import { toast } from "sonner";
 import { NoAlertsEmptyState } from "@/components/ui/empty-states";
 import { AlertsSkeleton } from "@/components/ui/skeletons";
+import { useSSEMessages } from "@/hooks/useSSEMessages";
 
 const SEVERITY_CONFIG = {
   info: {
@@ -38,6 +38,8 @@ const SEVERITY_CONFIG = {
   },
 };
 
+const FLIGHT_PREFIX = /^Flight\s+([A-Z0-9]{2,8}):\s*(.+)$/;
+
 export default function Alerts() {
   const { data: alerts, isLoading, refetch } = trpc.alerts.list.useQuery({});
 
@@ -46,8 +48,20 @@ export default function Alerts() {
     onError: e => toast.error(e.message),
   });
 
+  // Live updates: refetch alerts when a flight_alert SSE event arrives.
+  useSSEMessages({
+    onFlightAlert: payload => {
+      refetch();
+      toast.message(`Flight ${payload.flightNumber}`, {
+        description: payload.message,
+      });
+    },
+  });
+
   const unread = alerts?.filter(a => !a.isRead) ?? [];
   const read = alerts?.filter(a => a.isRead) ?? [];
+
+  const isFlightAlert = (title: string) => FLIGHT_PREFIX.test(title);
 
   return (
     <PortalLayout
@@ -72,7 +86,8 @@ export default function Alerts() {
                 SEVERITY_CONFIG[
                   alert.severity as keyof typeof SEVERITY_CONFIG
                 ] ?? SEVERITY_CONFIG.info;
-              const Icon = config.icon;
+              const flight = isFlightAlert(alert.title);
+              const Icon = flight ? Plane : config.icon;
               return (
                 <div
                   key={alert.id}
@@ -82,25 +97,34 @@ export default function Alerts() {
                     className={`w-5 h-5 flex-shrink-0 mt-0.5 ${config.color}`}
                   />
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-3 mb-1">
+                    <div className="flex items-start justify-between gap-3 mb-1 flex-wrap">
                       <h4 className="font-sans font-semibold text-foreground">
                         {alert.title}
                       </h4>
-                      <Badge
-                        className={`text-xs font-sans flex-shrink-0 ${config.badge}`}
-                      >
-                        {config.label}
-                      </Badge>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        {flight && (
+                          <Badge className="bg-sky-100 text-sky-800 border-0 text-xs font-sans">
+                            Flight
+                          </Badge>
+                        )}
+                        <Badge
+                          className={`text-xs font-sans ${config.badge}`}
+                        >
+                          {config.label}
+                        </Badge>
+                      </div>
                     </div>
                     <p className="text-foreground/80 font-sans text-sm leading-relaxed">
                       {alert.content}
                     </p>
                     <div className="flex items-center justify-between mt-3">
                       <p className="text-muted-foreground font-sans text-xs">
-                        {new Date(alert.createdAt).toLocaleDateString("en-US", {
+                        {new Date(alert.createdAt).toLocaleString("en-US", {
                           month: "long",
                           day: "numeric",
                           year: "numeric",
+                          hour: "numeric",
+                          minute: "2-digit",
                         })}
                       </p>
                       <Button
@@ -132,7 +156,8 @@ export default function Alerts() {
                 SEVERITY_CONFIG[
                   alert.severity as keyof typeof SEVERITY_CONFIG
                 ] ?? SEVERITY_CONFIG.info;
-              const Icon = config.icon;
+              const flight = isFlightAlert(alert.title);
+              const Icon = flight ? Plane : config.icon;
               return (
                 <div
                   key={alert.id}

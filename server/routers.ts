@@ -35,6 +35,7 @@ import {
   updateDestinationGuide,
   getTravelAlerts,
   markAlertRead,
+  createTravelAlert,
   getAllUsers,
   getUserById,
   updateUserProfile,
@@ -51,14 +52,36 @@ import {
   getInviteToken,
   markInviteTokenUsed,
   getInviteTokensCreatedBy,
+  getIdentityWalletEntries,
+  createIdentityWalletEntry,
+  deleteIdentityWalletEntry,
+  markIdentityWalletEntryVerified,
+  getAccessibilityProfile,
+  upsertAccessibilityProfile,
+  recordClientEvent,
+  getRecentClientEvents,
+  createCollaborator,
+  listCollaboratorsForTrip,
+  getCollaboratorByToken,
+  acceptCollaboratorInvite,
+  revokeCollaborator,
 } from "./db";
 import {
   broadcastMessage,
   broadcastTyping,
   broadcastRead,
+  broadcastFlightAlert,
 } from "./messageBroker";
 import { storagePut } from "./storage";
 import { sendInviteEmail, notifyOwnerOfInquiry } from "./email";
+import {
+  generateItinerary,
+  parseItineraryFromText,
+  getPersonalizedSuggestions,
+  chatbotQuery,
+} from "./ai";
+import { searchFlights, searchHotels, bookOffer } from "./gds";
+import { nanoid } from "nanoid";
 
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
   if (ctx.user.role !== "admin") {
@@ -869,6 +892,381 @@ export const appRouter = router({
             error: err instanceof Error ? err.message : "Unknown error",
           };
         }
+      }),
+  }),
+
+  // ─── AI: Trip Genius, Import Wizard, Recommendations, Chatbot ────────────
+  ai: router({
+    generateItinerary: adminProcedure
+      .input(
+        z.object({
+          destination: z.string().min(2),
+          startDate: z.date().optional(),
+          endDate: z.date().optional(),
+          travelStyle: z.string().optional(),
+          budgetTier: z.enum(["budget", "mid", "luxury"]).optional(),
+          groupSize: z.number().int().positive().optional(),
+          groupType: z.string().optional(),
+          interests: z.array(z.string()).optional(),
+          notes: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        return await generateItinerary({
+          destination: input.destination,
+          startDate: input.startDate ?? null,
+          endDate: input.endDate ?? null,
+          travelStyle: input.travelStyle,
+          budgetTier: input.budgetTier,
+          groupSize: input.groupSize,
+          groupType: input.groupType,
+          interests: input.interests,
+          notes: input.notes,
+        });
+      }),
+    parseItineraryFromText: adminProcedure
+      .input(z.object({ text: z.string().min(1).max(60000) }))
+      .mutation(async ({ input }) => {
+        return await parseItineraryFromText(input.text);
+      }),
+    getPersonalizedSuggestions: protectedProcedure
+      .input(
+        z
+          .object({
+            destination: z.string().optional(),
+            daysUntilTrip: z.number().int().nullable().optional(),
+          })
+          .optional()
+      )
+      .query(async ({ ctx, input }) => {
+        const events = await getRecentClientEvents(ctx.user.id, 25);
+        return await getPersonalizedSuggestions(
+          events.map(e => ({ eventType: e.eventType, payload: e.payload })),
+          {
+            destination: input?.destination,
+            daysUntilTrip: input?.daysUntilTrip ?? null,
+          }
+        );
+      }),
+    chatbot: protectedProcedure
+      .input(
+        z.object({
+          question: z.string().min(1).max(2000),
+          history: z
+            .array(
+              z.object({
+                role: z.enum(["user", "assistant"]),
+                content: z.string(),
+              })
+            )
+            .optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        return await chatbotQuery(input.question, input.history ?? []);
+      }),
+  }),
+
+  // ─── Direct GDS (Sabre) integration — mock-backed for demo ────────────────
+  gds: router({
+    searchFlights: adminProcedure
+      .input(
+        z.object({
+          origin: z.string().min(2).max(8),
+          destination: z.string().min(2).max(8),
+          departureDate: z.string(),
+          returnDate: z.string().optional(),
+          passengers: z.number().int().positive().optional(),
+          cabin: z.enum(["economy", "premium", "business", "first"]).optional(),
+        })
+      )
+      .query(async ({ input }) => {
+        return await searchFlights(input);
+      }),
+    searchHotels: adminProcedure
+      .input(
+        z.object({
+          city: z.string().min(2),
+          checkIn: z.string(),
+          checkOut: z.string(),
+          guests: z.number().int().positive().optional(),
+          ecoOnly: z.boolean().optional(),
+        })
+      )
+      .query(async ({ input }) => {
+        return await searchHotels(input);
+      }),
+    bookFlight: adminProcedure
+      .input(
+        z.object({
+          offerId: z.string(),
+          passengers: z.number().int().positive(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        return await bookOffer({
+          kind: "flight",
+          offerId: input.offerId,
+          passengers: input.passengers,
+        });
+      }),
+    bookHotel: adminProcedure
+      .input(
+        z.object({
+          offerId: z.string(),
+          guests: z.number().int().positive(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        return await bookOffer({
+          kind: "hotel",
+          offerId: input.offerId,
+          guests: input.guests,
+        });
+      }),
+  }),
+
+  // ─── Identity Wallet (verified credentials & payment tokens) ─────────────
+  identityWallet: router({
+    list: protectedProcedure.query(async ({ ctx }) => {
+      return await getIdentityWalletEntries(ctx.user.id);
+    }),
+    create: protectedProcedure
+      .input(
+        z.object({
+          documentType: z.enum([
+            "passport",
+            "id_card",
+            "drivers_license",
+            "tsa_precheck",
+            "global_entry",
+            "loyalty_number",
+            "payment_token",
+            "other",
+          ]),
+          label: z.string().min(1).max(255),
+          // Public-safe hint only — never raw card numbers
+          maskedHint: z.string().max(64).optional(),
+          // Token reference from a PCI-compliant vault (e.g. Stripe pm_…)
+          tokenRef: z.string().max(512).optional(),
+          expiryDate: z.date().optional(),
+          metadata: z.record(z.string(), z.unknown()).optional(),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        // Reject anything that looks like a raw PAN
+        if (input.tokenRef && /\b\d{12,19}\b/.test(input.tokenRef)) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message:
+              "Raw card numbers are not allowed. Provide a tokenized reference instead.",
+          });
+        }
+        return await createIdentityWalletEntry({
+          userId: ctx.user.id,
+          documentType: input.documentType,
+          label: input.label,
+          maskedHint: input.maskedHint ?? null,
+          tokenRef: input.tokenRef ?? null,
+          expiryDate: input.expiryDate ?? null,
+          metadata: input.metadata ?? null,
+        });
+      }),
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        return await deleteIdentityWalletEntry(input.id, ctx.user.id);
+      }),
+    markVerified: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        return await markIdentityWalletEntryVerified(input.id, ctx.user.id);
+      }),
+  }),
+
+  // ─── Accessibility profile ───────────────────────────────────────────────
+  accessibility: router({
+    get: protectedProcedure
+      .input(z.object({ userId: z.number().optional() }).optional())
+      .query(async ({ ctx, input }) => {
+        // Admins can fetch any profile; clients can only fetch their own
+        const targetId =
+          ctx.user.role === "admin" && input?.userId
+            ? input.userId
+            : ctx.user.id;
+        return await getAccessibilityProfile(targetId);
+      }),
+    upsert: protectedProcedure
+      .input(
+        z.object({
+          mobilityNeeds: z.array(z.string()).optional(),
+          neurodivergentNeeds: z.array(z.string()).optional(),
+          medicalNeeds: z.array(z.string()).optional(),
+          dietaryRestrictions: z.array(z.string()).optional(),
+          serviceAnimal: z.boolean().optional(),
+          notes: z.string().optional(),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        return await upsertAccessibilityProfile({
+          userId: ctx.user.id,
+          mobilityNeeds: input.mobilityNeeds ?? null,
+          neurodivergentNeeds: input.neurodivergentNeeds ?? null,
+          medicalNeeds: input.medicalNeeds ?? null,
+          dietaryRestrictions: input.dietaryRestrictions ?? null,
+          serviceAnimal: input.serviceAnimal ?? false,
+          notes: input.notes ?? null,
+        });
+      }),
+  }),
+
+  // ─── Behavior-tracking events ────────────────────────────────────────────
+  events: router({
+    record: protectedProcedure
+      .input(
+        z.object({
+          eventType: z.string().min(1).max(64),
+          payload: z.record(z.string(), z.unknown()).optional(),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        return await recordClientEvent({
+          userId: ctx.user.id,
+          eventType: input.eventType,
+          payload: input.payload ?? null,
+        });
+      }),
+    listMine: protectedProcedure
+      .input(z.object({ limit: z.number().int().positive().max(200).optional() }).optional())
+      .query(async ({ ctx, input }) => {
+        return await getRecentClientEvents(ctx.user.id, input?.limit ?? 50);
+      }),
+  }),
+
+  // ─── Collaborator network (tour operators co-editing trips) ──────────────
+  collaborators: router({
+    invite: adminProcedure
+      .input(
+        z.object({
+          tripId: z.number(),
+          email: z.string().email(),
+          name: z.string().optional(),
+          role: z.enum(["viewer", "editor"]).optional(),
+          expiresInDays: z.number().int().positive().max(60).optional(),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        const expiresAt = new Date(
+          Date.now() + (input.expiresInDays ?? 14) * 24 * 60 * 60 * 1000
+        );
+        const token = nanoid(32);
+        const created = await createCollaborator({
+          tripId: input.tripId,
+          email: input.email,
+          name: input.name ?? null,
+          role: input.role ?? "viewer",
+          token,
+          expiresAt,
+          invitedByUserId: ctx.user.id,
+        });
+        return created;
+      }),
+    list: adminProcedure
+      .input(z.object({ tripId: z.number() }))
+      .query(async ({ input }) => {
+        return await listCollaboratorsForTrip(input.tripId);
+      }),
+    validate: publicProcedure
+      .input(z.object({ token: z.string() }))
+      .query(async ({ input }) => {
+        const c = await getCollaboratorByToken(input.token);
+        if (!c) return { valid: false, reason: "Token not found" };
+        if (new Date() > c.expiresAt)
+          return { valid: false, reason: "This invite has expired" };
+        return {
+          valid: true,
+          collaborator: {
+            tripId: c.tripId,
+            email: c.email,
+            name: c.name,
+            role: c.role,
+            acceptedAt: c.acceptedAt,
+          },
+        };
+      }),
+    accept: protectedProcedure
+      .input(z.object({ token: z.string() }))
+      .mutation(async ({ ctx, input }) => {
+        const c = await getCollaboratorByToken(input.token);
+        if (!c)
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Collaborator invite not found",
+          });
+        if (new Date() > c.expiresAt)
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Collaborator invite expired",
+          });
+        await acceptCollaboratorInvite(input.token, ctx.user.id);
+        return { success: true, tripId: c.tripId, role: c.role };
+      }),
+    revoke: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        return await revokeCollaborator(input.id);
+      }),
+  }),
+
+  // ─── Real-time flight alerts (extends alerts router via SSE) ─────────────
+  flightAlerts: router({
+    sendUpdate: adminProcedure
+      .input(
+        z.object({
+          userId: z.number(),
+          tripId: z.number().nullable().optional(),
+          flightNumber: z.string().min(2).max(16),
+          status: z.enum([
+            "on_time",
+            "delayed",
+            "cancelled",
+            "boarding",
+            "departed",
+            "arrived",
+            "gate_change",
+          ]),
+          newDepartureIso: z.string().optional(),
+          newArrivalIso: z.string().optional(),
+          newGate: z.string().optional(),
+          message: z.string().min(1).max(500),
+          severity: z.enum(["info", "warning", "urgent"]).optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const severity = input.severity ?? "info";
+        // Persist as a travel alert with a structured title
+        const alert = await createTravelAlert({
+          tripId: input.tripId ?? null,
+          userId: input.userId,
+          title: `Flight ${input.flightNumber}: ${input.status.replace("_", " ")}`,
+          content: input.message,
+          severity,
+        });
+        // Push via SSE
+        broadcastFlightAlert({
+          alertId: alert.id,
+          userId: input.userId,
+          tripId: input.tripId ?? null,
+          flightNumber: input.flightNumber,
+          status: input.status,
+          newDepartureIso: input.newDepartureIso ?? null,
+          newArrivalIso: input.newArrivalIso ?? null,
+          newGate: input.newGate ?? null,
+          message: input.message,
+          severity,
+          createdAt: new Date(),
+        });
+        return alert;
       }),
   }),
 });

@@ -358,9 +358,15 @@ function Step2({
 function Step3({
   items,
   setItems,
+  destination,
+  startDate,
+  endDate,
 }: {
   items: ItineraryDraft[];
   setItems: (items: ItineraryDraft[]) => void;
+  destination?: string;
+  startDate?: string;
+  endDate?: string;
 }) {
   const [newItem, setNewItem] = useState<Omit<ItineraryDraft, "id">>({
     dayNumber: 1,
@@ -370,6 +376,48 @@ function Step3({
     location: "",
     category: "activity",
   });
+  // ─── AI Trip Genius ───────────────────────────────────────────────────────
+  const [travelStyle, setTravelStyle] = useState("balanced");
+  const [budgetTier, setBudgetTier] = useState<"budget" | "mid" | "luxury">(
+    "mid"
+  );
+  const [groupSize, setGroupSize] = useState<number>(2);
+  const [aiSource, setAiSource] = useState<"llm" | "mock" | null>(null);
+
+  const generate = trpc.ai.generateItinerary.useMutation({
+    onSuccess: data => {
+      const drafts: ItineraryDraft[] = data.items.map(it => ({
+        id: uid(),
+        dayNumber: it.dayNumber,
+        time: it.time ?? "",
+        title: it.title,
+        description: it.description ?? "",
+        location: it.location ?? "",
+        category: it.category,
+      }));
+      setItems([...items, ...drafts]);
+      setAiSource(data.source);
+      toast.success(
+        `AI added ${drafts.length} items${data.source === "mock" ? " (mock)" : ""}`
+      );
+    },
+    onError: e => toast.error(e.message),
+  });
+
+  const runGenius = () => {
+    if (!destination?.trim()) {
+      toast.error("Set a destination in Step 1 first");
+      return;
+    }
+    generate.mutate({
+      destination,
+      startDate: startDate ? new Date(startDate) : undefined,
+      endDate: endDate ? new Date(endDate) : undefined,
+      travelStyle,
+      budgetTier,
+      groupSize,
+    });
+  };
 
   const addItem = () => {
     if (!newItem.title) {
@@ -397,6 +445,104 @@ function Step3({
 
   return (
     <div className="space-y-5">
+      {/* AI Trip Genius panel */}
+      <Card className="border border-primary/40 bg-gradient-to-br from-primary/5 to-secondary/5">
+        <CardContent className="p-4 space-y-3">
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <p className="text-sm font-sans font-semibold text-foreground flex items-center gap-2">
+              <Mountain className="w-4 h-4 text-primary" />
+              AI Trip Genius
+              {aiSource && (
+                <Badge
+                  variant="outline"
+                  className={
+                    aiSource === "llm"
+                      ? "border-primary text-primary"
+                      : "border-amber-500 text-amber-700"
+                  }
+                >
+                  {aiSource === "llm" ? "AI generated" : "Mock fallback"}
+                </Badge>
+              )}
+            </p>
+            <span className="text-xs text-muted-foreground font-sans">
+              Generates day-by-day items from client preferences.
+            </span>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div>
+              <Label className="font-sans text-xs">Travel style</Label>
+              <Select value={travelStyle} onValueChange={setTravelStyle}>
+                <SelectTrigger className="mt-1 h-8 text-sm font-sans">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {[
+                    "balanced",
+                    "adventurous",
+                    "relaxing",
+                    "cultural",
+                    "foodie",
+                    "luxury",
+                    "family",
+                  ].map(s => (
+                    <SelectItem key={s} value={s} className="capitalize">
+                      {s}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="font-sans text-xs">Budget tier</Label>
+              <Select
+                value={budgetTier}
+                onValueChange={v =>
+                  setBudgetTier(v as "budget" | "mid" | "luxury")
+                }
+              >
+                <SelectTrigger className="mt-1 h-8 text-sm font-sans">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="budget">Budget</SelectItem>
+                  <SelectItem value="mid">Mid</SelectItem>
+                  <SelectItem value="luxury">Luxury</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="font-sans text-xs">Group size</Label>
+              <Input
+                type="number"
+                min={1}
+                value={groupSize}
+                onChange={e =>
+                  setGroupSize(Math.max(1, Number(e.target.value) || 1))
+                }
+                className="mt-1 h-8 text-sm font-sans"
+              />
+            </div>
+            <div className="flex items-end">
+              <Button
+                type="button"
+                onClick={runGenius}
+                disabled={generate.isPending}
+                className="w-full h-8 font-sans"
+                size="sm"
+              >
+                {generate.isPending ? (
+                  <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" />
+                ) : (
+                  <Mountain className="w-3.5 h-3.5 mr-1" />
+                )}
+                Generate
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Add form */}
       <Card className="border-dashed border-2 border-primary/30">
         <CardContent className="p-4 space-y-3">
@@ -706,9 +852,15 @@ function Step4({
 function Step5({
   items,
   setItems,
+  destination,
+  startDate,
+  endDate,
 }: {
   items: BookingDraft[];
   setItems: (items: BookingDraft[]) => void;
+  destination?: string;
+  startDate?: string;
+  endDate?: string;
 }) {
   const [newItem, setNewItem] = useState<Omit<BookingDraft, "id">>({
     type: "flight",
@@ -721,6 +873,36 @@ function Step5({
     currency: "USD",
     notes: "",
   });
+
+  // GDS Live Search state
+  const [gdsTab, setGdsTab] = useState<"flights" | "hotels">("flights");
+  const [origin, setOrigin] = useState("");
+  const flightSearch = trpc.gds.searchFlights.useQuery(
+    {
+      origin: origin || "JFK",
+      destination: (destination || "MCO").slice(0, 3).toUpperCase(),
+      departureDate: startDate || new Date().toISOString().slice(0, 10),
+      returnDate: endDate,
+    },
+    { enabled: false }
+  );
+  const hotelSearch = trpc.gds.searchHotels.useQuery(
+    {
+      city: destination || "",
+      checkIn: startDate || new Date().toISOString().slice(0, 10),
+      checkOut:
+        endDate ||
+        new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
+    },
+    { enabled: false }
+  );
+  const [searched, setSearched] = useState(false);
+
+  const runSearch = () => {
+    setSearched(true);
+    if (gdsTab === "flights") flightSearch.refetch();
+    else hotelSearch.refetch();
+  };
 
   const addItem = () => {
     if (!newItem.title) {
@@ -745,6 +927,235 @@ function Step5({
 
   return (
     <div className="space-y-5">
+      {/* GDS Live Search */}
+      <Card className="border border-primary/40 bg-gradient-to-br from-primary/5 to-secondary/5">
+        <CardContent className="p-4 space-y-3">
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <p className="text-sm font-sans font-semibold flex items-center gap-2">
+              <Plane className="w-4 h-4 text-primary" /> GDS Live Search
+            </p>
+            <Badge variant="outline" className="text-xs">
+              Sabre · cached 5 min
+            </Badge>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              size="sm"
+              variant={gdsTab === "flights" ? "default" : "outline"}
+              onClick={() => setGdsTab("flights")}
+            >
+              Flights
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant={gdsTab === "hotels" ? "default" : "outline"}
+              onClick={() => setGdsTab("hotels")}
+            >
+              Hotels
+            </Button>
+          </div>
+          {gdsTab === "flights" && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+              <div>
+                <Label className="font-sans text-xs">Origin (IATA)</Label>
+                <Input
+                  value={origin}
+                  onChange={e => setOrigin(e.target.value.toUpperCase())}
+                  placeholder="JFK"
+                  className="mt-1 h-8 text-sm font-sans uppercase"
+                />
+              </div>
+              <div>
+                <Label className="font-sans text-xs">Destination</Label>
+                <Input
+                  value={destination ?? ""}
+                  readOnly
+                  className="mt-1 h-8 text-sm font-sans bg-muted"
+                />
+              </div>
+              <div>
+                <Label className="font-sans text-xs">Depart</Label>
+                <Input
+                  value={startDate ?? ""}
+                  readOnly
+                  className="mt-1 h-8 text-sm font-sans bg-muted"
+                />
+              </div>
+              <div className="flex items-end">
+                <Button
+                  size="sm"
+                  type="button"
+                  className="w-full h-8 font-sans"
+                  onClick={runSearch}
+                  disabled={flightSearch.isFetching}
+                >
+                  {flightSearch.isFetching ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    "Search"
+                  )}
+                </Button>
+              </div>
+            </div>
+          )}
+          {gdsTab === "hotels" && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+              <div className="md:col-span-2">
+                <Label className="font-sans text-xs">City</Label>
+                <Input
+                  value={destination ?? ""}
+                  readOnly
+                  className="mt-1 h-8 text-sm font-sans bg-muted"
+                />
+              </div>
+              <div>
+                <Label className="font-sans text-xs">Check-in</Label>
+                <Input
+                  value={startDate ?? ""}
+                  readOnly
+                  className="mt-1 h-8 text-sm font-sans bg-muted"
+                />
+              </div>
+              <div className="flex items-end">
+                <Button
+                  size="sm"
+                  type="button"
+                  className="w-full h-8 font-sans"
+                  onClick={runSearch}
+                  disabled={hotelSearch.isFetching}
+                >
+                  {hotelSearch.isFetching ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    "Search"
+                  )}
+                </Button>
+              </div>
+            </div>
+          )}
+          {searched &&
+            gdsTab === "flights" &&
+            !flightSearch.isFetching &&
+            (flightSearch.data?.length ?? 0) > 0 && (
+              <div className="space-y-1.5 max-h-72 overflow-y-auto">
+                {flightSearch.data!.map(o => (
+                  <div
+                    key={o.id}
+                    className="flex items-center justify-between gap-3 p-2 rounded-lg border border-border bg-card"
+                  >
+                    <div className="min-w-0 text-sm font-sans">
+                      <span className="font-semibold">
+                        {o.airline.name} {o.flightNumber}
+                      </span>
+                      <span className="text-muted-foreground ml-2">
+                        {o.origin} → {o.destination} ·{" "}
+                        {o.stops === 0 ? "Direct" : `${o.stops} stop`}
+                      </span>
+                      <div className="text-xs text-muted-foreground">
+                        {Math.floor(o.durationMinutes / 60)}h{" "}
+                        {o.durationMinutes % 60}m · {o.cabin} ·{" "}
+                        {o.carbonKg} kg CO₂
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <span className="font-serif font-semibold">
+                        ${o.priceUsd}
+                      </span>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          setItems([
+                            ...items,
+                            {
+                              id: uid(),
+                              type: "flight",
+                              title: `${o.airline.name} ${o.flightNumber}`,
+                              provider: o.airline.name,
+                              confirmationNumber: "",
+                              checkIn: o.departureIso.slice(0, 10),
+                              checkOut: o.arrivalIso.slice(0, 10),
+                              amount: String(o.priceUsd),
+                              currency: "USD",
+                              notes: `${o.origin}→${o.destination} · ${o.cabin}`,
+                            },
+                          ]);
+                          toast.success("Added to bookings");
+                        }}
+                      >
+                        Add
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          {searched &&
+            gdsTab === "hotels" &&
+            !hotelSearch.isFetching &&
+            (hotelSearch.data?.length ?? 0) > 0 && (
+              <div className="space-y-1.5 max-h-72 overflow-y-auto">
+                {hotelSearch.data!.map(o => (
+                  <div
+                    key={o.id}
+                    className="flex items-center justify-between gap-3 p-2 rounded-lg border border-border bg-card"
+                  >
+                    <div className="min-w-0 text-sm font-sans">
+                      <span className="font-semibold">{o.name}</span>
+                      <span className="text-muted-foreground ml-2">
+                        {"★".repeat(o.starRating)}
+                      </span>
+                      {o.ecoCertified && (
+                        <Badge className="ml-2 bg-emerald-100 text-emerald-800 border-0 text-[10px]">
+                          Eco
+                        </Badge>
+                      )}
+                      <div className="text-xs text-muted-foreground">
+                        ${o.pricePerNightUsd}/night · ${o.totalPriceUsd} total
+                      </div>
+                    </div>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        setItems([
+                          ...items,
+                          {
+                            id: uid(),
+                            type: "hotel",
+                            title: o.name,
+                            provider: o.vendor,
+                            confirmationNumber: "",
+                            checkIn: startDate ?? "",
+                            checkOut: endDate ?? "",
+                            amount: String(o.totalPriceUsd),
+                            currency: "USD",
+                            notes: o.ecoCertified
+                              ? "Eco-certified property"
+                              : "",
+                          },
+                        ]);
+                        toast.success("Added to bookings");
+                      }}
+                    >
+                      Add
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          {searched &&
+            ((gdsTab === "flights" && flightSearch.data?.length === 0) ||
+              (gdsTab === "hotels" && hotelSearch.data?.length === 0)) && (
+              <p className="text-xs text-muted-foreground">No results.</p>
+            )}
+        </CardContent>
+      </Card>
+
       <Card className="border-dashed border-2 border-primary/30">
         <CardContent className="p-4 space-y-3">
           <p className="text-sm font-sans font-semibold text-foreground">
@@ -1111,9 +1522,25 @@ export default function TripBuilderWizard() {
               />
             )}
             {step === 2 && <Step2 form={step2} setForm={setStep2} />}
-            {step === 3 && <Step3 items={itinerary} setItems={setItinerary} />}
+            {step === 3 && (
+              <Step3
+                items={itinerary}
+                setItems={setItinerary}
+                destination={step1.destination}
+                startDate={step2.startDate}
+                endDate={step2.endDate}
+              />
+            )}
             {step === 4 && <Step4 items={packing} setItems={setPacking} />}
-            {step === 5 && <Step5 items={bookings} setItems={setBookings} />}
+            {step === 5 && (
+              <Step5
+                items={bookings}
+                setItems={setBookings}
+                destination={step1.destination}
+                startDate={step2.startDate}
+                endDate={step2.endDate}
+              />
+            )}
 
             {/* Navigation */}
             <div className="flex gap-3 mt-8 pt-5 border-t border-border">

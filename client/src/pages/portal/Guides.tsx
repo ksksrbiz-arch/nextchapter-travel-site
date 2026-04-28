@@ -1,9 +1,11 @@
 import PortalLayout from "@/components/PortalLayout";
 import { trpc } from "@/lib/trpc";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { Link } from "wouter";
+import { useState, useMemo } from "react";
 import {
   Globe,
   MapPin,
@@ -15,6 +17,8 @@ import {
   Lightbulb,
   Loader2,
   Search,
+  TrendingUp,
+  Eye,
 } from "lucide-react";
 import { NoGuidesEmptyState, NoResults } from "@/components/ui/empty-states";
 import { GuidesSkeleton } from "@/components/ui/skeletons";
@@ -23,6 +27,7 @@ export default function Guides() {
   const { data: guides, isLoading } = trpc.guides.list.useQuery();
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<number | null>(null);
+  const [tab, setTab] = useState<"all" | "trending">("all");
 
   const filtered =
     guides?.filter(
@@ -30,6 +35,17 @@ export default function Guides() {
         g.destination.toLowerCase().includes(search.toLowerCase()) ||
         (g.country ?? "").toLowerCase().includes(search.toLowerCase())
     ) ?? [];
+
+  const trending = useMemo(
+    () =>
+      filtered.filter(g => {
+        const tags = (g as { trendingTags?: unknown }).trendingTags;
+        return Array.isArray(tags) && tags.length > 0;
+      }),
+    [filtered]
+  );
+
+  const visible = tab === "trending" ? trending : filtered;
 
   const selectedGuide =
     selected !== null ? guides?.find(g => g.id === selected) : null;
@@ -231,15 +247,42 @@ export default function Guides() {
       title="Destination Guides"
       subtitle="Local tips and essential info for your destinations"
     >
-      {/* Search */}
-      <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-        <Input
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          placeholder="Search destinations..."
-          className="pl-9 font-sans"
-        />
+      {/* Search + tabs */}
+      <div className="flex flex-col md:flex-row gap-3 mb-6">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Search destinations..."
+            className="pl-9 font-sans"
+          />
+        </div>
+        <div className="flex gap-2">
+          <Button
+            type="button"
+            variant={tab === "all" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setTab("all")}
+          >
+            All
+          </Button>
+          <Button
+            type="button"
+            variant={tab === "trending" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setTab("trending")}
+            className="font-sans"
+          >
+            <TrendingUp className="w-4 h-4 mr-1" />
+            Trending
+            {trending.length > 0 && (
+              <Badge variant="secondary" className="ml-2">
+                {trending.length}
+              </Badge>
+            )}
+          </Button>
+        </div>
       </div>
 
       {/* Loading */}
@@ -247,64 +290,129 @@ export default function Guides() {
 
       {/* Empty state */}
       {!isLoading &&
-        filtered.length === 0 &&
-        (search ? <NoResults query={search} /> : <NoGuidesEmptyState />)}
+        visible.length === 0 &&
+        (search ? (
+          <NoResults query={search} />
+        ) : tab === "trending" ? (
+          <Card>
+            <CardContent className="py-10 text-center">
+              <TrendingUp className="w-10 h-10 mx-auto text-muted-foreground mb-2" />
+              <p className="font-sans text-foreground/70">
+                No trending guides yet — Jessica curates these from social
+                inspiration.
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <NoGuidesEmptyState />
+        ))}
 
       {/* Guides grid */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filtered.map(guide => (
-          <Card
-            key={guide.id}
-            className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group"
-            onClick={() => setSelected(guide.id)}
-          >
-            <div className="relative h-40 bg-muted">
-              {guide.heroImageUrl ? (
-                <img
-                  src={guide.heroImageUrl}
-                  alt={guide.destination}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-secondary/20">
-                  <Globe className="w-12 h-12 text-primary/40" />
+        {visible.map(guide => {
+          const tags =
+            ((guide as { trendingTags?: unknown }).trendingTags as
+              | string[]
+              | null) ?? null;
+          const vrTourUrl =
+            (guide as { vrTourUrl?: string | null }).vrTourUrl ?? null;
+          return (
+            <Card
+              key={guide.id}
+              className="overflow-hidden hover:shadow-lg transition-shadow group"
+            >
+              <div
+                className="relative h-40 bg-muted cursor-pointer"
+                onClick={() => setSelected(guide.id)}
+              >
+                {guide.heroImageUrl ? (
+                  <img
+                    src={guide.heroImageUrl}
+                    alt={guide.destination}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-secondary/20">
+                    <Globe className="w-12 h-12 text-primary/40" />
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                <div className="absolute bottom-3 left-4 text-white">
+                  <h3 className="font-serif font-bold text-lg leading-tight">
+                    {guide.destination}
+                  </h3>
+                  {guide.country && (
+                    <p className="text-white/80 text-xs font-sans">
+                      {guide.country}
+                    </p>
+                  )}
                 </div>
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-              <div className="absolute bottom-3 left-4 text-white">
-                <h3 className="font-serif font-bold text-lg leading-tight">
-                  {guide.destination}
-                </h3>
-                {guide.country && (
-                  <p className="text-white/80 text-xs font-sans">
-                    {guide.country}
+                {Array.isArray(tags) && tags.length > 0 && (
+                  <div className="absolute top-3 right-3">
+                    <Badge className="bg-pink-500/90 text-white border-0 text-xs font-sans">
+                      <TrendingUp className="w-3 h-3 mr-1" />
+                      Trending
+                    </Badge>
+                  </div>
+                )}
+              </div>
+              <CardContent className="p-4">
+                {guide.overview && (
+                  <p className="text-muted-foreground font-sans text-sm line-clamp-2 mb-3">
+                    {guide.overview}
                   </p>
                 )}
-              </div>
-            </div>
-            <CardContent className="p-4">
-              {guide.overview && (
-                <p className="text-muted-foreground font-sans text-sm line-clamp-2 mb-3">
-                  {guide.overview}
-                </p>
-              )}
-              <div className="flex flex-wrap gap-2">
-                {guide.currency && (
-                  <Badge className="bg-muted text-muted-foreground border-0 font-sans text-xs">
-                    💰 {guide.currency}
-                  </Badge>
-                )}
-                {guide.language && (
-                  <Badge className="bg-muted text-muted-foreground border-0 font-sans text-xs">
-                    🗣️ {guide.language}
-                  </Badge>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+                <div className="flex flex-wrap gap-2">
+                  {guide.currency && (
+                    <Badge className="bg-muted text-muted-foreground border-0 font-sans text-xs">
+                      💰 {guide.currency}
+                    </Badge>
+                  )}
+                  {guide.language && (
+                    <Badge className="bg-muted text-muted-foreground border-0 font-sans text-xs">
+                      🗣️ {guide.language}
+                    </Badge>
+                  )}
+                </div>
+                <div className="mt-3 flex items-center gap-2">
+                  {vrTourUrl ? (
+                    <Button
+                      asChild
+                      size="sm"
+                      variant="outline"
+                      className="h-7 text-xs"
+                    >
+                      <a
+                        href={vrTourUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={e => e.stopPropagation()}
+                      >
+                        <Eye className="w-3 h-3 mr-1" /> Virtual tour
+                      </a>
+                    </Button>
+                  ) : (
+                    <Button
+                      asChild
+                      size="sm"
+                      variant="ghost"
+                      className="h-7 text-xs text-muted-foreground"
+                    >
+                      <Link
+                        href="/portal/vr-previews"
+                        onClick={e => e.stopPropagation()}
+                      >
+                        <Eye className="w-3 h-3 mr-1" /> Browse VR previews
+                      </Link>
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
     </PortalLayout>
   );

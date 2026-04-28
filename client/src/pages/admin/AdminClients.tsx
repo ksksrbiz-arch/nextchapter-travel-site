@@ -298,6 +298,9 @@ export function AdminClientDetail() {
     trpc.admin.getClient.useQuery({ id: clientId });
   const { data: trips, isLoading: tripsLoading } =
     trpc.admin.getClientTrips.useQuery({ userId: clientId });
+  const { data: accessibility } = trpc.accessibility.get.useQuery({
+    userId: clientId,
+  });
 
   if (clientLoading) {
     return (
@@ -405,6 +408,85 @@ export function AdminClientDetail() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Accessibility profile */}
+        {accessibility && (
+          <Card className="border-emerald-200 bg-emerald-50/50 lg:col-span-1">
+            <CardContent className="p-5">
+              <h4 className="font-serif font-semibold text-foreground mb-3 text-sm">
+                Accessibility Profile
+              </h4>
+              <div className="space-y-2 text-xs font-sans">
+                {Array.isArray(accessibility.mobilityNeeds) &&
+                  accessibility.mobilityNeeds.length > 0 && (
+                    <div>
+                      <p className="uppercase tracking-wide text-muted-foreground mb-0.5">
+                        Mobility
+                      </p>
+                      <div className="flex flex-wrap gap-1">
+                        {(accessibility.mobilityNeeds as string[]).map(n => (
+                          <Badge
+                            key={n}
+                            className="bg-emerald-100 text-emerald-800 border-0 text-[10px]"
+                          >
+                            {n}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                {Array.isArray(accessibility.medicalNeeds) &&
+                  accessibility.medicalNeeds.length > 0 && (
+                    <div>
+                      <p className="uppercase tracking-wide text-muted-foreground mb-0.5">
+                        Medical
+                      </p>
+                      <div className="flex flex-wrap gap-1">
+                        {(accessibility.medicalNeeds as string[]).map(n => (
+                          <Badge
+                            key={n}
+                            className="bg-amber-100 text-amber-800 border-0 text-[10px]"
+                          >
+                            {n}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                {Array.isArray(accessibility.dietaryRestrictions) &&
+                  accessibility.dietaryRestrictions.length > 0 && (
+                    <div>
+                      <p className="uppercase tracking-wide text-muted-foreground mb-0.5">
+                        Dietary
+                      </p>
+                      <div className="flex flex-wrap gap-1">
+                        {(accessibility.dietaryRestrictions as string[]).map(
+                          n => (
+                            <Badge
+                              key={n}
+                              className="bg-blue-100 text-blue-800 border-0 text-[10px]"
+                            >
+                              {n}
+                            </Badge>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  )}
+                {accessibility.serviceAnimal && (
+                  <Badge className="bg-emerald-100 text-emerald-800 border-0 text-[10px]">
+                    Service animal
+                  </Badge>
+                )}
+                {accessibility.notes && (
+                  <p className="text-muted-foreground italic mt-2">
+                    "{accessibility.notes}"
+                  </p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Trips */}
         <div className="lg:col-span-2">

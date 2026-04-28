@@ -5,6 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FormFieldWrapper } from "@/components/ui/form-errors";
 import { EmptyState } from "@/components/ui/empty-states";
+import {
+  CabinAssignmentGrid,
+  GroupManifest,
+} from "@/components/GroupBookingEnhancements";
 
 interface TravelCompanion {
   id: string;
@@ -289,6 +293,10 @@ export function GroupTravelCoordination() {
           </div>
         </div>
       </Card>
+
+      {/* Group booking enhancements */}
+      <CabinAssignmentGrid />
+      <GroupManifest />
 
       {/* Collaboration Tips */}
       <Card className="border-blue-500/20 bg-blue-950/20 p-4">

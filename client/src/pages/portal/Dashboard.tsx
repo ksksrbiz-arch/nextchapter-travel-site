@@ -15,6 +15,7 @@ import {
   MapPin,
   Clock,
   ArrowRight,
+  Sparkles,
 } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import PushNotificationSettings from "@/components/PushNotificationSettings";
@@ -174,6 +175,32 @@ export default function PortalDashboard() {
     [];
   const unreadAlerts = alerts?.filter(a => !a.isRead) ?? [];
 
+  // Days until next upcoming trip (for AI behavior-driven suggestions)
+  const nextTripStart = upcomingTrips
+    .map(t => (t.startDate ? new Date(t.startDate) : null))
+    .filter((d): d is Date => !!d && d.getTime() > Date.now())
+    .sort((a, b) => a.getTime() - b.getTime())[0];
+  const daysUntilTrip = nextTripStart
+    ? Math.ceil(
+        (nextTripStart.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+      )
+    : null;
+  const nextTripDestination =
+    upcomingTrips.find(
+      t =>
+        t.startDate &&
+        new Date(t.startDate).getTime() ===
+          (nextTripStart?.getTime() ?? -1)
+    )?.destination ?? undefined;
+
+  const { data: suggestions } = trpc.ai.getPersonalizedSuggestions.useQuery(
+    {
+      destination: nextTripDestination,
+      daysUntilTrip,
+    },
+    { staleTime: 5 * 60 * 1000 }
+  );
+
   const quickLinks = [
     {
       href: "/portal/itinerary",
@@ -218,6 +245,41 @@ export default function PortalDashboard() {
       title={`Welcome back, ${user?.name?.split(" ")[0] ?? "Traveler"}`}
       subtitle="Here's your travel overview"
     >
+      {/* Personalized AI suggestions */}
+      {suggestions && suggestions.length > 0 && (
+        <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-3">
+          {suggestions.slice(0, 2).map((s, i) => (
+            <div
+              key={i}
+              className="p-4 rounded-xl border border-primary/20 bg-gradient-to-br from-primary/5 to-secondary/5 flex items-start gap-3"
+            >
+              <Sparkles className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+              <div className="flex-1 min-w-0">
+                <p className="font-serif font-semibold text-foreground text-sm">
+                  {s.title}
+                </p>
+                <p className="text-foreground/80 font-sans text-sm mt-1 leading-relaxed">
+                  {s.description}
+                </p>
+                {s.ctaHref && s.ctaLabel && (
+                  <Button
+                    asChild
+                    size="sm"
+                    variant="outline"
+                    className="mt-2 h-7 text-xs"
+                  >
+                    <Link href={s.ctaHref}>
+                      {s.ctaLabel}
+                      <ArrowRight className="w-3 h-3 ml-1" />
+                    </Link>
+                  </Button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Alerts banner */}
       {unreadAlerts.length > 0 && (
         <div className="mb-6 p-4 rounded-xl border border-amber-200 bg-amber-50 flex items-start gap-3">

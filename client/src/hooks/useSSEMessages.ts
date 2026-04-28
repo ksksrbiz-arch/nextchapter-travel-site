@@ -25,16 +25,39 @@ export type SSEReadPayload = {
   fromUserId: number;
 };
 
+export type SSEFlightAlertPayload = {
+  alertId: number;
+  userId: number;
+  tripId: number | null;
+  flightNumber: string;
+  status:
+    | "on_time"
+    | "delayed"
+    | "cancelled"
+    | "boarding"
+    | "departed"
+    | "arrived"
+    | "gate_change";
+  newDepartureIso?: string | null;
+  newArrivalIso?: string | null;
+  newGate?: string | null;
+  message: string;
+  severity: "info" | "warning" | "urgent";
+  createdAt: string;
+};
+
 export type SSEEvent =
   | { type: "message"; data: SSEMessagePayload }
   | { type: "typing"; data: SSETypingPayload }
   | { type: "read"; data: SSEReadPayload }
+  | { type: "flight_alert"; data: SSEFlightAlertPayload }
   | { type: "ping" };
 
 type UseSSEMessagesOptions = {
   onMessage?: (msg: SSEMessagePayload) => void;
   onTyping?: (evt: SSETypingPayload) => void;
   onRead?: (evt: SSEReadPayload) => void;
+  onFlightAlert?: (evt: SSEFlightAlertPayload) => void;
   enabled?: boolean;
 };
 
@@ -46,6 +69,7 @@ export function useSSEMessages({
   onMessage,
   onTyping,
   onRead,
+  onFlightAlert,
   enabled = true,
 }: UseSSEMessagesOptions) {
   const esRef = useRef<EventSource | null>(null);
@@ -78,6 +102,8 @@ export function useSSEMessages({
           onTyping(event.data);
         } else if (event.type === "read" && onRead) {
           onRead(event.data);
+        } else if (event.type === "flight_alert" && onFlightAlert) {
+          onFlightAlert(event.data);
         }
         // ping events are ignored
       } catch {
@@ -94,7 +120,7 @@ export function useSSEMessages({
       retryDelay.current = delay * 2;
       retryRef.current = setTimeout(connect, delay);
     };
-  }, [enabled, onMessage, onTyping, onRead]);
+  }, [enabled, onMessage, onTyping, onRead, onFlightAlert]);
 
   useEffect(() => {
     if (!enabled) return;

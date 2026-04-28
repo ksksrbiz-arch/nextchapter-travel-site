@@ -1,7 +1,9 @@
 import PortalLayout from "@/components/PortalLayout";
 import { trpc } from "@/lib/trpc";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Link } from "wouter";
 import { useTrip } from "@/contexts/TripContext";
 import {
   Plane,
@@ -14,6 +16,8 @@ import {
   Calendar,
   DollarSign,
   Loader2,
+  Leaf,
+  Eye,
 } from "lucide-react";
 import { NoBookingsEmptyState } from "@/components/ui/empty-states";
 import { BookingsSkeleton } from "@/components/ui/skeletons";
@@ -72,6 +76,20 @@ const STATUS_COLORS: Record<string, string> = {
   cancelled: "bg-red-100 text-red-700",
   waitlisted: "bg-orange-100 text-orange-800",
 };
+
+// "Green logistics" — direct flights, eco-certified hotels, EV transfers, etc.
+const GREEN_KEYWORDS = /\b(direct|eco|green key|leed|earthcheck|ev|electric|carbon[- ]neutral)\b/i;
+function isGreenBooking(b: {
+  type: string;
+  notes: string | null;
+  vendor?: string | null;
+}): boolean {
+  const haystack = `${b.notes ?? ""} ${b.vendor ?? ""}`;
+  if (GREEN_KEYWORDS.test(haystack)) return true;
+  // Heuristic: trains/transfers tend to be lower-emission than flights/cars
+  if (b.type === "transfer" && /train|rail/i.test(haystack)) return true;
+  return false;
+}
 
 export default function Bookings() {
   const { selectedTripId: tripId } = useTrip();
@@ -200,6 +218,27 @@ export default function Bookings() {
                         {booking.notes}
                       </p>
                     )}
+                    <div className="mt-3 flex items-center gap-2 flex-wrap">
+                      {isGreenBooking(booking) && (
+                        <Badge className="bg-emerald-100 text-emerald-800 border-0 text-xs font-sans">
+                          <Leaf className="w-3 h-3 mr-1" /> Green logistics
+                        </Badge>
+                      )}
+                      {(booking.type === "hotel" ||
+                        booking.type === "tour" ||
+                        booking.type === "cruise") && (
+                        <Button
+                          asChild
+                          size="sm"
+                          variant="outline"
+                          className="h-7 text-xs"
+                        >
+                          <Link href="/portal/vr-previews">
+                            <Eye className="w-3 h-3 mr-1" /> Virtual tour
+                          </Link>
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </CardContent>
