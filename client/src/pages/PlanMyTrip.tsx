@@ -258,7 +258,7 @@ export default function PlanMyTrip() {
                     className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 font-sans font-bold min-h-[52px] rounded-xl active:scale-[0.99] transition-transform"
                   >
                     <a
-                      href="mailto:jessica@nextchaptertravel.com?subject=Plan%20My%20Trip&body=Hi%20Jessica%2C%0A%0AI%27d%20like%20to%20start%20planning%20a%20trip.%20Here%27s%20a%20bit%20about%20what%20we%27re%20looking%20for%3A%0A%0A%E2%80%A2%20Travelers%3A%0A%E2%80%A2%20Travel%20dates%3A%0A%E2%80%A2%20Destination(s)%3A%0A%E2%80%A2%20Approximate%20budget%3A%0A%E2%80%A2%20Anything%20else%3A%0A%0AThanks%21"
+                      href="mailto:seidersconsulting@gmail.com?subject=Plan%20My%20Trip&body=Hi%20Jessica%2C%0A%0AI%27d%20like%20to%20start%20planning%20a%20trip.%20Here%27s%20a%20bit%20about%20what%20we%27re%20looking%20for%3A%0A%0A%E2%80%A2%20Travelers%3A%0A%E2%80%A2%20Travel%20dates%3A%0A%E2%80%A2%20Destination(s)%3A%0A%E2%80%A2%20Approximate%20budget%3A%0A%E2%80%A2%20Anything%20else%3A%0A%0AThanks%21"
                     >
                       <Mail className="w-4 h-4 mr-2" />
                       Email Jessica directly

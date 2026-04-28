@@ -160,10 +160,10 @@ export function ThankYou() {
               Response within 24 hours
             </p>
             <a
-              href="mailto:jessica@nextchaptertravel.com"
+              href="mailto:seidersconsulting@gmail.com"
               className="text-secondary hover:text-secondary/80 transition-colors text-sm font-medium"
             >
-              jessica@nextchaptertravel.com
+              seidersconsulting@gmail.com
             </a>
           </div>
 

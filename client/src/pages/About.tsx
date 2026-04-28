@@ -217,11 +217,11 @@ export default function About() {
                     <span className="font-sans font-semibold">Instagram</span>
                   </a>
                   <a
-                    href="mailto:jessica@nextchaptertravel.com"
+                    href="/plan-my-trip"
                     className="inline-flex items-center gap-2 text-secondary hover:text-secondary/80 transition-colors bg-secondary/10 px-4 py-3 rounded-xl min-h-[48px] active:scale-[0.98]"
                   >
                     <Mail className="w-5 h-5" />
-                    <span className="font-sans font-semibold">Email Jessica</span>
+                    <span className="font-sans font-semibold">Plan My Trip</span>
                   </a>
                 </div>
               </div>

@@ -8,4 +8,4 @@ Disallow: /api/
 Disallow: /join
 Disallow: /thank-you
 
-Sitemap: https://nextchaptertravel.com/sitemap.xml
+Sitemap: https://next-chapter-travel.netlify.app/sitemap.xml

@@ -131,7 +131,7 @@ class BusinessOperationsService {
         id: "team-jessica",
         name: "Jessica Seiders",
         role: "cfo",
-        email: "jessica@nextchaptertravel.com",
+        email: "seidersconsulting@gmail.com",
         phone: "1-555-0100",
         department: "Finance & Operations",
         assignedTrips: [],

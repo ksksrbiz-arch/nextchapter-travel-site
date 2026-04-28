@@ -127,10 +127,10 @@ export default function SiteFooter() {
                   Email
                 </p>
                 <a
-                  href="mailto:jessica@nextchaptertravel.com"
+                  href="mailto:seidersconsulting@gmail.com"
                   className="text-primary-foreground/70 hover:text-secondary transition-colors"
                 >
-                  jessica@nextchaptertravel.com
+                  seidersconsulting@gmail.com
                 </a>
               </li>
               <li>
@@ -163,7 +163,7 @@ export default function SiteFooter() {
               Sitemap
             </a>
             <span className="mx-2">·</span>
-            <a href="mailto:jessica@nextchaptertravel.com" className="hover:text-primary-foreground/60 transition-colors">
+            <a href="mailto:seidersconsulting@gmail.com" className="hover:text-primary-foreground/60 transition-colors">
               Privacy
             </a>
           </p>
