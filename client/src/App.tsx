@@ -209,6 +209,14 @@ const CollaboratorJoinPage = lazyWithRetry(
   "collaborator-join"
 );
 
+// Public multi-page expansion
+const About = lazyWithRetry(() => import("./pages/About"), "about");
+const Destinations = lazyWithRetry(
+  () => import("./pages/Destinations"),
+  "destinations"
+);
+const Services = lazyWithRetry(() => import("./pages/Services"), "services");
+
 // Admin pages
 const AdminDashboard = lazyWithRetry(
   () => import("./pages/admin/AdminDashboard"),
@@ -268,6 +276,9 @@ function Router() {
     <Switch>
       {/* Public landing page */}
       <Route path="/" component={Home} />
+      <Route path="/about" component={About} />
+      <Route path="/destinations" component={Destinations} />
+      <Route path="/services" component={Services} />
       <Route path="/join" component={JoinPage} />
       <Route path="/plan-my-trip" component={PlanMyTrip} />
       <Route path="/plan" component={PlanMyTrip} />

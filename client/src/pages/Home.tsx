@@ -6,6 +6,8 @@ import LazyImage from "@/components/LazyImage";
 import { Link } from "wouter";
 import { useEffect, useState } from "react";
 import { SEOHead } from "@/components/SEOHead";
+import SiteNav from "@/components/SiteNav";
+import SiteFooter from "@/components/SiteFooter";
 import {
   MapPin,
   MessageSquare,
@@ -15,14 +17,11 @@ import {
   Plane,
   Shield,
   Star,
-  BookOpen,
   Globe,
   Users,
   Facebook,
   Instagram,
   Sparkles,
-  Menu,
-  X,
   Compass,
   ChevronUp,
   Award,
@@ -146,8 +145,6 @@ const BRAND_STRIP = [
 
 export default function Home() {
   const { setVideoContext, preloadContext } = useVideoHero();
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
 
@@ -159,7 +156,6 @@ export default function Home() {
     setVideoContext("landing");
 
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
       setShowScrollTop(window.scrollY > 400);
     };
     window.addEventListener("scroll", handleScroll);
@@ -172,134 +168,7 @@ export default function Home() {
         canonical="/"
         includeLocalBusiness
       />
-      {/* ── Navigation ── */}
-      <nav
-        className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-          isScrolled
-            ? "bg-primary/95 backdrop-blur-md shadow-lg"
-            : "bg-transparent"
-        )}
-      >
-        <div className="container flex items-center justify-between h-16 sm:h-20">
-          <Link href="/">
-            <div className="text-xl sm:text-2xl font-serif font-bold text-secondary cursor-pointer hover:text-secondary/80 transition-colors">
-              Next Chapter Travel
-            </div>
-          </Link>
-
-          {/* Desktop Menu */}
-          <div className="hidden md:flex items-center gap-8">
-            <a
-              href="#features"
-              className="text-foreground hover:text-secondary transition-colors font-sans text-sm"
-            >
-              Features
-            </a>
-            <a
-              href="#how-it-works"
-              className="text-foreground hover:text-secondary transition-colors font-sans text-sm"
-            >
-              How It Works
-            </a>
-            <a
-              href="#about-jessica"
-              className="text-foreground hover:text-secondary transition-colors font-sans text-sm"
-            >
-              About Jessica
-            </a>
-              <Link href="/plan-my-trip">
-                <Button
-                  size="sm"
-                  className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-sans font-bold"
-                  onMouseEnter={() => preloadContext("plan-my-trip")}
-                  onFocus={() => preloadContext("plan-my-trip")}
-                >
-                  Plan My Trip
-                </Button>
-              </Link>
-            <a href={getLoginUrl()}>
-              <Button
-                size="sm"
-                variant="outline"
-                className="bg-background/40 backdrop-blur-md border-border hover:bg-background/60 font-sans font-bold"
-              >
-                Client Portal
-              </Button>
-            </a>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-3 min-w-[48px] min-h-[48px] flex items-center justify-center hover:bg-secondary/10 rounded-xl transition-colors active:scale-95"
-            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-          >
-            {mobileMenuOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
-            )}
-          </button>
-        </div>
-
-        {/* Mobile Menu */}
-        <div
-          className={cn(
-            "md:hidden bg-primary/98 backdrop-blur-lg border-t border-border overflow-y-auto transition-all duration-300 ease-out",
-            mobileMenuOpen
-              ? "max-h-[calc(100dvh-4rem)] opacity-100"
-              : "max-h-0 opacity-0"
-          )}
-        >
-          <div
-            className="container py-6 flex flex-col gap-3"
-            style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom, 0px))" }}
-          >
-            <a
-              href="#features"
-              onClick={() => setMobileMenuOpen(false)}
-              className="text-foreground hover:text-secondary transition-colors font-sans py-3 px-4 rounded-xl hover:bg-secondary/10 min-h-[48px] flex items-center active:scale-98"
-            >
-              Features
-            </a>
-            <a
-              href="#how-it-works"
-              onClick={() => setMobileMenuOpen(false)}
-              className="text-foreground hover:text-secondary transition-colors font-sans py-3 px-4 rounded-xl hover:bg-secondary/10 min-h-[48px] flex items-center active:scale-98"
-            >
-              How It Works
-            </a>
-            <a
-              href="#about-jessica"
-              onClick={() => setMobileMenuOpen(false)}
-              className="text-foreground hover:text-secondary transition-colors font-sans py-3 px-4 rounded-xl hover:bg-secondary/10 min-h-[48px] flex items-center active:scale-98"
-            >
-              About Jessica
-            </a>
-            <div className="pt-3 border-t border-border/50 flex flex-col gap-3">
-              <Link
-                href="/plan-my-trip"
-                onClick={() => setMobileMenuOpen(false)}
-                onMouseEnter={() => preloadContext("plan-my-trip")}
-                onFocus={() => preloadContext("plan-my-trip")}
-              >
-                <Button className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 font-sans font-bold min-h-[52px] text-base rounded-xl active:scale-98 transition-transform">
-                  Plan My Trip
-                </Button>
-              </Link>
-              <a href={getLoginUrl()} className="w-full">
-                <Button
-                  variant="outline"
-                  className="w-full bg-background/40 backdrop-blur-md border-border hover:bg-background/60 font-sans font-bold min-h-[52px] text-base rounded-xl active:scale-98 transition-transform"
-                >
-                  Client Portal
-                </Button>
-              </a>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <SiteNav ctaPreloadContext="plan-my-trip" />
 
       {/* ── Hero Section ── */}
       <section className="pt-24 sm:pt-32 md:pt-44 pb-14 sm:pb-24 md:pb-32 relative overflow-hidden">
@@ -662,18 +531,18 @@ export default function Home() {
 
               <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <Link href="/plan-my-trip">
-                  <Button className="w-full sm:w-auto bg-secondary text-secondary-foreground hover:bg-secondary/90 px-8 py-6 text-lg font-sans font-bold rounded-xl min-h-[56px] active:scale-98 transition-transform">
+                  <Button className="w-full sm:w-auto bg-secondary text-secondary-foreground hover:bg-secondary/90 px-8 py-6 text-lg font-sans font-bold rounded-xl min-h-[56px] active:scale-[0.98] transition-transform">
                     Start Planning With Me
                   </Button>
                 </Link>
-                <a href="#how-it-works">
+                <Link href="/about">
                   <Button
                     variant="outline"
-                    className="w-full sm:w-auto border-secondary/30 hover:bg-secondary/10 px-8 py-6 text-lg font-sans font-bold rounded-xl min-h-[56px] active:scale-98 transition-transform"
+                    className="w-full sm:w-auto border-secondary/30 hover:bg-secondary/10 px-8 py-6 text-lg font-sans font-bold rounded-xl min-h-[56px] active:scale-[0.98] transition-transform"
                   >
-                    See How It Works
+                    Read Full Story
                   </Button>
-                </a>
+                </Link>
               </div>
 
               <div className="mt-8 sm:mt-10 pt-6 sm:pt-8 border-t border-border">
@@ -885,12 +754,23 @@ export default function Home() {
               </div>
             ))}
           </div>
+          {/* See all link */}
+          <div className="text-center mt-10 sm:mt-12">
+            <Link href="/destinations">
+              <Button
+                variant="outline"
+                className="border-secondary/30 hover:bg-secondary/10 font-sans font-semibold px-8 py-4 rounded-xl min-h-[52px]"
+              >
+                <Compass className="w-4 h-4 mr-2 text-secondary" />
+                See All Destinations
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
-
-      {/* ── CTA Section ── */}
       <section className="py-20 sm:py-32 relative overflow-hidden">
-        {/* Background layers */}
+        {/* Background layers — CTA */}
         <div className="absolute inset-0 bg-gradient-to-b from-secondary/5 via-secondary/10 to-secondary/5 backdrop-blur-sm" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,oklch(0.72_0.09_65/0.18)_0%,transparent_70%)]" />
         <div aria-hidden className="pointer-events-none absolute inset-0">
@@ -952,167 +832,7 @@ export default function Home() {
       </section>
 
       {/* ── Footer ── */}
-      <footer
-        className="py-12 sm:py-16 bg-primary text-primary-foreground border-t border-white/10"
-        style={{ paddingBottom: "max(3rem, calc(2rem + env(safe-area-inset-bottom, 0px)))" }}
-      >
-        <div className="container">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 sm:gap-12 mb-10 sm:mb-14">
-            {/* Brand column */}
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <BookOpen className="w-5 h-5 text-secondary" />
-                <h3 className="font-serif font-bold text-lg text-secondary">
-                  Next Chapter Travel
-                </h3>
-              </div>
-              <p className="text-primary-foreground/60 text-sm font-sans leading-relaxed mb-4">
-                Your personal travel concierge, crafting unforgettable journeys
-                with expert planning and genuine care.
-              </p>
-              <div className="flex gap-3">
-                <a
-                  href="https://www.facebook.com/nextchaptertravel"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Facebook"
-                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-secondary/20 border border-white/10 hover:border-secondary/40 flex items-center justify-center transition-all"
-                >
-                  <Facebook className="w-4 h-4 text-primary-foreground/70" />
-                </a>
-                <a
-                  href="https://www.instagram.com/nextchaptertravelllc"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Instagram"
-                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-secondary/20 border border-white/10 hover:border-secondary/40 flex items-center justify-center transition-all"
-                >
-                  <Instagram className="w-4 h-4 text-primary-foreground/70" />
-                </a>
-              </div>
-            </div>
-
-            {/* Quick Links */}
-            <div>
-              <h4 className="font-bold mb-4 font-sans text-sm uppercase tracking-widest text-secondary/80">
-                Quick Links
-              </h4>
-              <ul className="space-y-2 font-sans text-sm">
-                {[
-                  { label: "Features", href: "#features", internal: false },
-                  { label: "How It Works", href: "#how-it-works", internal: false },
-                  { label: "About Jessica", href: "#about-jessica", internal: false },
-                  { label: "Plan My Trip", href: "/plan-my-trip", internal: true },
-                  { label: "Client Portal", href: null, external: true },
-                ].map(link =>
-                  link.href === null ? (
-                    <li key={link.label}>
-                      <a
-                        href={getLoginUrl()}
-                        className="text-primary-foreground/60 hover:text-secondary transition-colors py-0.5 inline-block"
-                      >
-                        {link.label}
-                      </a>
-                    </li>
-                  ) : link.internal ? (
-                    <li key={link.label}>
-                      <Link
-                        href={link.href}
-                        className="text-primary-foreground/60 hover:text-secondary transition-colors py-0.5 inline-block"
-                      >
-                        {link.label}
-                      </Link>
-                    </li>
-                  ) : (
-                    <li key={link.label}>
-                      <a
-                        href={link.href}
-                        className="text-primary-foreground/60 hover:text-secondary transition-colors py-0.5 inline-block"
-                      >
-                        {link.label}
-                      </a>
-                    </li>
-                  )
-                )}
-              </ul>
-            </div>
-
-            {/* Destinations */}
-            <div>
-              <h4 className="font-bold mb-4 font-sans text-sm uppercase tracking-widest text-secondary/80">
-                Specialties
-              </h4>
-              <ul className="space-y-2 font-sans text-sm text-primary-foreground/60">
-                {[
-                  "Disney World & Disneyland",
-                  "Caribbean Cruises",
-                  "Universal Studios",
-                  "All-Inclusive Resorts",
-                  "Hawaiian Getaways",
-                  "European River Cruises",
-                ].map(dest => (
-                  <li key={dest} className="flex items-center gap-2">
-                    <Compass className="w-3 h-3 text-secondary/50 flex-shrink-0" />
-                    {dest}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Contact */}
-            <div>
-              <h4 className="font-bold mb-4 font-sans text-sm uppercase tracking-widest text-secondary/80">
-                Contact
-              </h4>
-              <ul className="space-y-3 font-sans text-sm">
-                <li>
-                  <p className="text-primary-foreground/40 text-xs uppercase tracking-wider mb-0.5">
-                    Email
-                  </p>
-                  <a
-                    href="mailto:jessica@nextchaptertravel.com"
-                    className="text-primary-foreground/70 hover:text-secondary transition-colors"
-                  >
-                    jessica@nextchaptertravel.com
-                  </a>
-                </li>
-                <li>
-                  <p className="text-primary-foreground/40 text-xs uppercase tracking-wider mb-0.5">
-                    Company
-                  </p>
-                  <p className="text-primary-foreground/60">
-                    Next Chapter Travel LLC
-                  </p>
-                </li>
-                <li className="pt-2">
-                  <Link href="/plan-my-trip">
-                    <Button
-                      size="sm"
-                      className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-sans font-bold text-xs rounded-lg"
-                    >
-                      Start Planning — Free
-                    </Button>
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          {/* Bottom bar */}
-          <div className="border-t border-white/10 pt-6 sm:pt-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-primary-foreground/40 text-xs font-sans">
-            <p>&copy; 2026 Next Chapter Travel LLC. All rights reserved.</p>
-            <p>
-              <a href="/sitemap.xml" className="hover:text-primary-foreground/60 transition-colors">
-                Sitemap
-              </a>
-              <span className="mx-2">·</span>
-              <a href="mailto:jessica@nextchaptertravel.com" className="hover:text-primary-foreground/60 transition-colors">
-                Privacy
-              </a>
-            </p>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
 
       {/* ── Scroll to Top Button (Mobile) ── */}
       <button
