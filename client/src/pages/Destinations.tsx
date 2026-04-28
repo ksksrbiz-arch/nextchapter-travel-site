@@ -56,13 +56,18 @@ interface Destination {
   badge?: string;
 }
 
+// High-quality stock photos sourced from Unsplash's CDN (same pattern used in
+// VideoHeroContext, MemoryGallery, and RebookingRecommendations).
+const UNSPLASH = (id: string) =>
+  `https://images.unsplash.com/photo-${id}?w=1200&q=70&auto=format&fit=crop`;
+
 const DESTINATIONS: Destination[] = [
   {
     id: 1,
     title: "Disney World Adventure",
     destination: "Orlando, Florida",
     category: ["Disney"],
-    image: "/trips/disney.jpg",
+    image: UNSPLASH("1499678329028-101435549a4e"),
     description:
       "Experience the magic of Disney World with a personalized, day-by-day itinerary. From Genie+ strategy to the best dining reservations — every moment handled.",
     highlights: ["Magic Kingdom", "EPCOT", "Hollywood Studios", "Animal Kingdom"],
@@ -74,7 +79,7 @@ const DESTINATIONS: Destination[] = [
     title: "Royal Caribbean Cruise",
     destination: "Caribbean",
     category: ["Cruises"],
-    image: "/trips/royal-caribbean.jpg",
+    image: UNSPLASH("1548574505-5e239809ee19"),
     description:
       "Set sail on a world-class Royal Caribbean cruise. Perfect for families, couples, and groups — with curated itineraries across the Caribbean.",
     highlights: ["Caribbean Ports", "Onboard Activities", "Shore Excursions", "Dining Packages"],
@@ -86,7 +91,7 @@ const DESTINATIONS: Destination[] = [
     title: "Hawaiian Islands Getaway",
     destination: "Maui, Hawaii",
     category: ["Hawaii"],
-    image: "/trips/maui.jpg",
+    image: UNSPLASH("1500534314209-a25ddb2bd429"),
     description:
       "Relax and unwind in Maui with a custom-crafted family getaway. Stunning beaches, road-to-Hana adventures, and luxury resort stays.",
     highlights: ["Maui Beaches", "Road to Hana", "Snorkeling", "Luaus"],
@@ -98,7 +103,7 @@ const DESTINATIONS: Destination[] = [
     title: "Disneyland California",
     destination: "Anaheim, California",
     category: ["Disney"],
-    image: "/trips/disney.jpg",
+    image: UNSPLASH("1556388158-158ea5ccacbd"),
     description:
       "The original Disney park — perfect for first-timers and multi-generational families. Jessica plans your entire Disneyland experience, from park hopping to hotel selection.",
     highlights: ["Disneyland Park", "California Adventure", "Hotel Selection", "Genie+ Planning"],
@@ -110,7 +115,7 @@ const DESTINATIONS: Destination[] = [
     title: "Norwegian Cruise Line",
     destination: "Bahamas & Caribbean",
     category: ["Cruises"],
-    image: "/trips/royal-caribbean.jpg",
+    image: UNSPLASH("1507525428034-b723cf961d3e"),
     description:
       "Explore the Bahamas and Caribbean aboard Norwegian's Freestyle cruising experience. No fixed dining times, breathtaking ports, and onboard thrills.",
     highlights: ["Freestyle Dining", "Bahamas Ports", "Private Island", "Entertainment"],
@@ -122,7 +127,7 @@ const DESTINATIONS: Destination[] = [
     title: "Universal Orlando Resort",
     destination: "Orlando, Florida",
     category: ["Universal"],
-    image: "/trips/disney.jpg",
+    image: UNSPLASH("1555396273-367ea4eb4db5"),
     description:
       "From Harry Potter's Wizarding World to the Jurassic World ride — Universal Orlando is a thrill-seeker's paradise. Jessica handles Express Passes, dining, and lodging.",
     highlights: ["Wizarding World", "Epic Universe", "Express Passes", "CityWalk Dining"],
@@ -134,7 +139,7 @@ const DESTINATIONS: Destination[] = [
     title: "Caribbean All-Inclusive",
     destination: "Cancún & Riviera Maya",
     category: ["All-Inclusive"],
-    image: "/trips/maui.jpg",
+    image: UNSPLASH("1506905925346-21bda4d32df4"),
     description:
       "Escape to a luxury all-inclusive resort in Mexico. Unlimited dining, beachfront pools, and seamless service — nothing to think about except relaxing.",
     highlights: ["Beachfront Resorts", "All Meals Included", "Kids Clubs", "Spa & Activities"],
@@ -146,7 +151,7 @@ const DESTINATIONS: Destination[] = [
     title: "European River Cruise",
     destination: "Rhine & Danube Rivers",
     category: ["Europe", "Cruises"],
-    image: "/trips/royal-caribbean.jpg",
+    image: UNSPLASH("1540541338287-41700207dee6"),
     description:
       "Drift through the heart of Europe on a scenic river cruise. Medieval castles, world-class vineyards, and cobblestone towns — unforgettable at every bend.",
     highlights: ["Rhine River", "Danube River", "Guided Shore Tours", "Onboard Dining"],
@@ -158,7 +163,7 @@ const DESTINATIONS: Destination[] = [
     title: "Big Island, Hawaii",
     destination: "Kona & Hilo, Hawaii",
     category: ["Hawaii"],
-    image: "/trips/maui.jpg",
+    image: UNSPLASH("1469854523086-cc02fe5d8800"),
     description:
       "Explore Hawaii's most diverse island — from black-sand beaches to active volcanoes. Custom itineraries for adventurers, families, and honeymooners.",
     highlights: ["Volcanoes National Park", "Manta Ray Diving", "Coffee Farms", "Waterfall Hikes"],
@@ -170,7 +175,7 @@ const DESTINATIONS: Destination[] = [
     title: "Unique Airbnb Getaway",
     destination: "Anywhere You Dream",
     category: ["Airbnb & Stays"],
-    image: "/trips/airbnb.jpg",
+    image: UNSPLASH("1548036328-c9fa89d128fa"),
     description:
       "Treehouses, beachfront cottages, mountain cabins, vineyard estates — Jessica searches every platform to find the most unique, best-priced stays that hotels simply can't match.",
     highlights: ["Treehouses & Cabins", "Beachfront Cottages", "Price Comparison", "Unique Properties"],
@@ -182,7 +187,7 @@ const DESTINATIONS: Destination[] = [
     title: "Road Trip Adventure",
     destination: "Across the USA",
     category: ["Road Trips"],
-    image: "/trips/road-trip.jpg",
+    image: UNSPLASH("1487621167305-5d248087c724"),
     description:
       "Hit the open road with a fully planned route — curated stops, lodging along the way, and insider tips for every mile. Whether it's Route 66 or the Pacific Coast Highway, Jessica maps it all.",
     highlights: ["Route Planning", "Lodging Along the Way", "Local Food Spots", "National Parks"],
@@ -194,7 +199,7 @@ const DESTINATIONS: Destination[] = [
     title: "Van Life Experience",
     destination: "Custom Route",
     category: ["Road Trips"],
-    image: "/trips/van-life.jpg",
+    image: UNSPLASH("1464822759023-fed622ff2c3b"),
     description:
       "Ready to live the van life dream? Jessica plans your freedom-on-wheels adventure — van-friendly campgrounds, scenic routes, budget management, and must-see stops coast to coast.",
     highlights: ["Van-Friendly Camps", "Scenic Routes", "Budget Planning", "Off-Grid Spots"],
@@ -206,7 +211,7 @@ const DESTINATIONS: Destination[] = [
     title: "Live Concerts & Music Festivals",
     destination: "Nationwide & International",
     category: ["Events"],
-    image: "/trips/concert.jpg",
+    image: UNSPLASH("1521791136064-7986c2920216"),
     description:
       "Turn your favorite concert or festival into a full vacation experience. Jessica handles tickets, travel, hotel, and every detail — you just show up and enjoy the show.",
     highlights: ["Concert Tickets", "Festival Passes", "Hotel Packages", "VIP Upgrades"],
@@ -218,7 +223,7 @@ const DESTINATIONS: Destination[] = [
     title: "Sporting Events & Championships",
     destination: "Nationwide & International",
     category: ["Events"],
-    image: "/trips/sporting-event.jpg",
+    image: UNSPLASH("1509440159596-0249088772ff"),
     description:
       "Super Bowl, World Series, NBA Finals, World Cup — experience the biggest games live. Jessica secures tickets and builds the perfect gameday trip around your favorite team.",
     highlights: ["Game Tickets", "Tailgate Experiences", "City Hotel Deals", "Group Packages"],
@@ -230,7 +235,7 @@ const DESTINATIONS: Destination[] = [
     title: "Amusement Park Vacation",
     destination: "SeaWorld, Six Flags & More",
     category: ["Amusement Parks"],
-    image: "/trips/amusement-park.jpg",
+    image: UNSPLASH("1605833556294-ea5c7a74f57d"),
     description:
       "Beyond Disney and Universal — SeaWorld, Busch Gardens, Six Flags, Dollywood, and more. Jessica finds the best ticket bundles, nearby stays, and tips to beat the lines.",
     highlights: ["Ticket Bundles", "Beat-the-Crowd Tips", "Dining Plans", "Hotel Packages"],
@@ -242,7 +247,7 @@ const DESTINATIONS: Destination[] = [
     title: "Carnival & Norwegian Cruises",
     destination: "Caribbean & Alaska",
     category: ["Cruises"],
-    image: "/trips/royal-caribbean.jpg",
+    image: UNSPLASH("1544620347-c4fd4a3d5957"),
     description:
       "Carnival's fun ships or Norwegian's Freestyle dining — Jessica knows every ship, every deck, and every deal. She'll find the best cabin at the best price, guaranteed.",
     highlights: ["Carnival Fun Ships", "Norwegian Freestyle", "Alaska Cruises", "Best Cabin Deals"],
@@ -254,12 +259,60 @@ const DESTINATIONS: Destination[] = [
     title: "Sandals & Beaches Resorts",
     destination: "Jamaica, Barbados & St. Lucia",
     category: ["All-Inclusive"],
-    image: "/trips/sandals.jpg",
+    image: UNSPLASH("1507003211169-0a1dd7228f2d"),
     description:
       "Sandals and Beaches are synonymous with romance and luxury — and Jessica is certified to book them. Couples retreats, honeymoons, and family escapes at unbeatable prices.",
     highlights: ["Couples & Honeymoons", "Luxury Suites", "Unlimited Premium Dining", "Water Sports"],
     icon: TreePalm,
     badge: "Certified Specialist",
+  },
+  {
+    id: 18,
+    title: "Universal Studios Hollywood",
+    destination: "Los Angeles, California",
+    category: ["Universal"],
+    image: UNSPLASH("1530521954074-e64f6810b32d"),
+    description:
+      "Movie magic on the West Coast — ride the world-famous Studio Tour, explore the Wizarding World of Harry Potter, and pair it with a full LA getaway. Jessica builds the perfect park-and-city combo.",
+    highlights: ["Studio Tour", "Wizarding World", "Front-of-Line Passes", "LA Hotel Add-Ons"],
+    icon: Globe,
+    badge: undefined,
+  },
+  {
+    id: 19,
+    title: "Italy & Mediterranean Tour",
+    destination: "Rome, Florence & Amalfi Coast",
+    category: ["Europe"],
+    image: UNSPLASH("1501554728187-ce583db33af7"),
+    description:
+      "From the Colosseum to cliffside villages on the Amalfi Coast — Jessica crafts a multi-city Italian dream trip with private guides, scenic train transfers, and unforgettable meals.",
+    highlights: ["Rome & Vatican", "Tuscan Vineyards", "Amalfi Coast", "Private Guides"],
+    icon: Mountain,
+    badge: "Bucket List",
+  },
+  {
+    id: 20,
+    title: "Vineyard Estate Retreat",
+    destination: "Napa, Tuscany & Beyond",
+    category: ["Airbnb & Stays"],
+    image: UNSPLASH("1477959858617-67f85cf4f1df"),
+    description:
+      "Wake up to rolling vineyards and private terraces. Jessica curates standout vineyard estates and farmhouse stays — complete with tastings, chef experiences, and seamless transfers.",
+    highlights: ["Private Estates", "Wine Tastings", "Chef Experiences", "Farm-to-Table"],
+    icon: Home,
+    badge: undefined,
+  },
+  {
+    id: 21,
+    title: "Coaster Capital Adventure",
+    destination: "Cedar Point, Dollywood & Hersheypark",
+    category: ["Amusement Parks"],
+    image: UNSPLASH("1488085061387-422e29b40080"),
+    description:
+      "For thrill-seekers chasing the biggest, fastest coasters in the country — Jessica plans multi-park road trips with the right ticket bundles, on-property stays, and skip-the-line perks.",
+    highlights: ["Record-Breaking Coasters", "Multi-Park Passes", "On-Property Stays", "Skip-the-Line"],
+    icon: Zap,
+    badge: "Thrill Seekers",
   },
 ];
 

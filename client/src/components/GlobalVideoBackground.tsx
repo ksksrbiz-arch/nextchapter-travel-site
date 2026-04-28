@@ -14,6 +14,9 @@ import { useReducedData } from "@/hooks/useReducedData";
  * Architecture:
  *  - Two stacked <video> elements (activeSlot and inactiveSlot)
  *  - On context change: load new video into inactive slot, fade it in, fade out active
+ *  - On loop: instead of relying on the native `loop` attribute (which produces a
+ *    visible cut), the active slot fades into the inactive slot — restarted from
+ *    time 0 — so the video appears to play forever with no seam.
  *  - Respects prefers-reduced-motion: falls back to instant swap with poster image
  *  - Overlay gradient ensures text legibility on all content
  *
@@ -25,10 +28,16 @@ import { useReducedData } from "@/hooks/useReducedData";
  *  - Stall detection: auto-restarts stalled video elements
  *  - Adaptive quality: reduces playback rate on slow connections
  *  - Proper cleanup of all event listeners and timers
+ *  - Mobile-aware sizing: uses the large viewport unit (`100lvh`) so the
+ *    background fills the screen cleanly even when the iOS Safari URL bar
+ *    expands or collapses.
  */
 
 const FADE_DURATION = 800; // ms for crossfade
 const STALL_TIMEOUT = 5000; // ms before declaring a stall
+// Trigger the loop crossfade slightly before the video ends so the swap
+// completes right at the natural loop point, hiding the cut entirely.
+const LOOP_LEAD_SECONDS = FADE_DURATION / 1000 + 0.2;
 
 // iOS Safari requires a user gesture for video playback in some cases.
 // We attempt autoplay immediately and retry on first user interaction.
@@ -185,13 +194,36 @@ export default function GlobalVideoBackground() {
     key: currentKey,
   });
   const [activeSlot, setActiveSlot] = useState<"A" | "B">("A");
+  // Mirror activeSlot in a ref so event handlers always read the latest value
+  // without being recreated on every render.
+  const activeSlotRef = useRef<"A" | "B">("A");
+  useEffect(() => {
+    activeSlotRef.current = activeSlot;
+  }, [activeSlot]);
+
   const prevKeyRef = useRef(currentKey);
   const crossfadeTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  // ── Seamless loop crossfade ────────────────────────────────────────────────
+  // Track whether both slots currently hold the same VideoEntry (i.e. the
+  // inactive slot is a hot spare we can restart from t=0 to mask the loop cut).
+  // Initially both slots start with the same entry, so they are in sync.
+  const slotsSyncedRef = useRef(true);
+  // Guard so we don't re-trigger a crossfade while one is already running.
+  const loopCrossfadingRef = useRef(false);
+  const loopTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  const cancelLoopCrossfade = useCallback(() => {
+    loopTimersRef.current.forEach(t => clearTimeout(t));
+    loopTimersRef.current = [];
+    loopCrossfadingRef.current = false;
+  }, []);
 
   // Cleanup crossfade timers on unmount
   useEffect(() => {
     return () => {
       crossfadeTimersRef.current.forEach(t => clearTimeout(t));
+      loopTimersRef.current.forEach(t => clearTimeout(t));
     };
   }, []);
 
@@ -199,15 +231,21 @@ export default function GlobalVideoBackground() {
     if (currentKey === prevKeyRef.current) return;
     prevKeyRef.current = currentKey;
 
-    // Clear any pending crossfade timers
+    // Clear any pending crossfade timers — both key-change and loop crossfades.
     crossfadeTimersRef.current.forEach(t => clearTimeout(t));
     crossfadeTimersRef.current = [];
+    cancelLoopCrossfade();
+
+    // Slots will diverge during this crossfade. We re-sync them once it
+    // completes so the next loop crossfade can use the inactive slot.
+    slotsSyncedRef.current = false;
 
     if (prefersReducedMotion) {
       // Instant swap — no animation
       setSlotA({ entry: currentVideo, opacity: 1, key: currentKey });
       setSlotB({ entry: currentVideo, opacity: 0, key: currentKey });
       setActiveSlot("A");
+      slotsSyncedRef.current = true;
       return;
     }
 
@@ -231,6 +269,14 @@ export default function GlobalVideoBackground() {
           // After fade completes, swap active slot
           const t2 = setTimeout(() => {
             setActiveSlot("B");
+            // Re-sync the now-inactive slot (A) to the new entry so the
+            // next seamless loop crossfade has a hot spare ready.
+            setSlotA({
+              entry: currentVideo,
+              opacity: 0,
+              key: `${currentKey}-sync-A`,
+            });
+            slotsSyncedRef.current = true;
           }, FADE_DURATION);
           crossfadeTimersRef.current.push(t2);
         }, 50);
@@ -252,6 +298,12 @@ export default function GlobalVideoBackground() {
           setSlotB(prev => ({ ...prev, opacity: 0 }));
           const t2 = setTimeout(() => {
             setActiveSlot("A");
+            setSlotB({
+              entry: currentVideo,
+              opacity: 0,
+              key: `${currentKey}-sync-B`,
+            });
+            slotsSyncedRef.current = true;
           }, FADE_DURATION);
           crossfadeTimersRef.current.push(t2);
         }, 50);
@@ -264,7 +316,66 @@ export default function GlobalVideoBackground() {
     activeSlot,
     prefersReducedMotion,
     watchForStall,
+    cancelLoopCrossfade,
   ]);
+
+  // ── Seamless loop: crossfade back to the inactive slot before the video
+  //    naturally ends, restarting it from t=0 so there's no visible cut. ──
+  const handleTimeUpdate = useCallback(
+    (slotId: "A" | "B") => {
+      // Only the currently active slot drives loop detection.
+      if (slotId !== activeSlotRef.current) return;
+      if (loopCrossfadingRef.current) return;
+      if (!slotsSyncedRef.current) return;
+      if (prefersReducedMotion) return;
+
+      const activeEl =
+        slotId === "A" ? videoARef.current : videoBRef.current;
+      const inactiveEl =
+        slotId === "A" ? videoBRef.current : videoARef.current;
+      if (!activeEl || !inactiveEl) return;
+
+      const dur = activeEl.duration;
+      // Skip if duration is unknown (Infinity for live/streaming) or too short
+      // to bother crossfading.
+      if (!isFinite(dur) || dur < 2) return;
+
+      const remaining = dur - activeEl.currentTime;
+      if (remaining > LOOP_LEAD_SECONDS) return;
+
+      // Trigger the seamless restart.
+      loopCrossfadingRef.current = true;
+      try {
+        inactiveEl.currentTime = 0;
+      } catch (err) {
+        // Some mobile browsers throw if the video isn't ready; fall through
+        // — the native `loop` attribute will still keep playback going.
+        if (process.env.NODE_ENV !== "production") {
+          // eslint-disable-next-line no-console
+          console.debug("[GlobalVideoBackground] loop seek failed", err);
+        }
+      }
+      tryPlay(inactiveEl);
+
+      if (slotId === "A") {
+        setSlotA(prev => ({ ...prev, opacity: 0 }));
+        setSlotB(prev => ({ ...prev, opacity: 1 }));
+      } else {
+        setSlotB(prev => ({ ...prev, opacity: 0 }));
+        setSlotA(prev => ({ ...prev, opacity: 1 }));
+      }
+
+      const t = setTimeout(() => {
+        // Swap active slot. The previously-active slot keeps its native loop
+        // running (out of sight at opacity 0); we leave it alone so it stays
+        // primed for the next loop crossfade.
+        setActiveSlot(slotId === "A" ? "B" : "A");
+        loopCrossfadingRef.current = false;
+      }, FADE_DURATION);
+      loopTimersRef.current.push(t);
+    },
+    [prefersReducedMotion]
+  );
 
   const videoBaseClass =
     "absolute inset-0 w-full h-full object-cover pointer-events-none";
@@ -274,12 +385,20 @@ export default function GlobalVideoBackground() {
   // Using inline style for zIndex instead of Tailwind's -z-10 to avoid
   // stacking context conflicts that can hide the video on some browsers.
   // contain: strict isolates the stacking context and prevents layout thrashing.
+  // height: uses the large viewport unit so iOS Safari doesn't leave a strip
+  // uncovered when the URL bar collapses; falls back to 100vh for browsers
+  // that don't support lvh.
   const containerStyle: React.CSSProperties = {
     position: "fixed",
     top: 0,
     left: 0,
     width: "100vw",
     height: "100vh",
+    // `lvh` (large viewport height) is widely supported in modern browsers
+    // and ensures the background fills the screen even when the iOS Safari
+    // URL bar collapses. Using minHeight keeps `100vh` as the fallback for
+    // older browsers that don't recognize `lvh`.
+    minHeight: "100lvh",
     zIndex: -1,
     overflow: "hidden",
     backgroundColor: videoLoaded ? "transparent" : "#0a1628",
@@ -327,6 +446,19 @@ export default function GlobalVideoBackground() {
 
   return (
     <div ref={containerRef} style={containerStyle}>
+      {/* Poster fallback — visible while the first video buffers so users see
+          a beautiful still instead of a dark void. Fades out once the video
+          is ready. Always rendered behind both <video> elements. */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `url("${currentVideo.poster}")`,
+          opacity: videoLoaded ? 0 : 1,
+          transition: "opacity 600ms ease-out",
+        }}
+      />
+
       {/* Slot A */}
       <video
         ref={videoARef}
@@ -344,6 +476,7 @@ export default function GlobalVideoBackground() {
         x5-playsinline="true"
         x5-video-player-type="h5"
         preload="auto"
+        onTimeUpdate={() => handleTimeUpdate("A")}
         onLoadedData={() => {
           setVideoLoaded(true);
           setIsLoading(false);
@@ -381,7 +514,8 @@ export default function GlobalVideoBackground() {
         webkit-playsinline="true"
         x5-playsinline="true"
         x5-video-player-type="h5"
-        preload="none"
+        preload="auto"
+        onTimeUpdate={() => handleTimeUpdate("B")}
         onLoadedData={() => {
           setVideoLoaded(true);
           setIsLoading(false);
@@ -410,21 +544,28 @@ export default function GlobalVideoBackground() {
         }}
       />
 
-      {/* Loading skeleton overlay */}
-      {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-900/40 via-slate-800/20 to-slate-900/40 backdrop-blur-sm">
-          <div className="flex flex-col items-center gap-4">
-            <div className="relative w-16 h-16">
-              <div className="absolute inset-0 rounded-full border-2 border-white/10" />
-              <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-amber-400/80 border-r-amber-400/60 animate-spin" />
-              <Loader2 className="absolute inset-0 m-auto w-6 h-6 text-amber-400/60 animate-pulse" />
-            </div>
-            <p className="text-white/40 text-xs font-sans tracking-widest uppercase">
-              Loading your journey...
-            </p>
+      {/* Loading skeleton overlay — kept intentionally light so the poster
+          image still shows through on slow connections. Fades out smoothly
+          once the video is ready. */}
+      <div
+        aria-hidden={!isLoading}
+        className="absolute inset-0 flex items-center justify-center pointer-events-none"
+        style={{
+          opacity: isLoading ? 1 : 0,
+          transition: "opacity 500ms ease-out",
+        }}
+      >
+        <div className="flex flex-col items-center gap-3 sm:gap-4">
+          <div className="relative w-12 h-12 sm:w-16 sm:h-16">
+            <div className="absolute inset-0 rounded-full border-2 border-white/10" />
+            <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-amber-400/80 border-r-amber-400/60 animate-spin" />
+            <Loader2 className="absolute inset-0 m-auto w-5 h-5 sm:w-6 sm:h-6 text-amber-400/60 animate-pulse" />
           </div>
+          <p className="text-white/50 text-[10px] sm:text-xs font-sans tracking-widest uppercase">
+            Loading your journey...
+          </p>
         </div>
-      )}
+      </div>
 
       {/* Context label — subtle cinematic caption (only show when not loading) */}
       {!isLoading && (
