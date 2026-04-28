@@ -22,10 +22,27 @@ import {
   Clock,
   Shield,
   CheckCircle,
+  Home,
+  Car,
+  Music,
+  Ticket,
+  Tag,
+  Zap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type DestCategory = "All" | "Disney" | "Cruises" | "Hawaii" | "All-Inclusive" | "Europe" | "Universal";
+type DestCategory =
+  | "All"
+  | "Disney"
+  | "Cruises"
+  | "Hawaii"
+  | "All-Inclusive"
+  | "Europe"
+  | "Universal"
+  | "Airbnb & Stays"
+  | "Road Trips"
+  | "Events"
+  | "Amusement Parks";
 
 interface Destination {
   id: number;
@@ -148,9 +165,117 @@ const DESTINATIONS: Destination[] = [
     icon: TreePalm,
     badge: undefined,
   },
+  {
+    id: 10,
+    title: "Unique Airbnb Getaway",
+    destination: "Anywhere You Dream",
+    category: ["Airbnb & Stays"],
+    image: "/trips/maui.jpg",
+    description:
+      "Treehouses, beachfront cottages, mountain cabins, vineyard estates — Jessica searches every platform to find the most unique, best-priced stays that hotels simply can't match.",
+    highlights: ["Treehouses & Cabins", "Beachfront Cottages", "Price Comparison", "Unique Properties"],
+    icon: Home,
+    badge: "Hidden Gems",
+  },
+  {
+    id: 11,
+    title: "Road Trip Adventure",
+    destination: "Across the USA",
+    category: ["Road Trips"],
+    image: "/trips/maui.jpg",
+    description:
+      "Hit the open road with a fully planned route — curated stops, lodging along the way, and insider tips for every mile. Whether it's Route 66 or the Pacific Coast Highway, Jessica maps it all.",
+    highlights: ["Route Planning", "Lodging Along the Way", "Local Food Spots", "National Parks"],
+    icon: Car,
+    badge: undefined,
+  },
+  {
+    id: 12,
+    title: "Van Life Experience",
+    destination: "Custom Route",
+    category: ["Road Trips"],
+    image: "/trips/maui.jpg",
+    description:
+      "Ready to live the van life dream? Jessica plans your freedom-on-wheels adventure — van-friendly campgrounds, scenic routes, budget management, and must-see stops coast to coast.",
+    highlights: ["Van-Friendly Camps", "Scenic Routes", "Budget Planning", "Off-Grid Spots"],
+    icon: Car,
+    badge: "Adventure",
+  },
+  {
+    id: 13,
+    title: "Live Concerts & Music Festivals",
+    destination: "Nationwide & International",
+    category: ["Events"],
+    image: "/trips/royal-caribbean.jpg",
+    description:
+      "Turn your favorite concert or festival into a full vacation experience. Jessica handles tickets, travel, hotel, and every detail — you just show up and enjoy the show.",
+    highlights: ["Concert Tickets", "Festival Passes", "Hotel Packages", "VIP Upgrades"],
+    icon: Music,
+    badge: "Full Package",
+  },
+  {
+    id: 14,
+    title: "Sporting Events & Championships",
+    destination: "Nationwide & International",
+    category: ["Events"],
+    image: "/trips/royal-caribbean.jpg",
+    description:
+      "Super Bowl, World Series, NBA Finals, World Cup — experience the biggest games live. Jessica secures tickets and builds the perfect gameday trip around your favorite team.",
+    highlights: ["Game Tickets", "Tailgate Experiences", "City Hotel Deals", "Group Packages"],
+    icon: Ticket,
+    badge: undefined,
+  },
+  {
+    id: 15,
+    title: "Amusement Park Vacation",
+    destination: "SeaWorld, Six Flags & More",
+    category: ["Amusement Parks"],
+    image: "/trips/disney.jpg",
+    description:
+      "Beyond Disney and Universal — SeaWorld, Busch Gardens, Six Flags, Dollywood, and more. Jessica finds the best ticket bundles, nearby stays, and tips to beat the lines.",
+    highlights: ["Ticket Bundles", "Beat-the-Crowd Tips", "Dining Plans", "Hotel Packages"],
+    icon: Zap,
+    badge: "Best Bundles",
+  },
+  {
+    id: 16,
+    title: "Carnival & Norwegian Cruises",
+    destination: "Caribbean & Alaska",
+    category: ["Cruises"],
+    image: "/trips/royal-caribbean.jpg",
+    description:
+      "Carnival's fun ships or Norwegian's Freestyle dining — Jessica knows every ship, every deck, and every deal. She'll find the best cabin at the best price, guaranteed.",
+    highlights: ["Carnival Fun Ships", "Norwegian Freestyle", "Alaska Cruises", "Best Cabin Deals"],
+    icon: Ship,
+    badge: undefined,
+  },
+  {
+    id: 17,
+    title: "Sandals & Beaches Resorts",
+    destination: "Jamaica, Barbados & St. Lucia",
+    category: ["All-Inclusive"],
+    image: "/trips/maui.jpg",
+    description:
+      "Sandals and Beaches are synonymous with romance and luxury — and Jessica is certified to book them. Couples retreats, honeymoons, and family escapes at unbeatable prices.",
+    highlights: ["Couples & Honeymoons", "Luxury Suites", "Unlimited Premium Dining", "Water Sports"],
+    icon: TreePalm,
+    badge: "Certified Specialist",
+  },
 ];
 
-const CATEGORIES: DestCategory[] = ["All", "Disney", "Cruises", "Hawaii", "All-Inclusive", "Universal", "Europe"];
+const CATEGORIES: DestCategory[] = [
+  "All",
+  "Disney",
+  "Cruises",
+  "Hawaii",
+  "All-Inclusive",
+  "Universal",
+  "Europe",
+  "Airbnb & Stays",
+  "Road Trips",
+  "Events",
+  "Amusement Parks",
+];
 
 export default function Destinations() {
   const { setVideoContext } = useVideoHero();
@@ -169,8 +294,8 @@ export default function Destinations() {
   return (
     <div className="min-h-screen font-serif selection:bg-secondary/30">
       <SEOHead
-        title="Destinations — Disney, Cruises, Hawaii & More"
-        description="Explore hand-picked destinations curated by Jessica Seiders at Next Chapter Travel. Disney, Royal Caribbean, Norwegian Cruise, Hawaii, all-inclusive resorts, and European river cruises."
+        title="Destinations — Anything, Anywhere | Next Chapter Travel"
+        description="Jessica Seiders plans any trip — Disney, cruises, Airbnb getaways, road trips, live events, amusement parks, Hawaii, all-inclusive resorts, and more. Best prices guaranteed."
         canonical="/destinations"
       />
 
@@ -189,23 +314,24 @@ export default function Destinations() {
             className="mb-4 sm:mb-6 bg-secondary/15 text-secondary border-secondary/30 font-sans text-[10px] sm:text-xs tracking-[0.18em] uppercase inline-flex items-center gap-2 px-3 py-1.5 backdrop-blur-md"
           >
             <Sparkles className="w-3 h-3" />
-            Hand-Picked by Jessica
+            Anything. Anywhere. Any Budget.
           </Badge>
           <h1
             data-reveal
             data-reveal-delay="100"
             className="text-[2.5rem] leading-[1.05] sm:text-6xl md:text-7xl font-serif font-bold mb-5 sm:mb-8 tracking-tight hero-text-shadow"
           >
-            Dream{" "}
-            <span className="text-gradient-gold italic">Destinations</span>
+            Your Trip,{" "}
+            <span className="text-gradient-gold italic">Your Way</span>
           </h1>
           <p
             data-reveal
             data-reveal-delay="200"
             className="text-base sm:text-xl text-muted-foreground/90 mb-8 sm:mb-10 font-sans font-light leading-relaxed max-w-2xl mx-auto"
           >
-            From Disney magic to Caribbean cruises to Hawaiian sunsets — every
-            destination personally vetted and planned by Jessica Seiders.
+            Airbnb or cruise ship. Theme park or van life. Concert weekend or tropical all-inclusive.
+            Whatever you're dreaming of — and whatever your budget — Jessica finds you the
+            absolute best deals and plans every last detail.
           </p>
 
           {/* Stats */}
@@ -223,9 +349,53 @@ export default function Destinations() {
               24-hr proposal turnaround
             </span>
             <span className="flex items-center gap-1.5">
+              <Tag className="w-4 h-4 text-secondary" />
+              Best prices — that's her job
+            </span>
+            <span className="flex items-center gap-1.5">
               <Shield className="w-4 h-4 text-secondary" />
               Certified in every brand
             </span>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Best Price Promise Banner ── */}
+      <section className="py-5 sm:py-6 bg-secondary/10 border-y border-secondary/20">
+        <div className="container">
+          <div
+            data-reveal
+            className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-10 text-center sm:text-left"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-secondary/20 border border-secondary/30 flex items-center justify-center flex-shrink-0">
+                <Tag className="w-5 h-5 text-secondary" />
+              </div>
+              <div>
+                <p className="font-serif font-bold text-base sm:text-lg leading-tight">Best Price Promise</p>
+                <p className="font-sans text-xs sm:text-sm text-muted-foreground">Finding the best deals is literally Jessica's job</p>
+              </div>
+            </div>
+            <div className="hidden sm:block h-8 w-px bg-border/50" />
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-secondary/20 border border-secondary/30 flex items-center justify-center flex-shrink-0">
+                <Globe className="w-5 h-5 text-secondary" />
+              </div>
+              <div>
+                <p className="font-serif font-bold text-base sm:text-lg leading-tight">Any Destination</p>
+                <p className="font-sans text-xs sm:text-sm text-muted-foreground">Airbnb, cruise, road trip, resort, event — she books it all</p>
+              </div>
+            </div>
+            <div className="hidden sm:block h-8 w-px bg-border/50" />
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-secondary/20 border border-secondary/30 flex items-center justify-center flex-shrink-0">
+                <Sparkles className="w-5 h-5 text-secondary" />
+              </div>
+              <div>
+                <p className="font-serif font-bold text-base sm:text-lg leading-tight">Any Budget</p>
+                <p className="font-sans text-xs sm:text-sm text-muted-foreground">From budget adventures to luxury escapes</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -352,13 +522,15 @@ export default function Destinations() {
               Your Dream Vacation Awaits
             </Badge>
             <h2 className="text-3xl sm:text-5xl font-serif font-bold mb-4 sm:mb-6 leading-[1.05]">
-              Don't See Your Destination?{" "}
-              <span className="text-gradient-gold italic">Ask Jessica</span>
+              Don't See Your Trip?{" "}
+              <span className="text-gradient-gold italic">Just Ask Jessica</span>
             </h2>
             <p className="text-primary-foreground/70 text-base sm:text-lg font-sans leading-relaxed mb-8 sm:mb-10">
-              These are just a few of Jessica's specialties. She books virtually
-              any destination — from Europe to Asia, Alaska to Africa. Get a
-              free proposal and she'll craft the perfect trip for you.
+              If you can dream it, Jessica can plan it — and you never have to
+              worry about getting the best price, because hunting down the
+              absolute best deals is truly her job. From Airbnb escapes and road
+              trips to cruises, concerts, and everything in between, she handles
+              every detail so you can just enjoy the ride.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6">
               <Link href="/plan-my-trip" className="w-full sm:w-auto">
@@ -382,7 +554,15 @@ export default function Destinations() {
               </Link>
             </div>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-sans text-primary-foreground/60">
-              {["Disney Specialist", "Royal Caribbean Expert", "Universal Studios", "Carnival Certified", "Norwegian Cruise Line"].map(cert => (
+              {[
+                "Disney Specialist",
+                "Royal Caribbean Expert",
+                "Universal Studios",
+                "Carnival Certified",
+                "Norwegian Cruise Line",
+                "Sandals & Beaches",
+                "Airbnb & VRBO",
+              ].map(cert => (
                 <span key={cert} className="flex items-center gap-1.5">
                   <Star className="w-3 h-3 text-secondary fill-secondary" />
                   {cert}
