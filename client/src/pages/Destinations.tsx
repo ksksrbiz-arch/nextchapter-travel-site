@@ -170,7 +170,7 @@ const DESTINATIONS: Destination[] = [
     title: "Unique Airbnb Getaway",
     destination: "Anywhere You Dream",
     category: ["Airbnb & Stays"],
-    image: "/trips/maui.jpg",
+    image: "/trips/airbnb.jpg",
     description:
       "Treehouses, beachfront cottages, mountain cabins, vineyard estates — Jessica searches every platform to find the most unique, best-priced stays that hotels simply can't match.",
     highlights: ["Treehouses & Cabins", "Beachfront Cottages", "Price Comparison", "Unique Properties"],
@@ -182,7 +182,7 @@ const DESTINATIONS: Destination[] = [
     title: "Road Trip Adventure",
     destination: "Across the USA",
     category: ["Road Trips"],
-    image: "/trips/maui.jpg",
+    image: "/trips/road-trip.jpg",
     description:
       "Hit the open road with a fully planned route — curated stops, lodging along the way, and insider tips for every mile. Whether it's Route 66 or the Pacific Coast Highway, Jessica maps it all.",
     highlights: ["Route Planning", "Lodging Along the Way", "Local Food Spots", "National Parks"],
@@ -194,7 +194,7 @@ const DESTINATIONS: Destination[] = [
     title: "Van Life Experience",
     destination: "Custom Route",
     category: ["Road Trips"],
-    image: "/trips/maui.jpg",
+    image: "/trips/van-life.jpg",
     description:
       "Ready to live the van life dream? Jessica plans your freedom-on-wheels adventure — van-friendly campgrounds, scenic routes, budget management, and must-see stops coast to coast.",
     highlights: ["Van-Friendly Camps", "Scenic Routes", "Budget Planning", "Off-Grid Spots"],
@@ -206,7 +206,7 @@ const DESTINATIONS: Destination[] = [
     title: "Live Concerts & Music Festivals",
     destination: "Nationwide & International",
     category: ["Events"],
-    image: "/trips/royal-caribbean.jpg",
+    image: "/trips/concert.jpg",
     description:
       "Turn your favorite concert or festival into a full vacation experience. Jessica handles tickets, travel, hotel, and every detail — you just show up and enjoy the show.",
     highlights: ["Concert Tickets", "Festival Passes", "Hotel Packages", "VIP Upgrades"],
@@ -218,7 +218,7 @@ const DESTINATIONS: Destination[] = [
     title: "Sporting Events & Championships",
     destination: "Nationwide & International",
     category: ["Events"],
-    image: "/trips/royal-caribbean.jpg",
+    image: "/trips/sporting-event.jpg",
     description:
       "Super Bowl, World Series, NBA Finals, World Cup — experience the biggest games live. Jessica secures tickets and builds the perfect gameday trip around your favorite team.",
     highlights: ["Game Tickets", "Tailgate Experiences", "City Hotel Deals", "Group Packages"],
@@ -230,7 +230,7 @@ const DESTINATIONS: Destination[] = [
     title: "Amusement Park Vacation",
     destination: "SeaWorld, Six Flags & More",
     category: ["Amusement Parks"],
-    image: "/trips/disney.jpg",
+    image: "/trips/amusement-park.jpg",
     description:
       "Beyond Disney and Universal — SeaWorld, Busch Gardens, Six Flags, Dollywood, and more. Jessica finds the best ticket bundles, nearby stays, and tips to beat the lines.",
     highlights: ["Ticket Bundles", "Beat-the-Crowd Tips", "Dining Plans", "Hotel Packages"],
@@ -254,7 +254,7 @@ const DESTINATIONS: Destination[] = [
     title: "Sandals & Beaches Resorts",
     destination: "Jamaica, Barbados & St. Lucia",
     category: ["All-Inclusive"],
-    image: "/trips/maui.jpg",
+    image: "/trips/sandals.jpg",
     description:
       "Sandals and Beaches are synonymous with romance and luxury — and Jessica is certified to book them. Couples retreats, honeymoons, and family escapes at unbeatable prices.",
     highlights: ["Couples & Honeymoons", "Luxury Suites", "Unlimited Premium Dining", "Water Sports"],
