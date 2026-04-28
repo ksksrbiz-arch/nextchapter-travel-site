@@ -176,14 +176,14 @@ export default function Home() {
       {/* ── Hero Section ── */}
       <section className="pt-24 sm:pt-32 md:pt-44 pb-14 sm:pb-24 md:pb-32 relative overflow-hidden">
         {/* Aurora gradient mesh — purely decorative, behind hero copy */}
-        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+        <div aria-hidden={true} className="pointer-events-none absolute inset-0 -z-10">
           <span className="aurora-blob gold" style={{ width: "44rem", height: "44rem", top: "-12rem", left: "-10rem" }} />
           <span className="aurora-blob navy" style={{ width: "40rem", height: "40rem", top: "-6rem", right: "-12rem" }} />
           <span className="aurora-blob cream" style={{ width: "32rem", height: "32rem", bottom: "-10rem", left: "30%" }} />
         </div>
 
         {/* Floating decorative travel icons */}
-        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div aria-hidden={true} className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
           <div className="float-icon-1 absolute top-[18%] left-[6%] opacity-20 hidden sm:block">
             <Plane className="w-8 h-8 text-secondary -rotate-12" />
           </div>
@@ -337,7 +337,7 @@ export default function Home() {
           <p className="text-center text-[10px] sm:text-xs uppercase tracking-[0.28em] text-muted-foreground/70 font-sans mb-4">
             Certified Specialist · Trusted Partners
           </p>
-          <div className="marquee" aria-hidden>
+          <div className="marquee" aria-hidden={true}>
             {[0, 1].map(loop => (
               <ul
                 key={loop}
@@ -408,12 +408,12 @@ export default function Home() {
 
       {/* ── Testimonials ── */}
       <section className="py-16 sm:py-24 bg-black/40 backdrop-blur-sm relative overflow-hidden">
-        <div aria-hidden className="pointer-events-none absolute inset-0 -z-0">
+        <div aria-hidden={true} className="pointer-events-none absolute inset-0 -z-0">
           <span className="aurora-blob gold" style={{ width: "30rem", height: "30rem", top: "-6rem", right: "-6rem", opacity: 0.35 }} />
           <span className="aurora-blob navy" style={{ width: "24rem", height: "24rem", bottom: "-4rem", left: "-4rem", opacity: 0.2 }} />
         </div>
         {/* Decorative dot grid */}
-        <div aria-hidden className="pointer-events-none absolute inset-0 dot-grid-bg opacity-30" />
+        <div aria-hidden={true} className="pointer-events-none absolute inset-0 dot-grid-bg opacity-30" />
         <div className="container relative">
           <div className="text-center mb-10 sm:mb-14" data-reveal>
             <Badge className="mb-3 sm:mb-4 bg-secondary/10 text-secondary border-secondary/20 font-sans text-xs tracking-widest uppercase">
@@ -666,12 +666,12 @@ export default function Home() {
         id="how-it-works"
         className="py-16 sm:py-24 bg-primary text-primary-foreground relative overflow-hidden"
       >
-        <div aria-hidden className="pointer-events-none absolute inset-0">
+        <div aria-hidden={true} className="pointer-events-none absolute inset-0">
           <span className="aurora-blob gold" style={{ width: "30rem", height: "30rem", top: "-8rem", left: "10%", opacity: 0.25 }} />
           <span className="aurora-blob navy" style={{ width: "30rem", height: "30rem", bottom: "-10rem", right: "5%", opacity: 0.4 }} />
         </div>
         {/* Dot grid overlay for texture */}
-        <div aria-hidden className="pointer-events-none absolute inset-0 dot-grid-bg opacity-10" />
+        <div aria-hidden={true} className="pointer-events-none absolute inset-0 dot-grid-bg opacity-10" />
         <div className="container relative">
           <div className="text-center mb-12 sm:mb-20" data-reveal>
             <Badge className="mb-3 sm:mb-4 bg-secondary/15 text-secondary border-secondary/30 font-sans text-xs tracking-widest uppercase">
@@ -839,7 +839,7 @@ export default function Home() {
         {/* Background layers — CTA */}
         <div className="absolute inset-0 bg-gradient-to-b from-secondary/5 via-secondary/10 to-secondary/5 backdrop-blur-sm" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,oklch(0.72_0.09_65/0.18)_0%,transparent_70%)]" />
-        <div aria-hidden className="pointer-events-none absolute inset-0">
+        <div aria-hidden={true} className="pointer-events-none absolute inset-0">
           <span className="aurora-blob gold" style={{ width: "36rem", height: "36rem", top: "-8rem", left: "10%" }} />
           <span className="aurora-blob navy" style={{ width: "32rem", height: "32rem", bottom: "-10rem", right: "10%", opacity: 0.4 }} />
         </div>

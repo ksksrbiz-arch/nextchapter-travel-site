@@ -19,18 +19,18 @@ export default function ScrollProgressBar() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    let frame = 0;
+    let rafId = 0;
     const update = () => {
       const doc = document.documentElement;
       const max = doc.scrollHeight - window.innerHeight;
       const next = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
       setProgress(next);
-      frame = 0;
+      rafId = 0;
     };
 
     const onScroll = () => {
-      if (frame) return;
-      frame = window.requestAnimationFrame(update);
+      if (rafId) return;
+      rafId = window.requestAnimationFrame(update);
     };
 
     update();
@@ -39,7 +39,7 @@ export default function ScrollProgressBar() {
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
-      if (frame) window.cancelAnimationFrame(frame);
+      if (rafId) window.cancelAnimationFrame(rafId);
     };
   }, []);
 

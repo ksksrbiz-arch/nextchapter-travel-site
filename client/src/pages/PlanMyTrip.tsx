@@ -109,7 +109,7 @@ export default function PlanMyTrip() {
         }}
       >
         {/* Aurora backdrop */}
-        <div aria-hidden className="pointer-events-none absolute inset-0">
+        <div aria-hidden={true} className="pointer-events-none absolute inset-0">
           <span className="aurora-blob gold" style={{ width: "32rem", height: "32rem", top: "-10rem", left: "-6rem", opacity: 0.4 }} />
           <span className="aurora-blob navy" style={{ width: "30rem", height: "30rem", top: "-6rem", right: "-6rem", opacity: 0.5 }} />
         </div>
