@@ -10,6 +10,7 @@ const QUICK_LINKS = [
   { label: "About Jessica", href: "/about", internal: true },
   { label: "Plan My Trip", href: "/plan-my-trip", internal: true },
   { label: "Client Portal", href: null, internal: false },
+  { label: "Adventure Chapter", href: "https://www.adventurechapter.com/", internal: false },
 ];
 
 const SPECIALTIES = [
@@ -115,6 +116,8 @@ export default function SiteFooter() {
                   <li key={link.label}>
                     <a
                       href={link.href ?? "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="text-primary-foreground/60 hover:text-secondary transition-colors py-0.5 inline-block"
                     >
                       {link.label}

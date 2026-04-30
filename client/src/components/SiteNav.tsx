@@ -7,10 +7,11 @@ import { Menu, X, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
-  { label: "Destinations", href: "/destinations" },
-  { label: "Deals", href: "/deals" },
-  { label: "Services", href: "/services" },
-  { label: "About", href: "/about" },
+  { label: "Destinations", href: "/destinations", external: false },
+  { label: "Deals", href: "/deals", external: false },
+  { label: "Services", href: "/services", external: false },
+  { label: "About", href: "/about", external: false },
+  { label: "Adventure Chapter", href: "https://www.adventurechapter.com/", external: true },
 ];
 
 interface SiteNavProps {
@@ -61,8 +62,18 @@ export default function SiteNav({ alwaysSolid = false, ctaPreloadContext }: Site
         {/* Desktop links */}
         <div className="hidden md:flex items-center gap-7">
           {NAV_LINKS.map(link => {
-            const isActive = location === link.href;
-            return (
+            const isActive = !link.external && location === link.href;
+            return link.external ? (
+              <a
+                key={link.href}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="nav-link-underline relative text-foreground hover:text-secondary transition-colors font-sans text-sm pb-0.5"
+              >
+                {link.label}
+              </a>
+            ) : (
               <Link
                 key={link.href}
                 href={link.href}
@@ -130,8 +141,19 @@ export default function SiteNav({ alwaysSolid = false, ctaPreloadContext }: Site
           style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom, 0px))" }}
         >
           {NAV_LINKS.map(link => {
-            const isActive = location === link.href;
-            return (
+            const isActive = !link.external && location === link.href;
+            return link.external ? (
+              <a
+                key={link.href}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setMobileMenuOpen(false)}
+                className="transition-colors font-sans py-3 px-4 rounded-xl min-h-[48px] flex items-center active:scale-[0.98] text-foreground hover:text-secondary hover:bg-secondary/10"
+              >
+                {link.label}
+              </a>
+            ) : (
               <Link
                 key={link.href}
                 href={link.href}
